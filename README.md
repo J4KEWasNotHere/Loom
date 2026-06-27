@@ -25,7 +25,7 @@ I want to give thanks to the users and thier resources toward the making of **Lo
 
 - All visuals and graphics were designed in
  [<img src="https://cdn.simpleicons.org/photopea/000/18A497" width="15" /> Photopea](https://www.photopea.com/)
-- Font, [Domus-Extra Bold by no-one](https://fonnts.com/font_weights/domus_extrabold-otf/) on [**fonnts.com**](https://fonnts.com/)
+- Font, [Domus-Extra Bold by _no-one_](https://fonnts.com/font_weights/domus_extrabold-otf/) on [**fonnts.com**](https://fonnts.com/)
 
 **Backend** ( [J4KEWasNotHere](https://github.com/J4KEWasNotHere) )
 
@@ -33,7 +33,7 @@ I want to give thanks to the users and thier resources toward the making of **Lo
 - Decompression of files, [<img src="https://cdn.simpleicons.org/codeberg/000/2185D0" width="15" /> **ZZLib** by zerkman](https://codeberg.org/zerkman/zzlib)
 
 # <img src="github/images/LoomIcon.png" width="46" /> License & Holder Agreement
-Loom is available under the MPL-2.0 License <img src="https://cdn.simpleicons.org/mozilla/000/fff" width="15" />. Terms and conditions are available in [LICENSE.txt](https://github.com/J4KEWasNotHere/Loom/blob/main/LICENSE) or at the [Offical Website](https://www.mozilla.org/en-GB/MPL/2.0).
+Loom is available under the MPL-2.0 License <img src="https://cdn.simpleicons.org/mozilla/000/fff" width="15" />. Terms and conditions are available in [LICENSE.txt](https://github.com/J4KEWasNotHere/Loom/blob/main/LICENSE) or at the [Official Website](https://www.mozilla.org/en-GB/MPL/2.0).
 
 With respect of </b>[@UpliftGames](https://github.com/UpliftGames)</b>, and [<img src="https://cdn.simpleicons.org/mozilla/000/4493f8" width="15" /> Wally's License (MPL-2.0 License)](https://github.com/UpliftGames/wally/blob/main/LICENSE.txt). I hereby consent to any actions or modifications, including deletion, that they may make toward [<img src="github/images/LoomIcon.png" width="16" />  J4KEWasNotHere/**Loom**](https://github.com/J4KEWasNotHere/Loom).
 
