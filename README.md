@@ -1,6 +1,6 @@
 <img src="github/images/LoomBanner.png" alt="Alt text" width="100%">
 
-<h1 align="center">Loom, native <a href="https://github.com/upliftgames/wally">Wally</a> package manager for Roblox</h1>
+<h1 align="center">Loom, native <a href="https://github.com/upliftgames/wally">Wally</a> package manager for Roblox Studio</h1>
 
 Loom is a native package manager for Roblox Studio that imports and manages Wally packages directly inside the editor. No command line. No external tools. Just seamless integration.
 
