@@ -5,7 +5,6 @@
 <div align="center">
 
 [![Static Badge](https://img.shields.io/badge/Plugin-white?logo=roblox&label=Marketplace&labelColor=%23363636)]()
-[![Static Badge](https://img.shields.io/badge/Documentation-3ECC5F?logo=docusaurus&labelColor=%23363636)]()
 [![Static Badge](https://img.shields.io/badge/Devforum-00A2FF?logo=robloxstudio&labelColor=%23363636)]()
 </div>
 
@@ -14,7 +13,10 @@ Loom is a native package manager for Roblox Studio that imports and manages Wall
 Loom is a Roblox Plugin which was created for those unfamiliar with [Rojo](https://rojo.space/), with its simple injection of packages which follow rojo's code structure (.client.luau, .server.luau, etc..).
 
 ___
-# About
+<details>
+<summary>  <h2>About Wally & Loom</h2> </summary>
+
+ 
 ## About Wally
 
 Wally is a package manager built specifically for the Roblox ecosystem, similar to npm for JavaScript or Cargo for Rust. It allows developers to easily discover, install, and manage reusable code libraries, known as packages, from a centralized registry.
@@ -28,6 +30,8 @@ Loom brings the power of Wally directly into Roblox Studio, with no command line
 Loom is a Roblox plugin that makes package management simple for developers who prefer working entirely inside Studio. It provides an easy way to browse, install, and manage Wally packages through a visual interface. Loom also understands Rojo's project structure, supporting file types such as .client.luau, .server.luau, and other context-specific scripts automatically.
 
 This allows developers to use modular code and package management without changing their workflow or learning additional tools. Loom helps bridge the gap between traditional Roblox Studio development and modern software engineering practices, making it easier for both individuals and teams to build organized, scalable projects.
+
+</details>
 
 ____
 # Usage
@@ -55,11 +59,3 @@ Loom is available under the <kbd>MPL-2.0 License <img src="https://cdn.simpleico
 With respect of </b>[@UpliftGames](https://github.com/UpliftGames)</b>, and <kbd>[<img src="https://cdn.simpleicons.org/mozilla/000/4493f8" width="15" /> Wally's License (MPL-2.0 License)](https://github.com/UpliftGames/wally/blob/main/LICENSE.txt)</kbd>. I hereby consent to any actions or modifications, including deletion, that they may make toward <kbd>[<img src="github/images/LoomIcon.png" width="16" />  J4KEWasNotHere/**Loom**](https://github.com/J4KEWasNotHere/Loom)</kbd>.
 
 <div align="center"><a href="https://www.roblox.com/communities/34077341/Kalaran#!/about"><img src="github/images/KalaranBanner.png" alt="Alt text" width="50%"></a></div>
-
-____
-
-#### TODO:
-* Implement Documentation using [Docusaurus](https://docusaurus.io)
-* Create Devforum Topic
-* Publish Plugin to Marketplace
-* Plugin Version Control
