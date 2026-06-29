@@ -6,4 +6,4 @@ name = "Loom"
 description = "Native Wally package manager for Roblox Studio."
 
 [versions] # Used for version-control
-"0.0.1" = {ref = ""}
+"0.0.1" = {ref = "https://github.com/J4KEWasNotHere/Loom/releases/download/v0.0.1/LoomPlugin.rbxm"}
