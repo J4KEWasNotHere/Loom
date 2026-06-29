@@ -4,11 +4,11 @@
 
 </div>
 
+<div align="center"><i>Wally's Little Brother</i></div>
+
 <img src="github/images/LoomBanner.png" alt="Alt text" width="100%">
 
 <h1 align="center">Loom, native <a href="https://github.com/upliftgames/wally">Wally</a> package manager for Roblox Studio</h1>
-
-*Wally's Little Brother*
 
 <div align="center">
 
