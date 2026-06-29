@@ -1,2 +1,9 @@
+# Contains all the nessecary data for the systems Loom uses.
+# The toml file is simply just used for simplicity.
+
 [details]
+name = "Loom"
 description = "Native Wally package manager for Roblox Studio."
+
+[versions] # Used for version-control
+"0.0.1" = {ref = ""}
