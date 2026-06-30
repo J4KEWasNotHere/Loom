@@ -7,7 +7,7 @@
 <div align="center">
 
 [![Static Badge](https://img.shields.io/badge/Plugin-white?logo=roblox&label=Marketplace&labelColor=%23363636)](https://create.roblox.com/store/asset/135233720563600/Loom-Import-Wally-Packages)
-[![Static Badge](https://img.shields.io/badge/Devforum-00A2FF?logo=robloxstudio&labelColor=%23363636)]()
+[![Static Badge](https://img.shields.io/badge/Devforum-00A2FF?logo=robloxstudio&labelColor=%23363636)](https://devforum.roblox.com/t/loom-import-wally-packages-natively-inside-roblox-studio/4711006)
 
 </div>
 
