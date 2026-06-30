@@ -56,7 +56,8 @@ I want to give thanks to the users resources or softwares toward the making of *
 - All visuals and graphics were designed in
  [<img src="https://cdn.simpleicons.org/photopea/000/18A497" width="15" /> Photopea](https://www.photopea.com/)
 - Font, [Domus-Extra Bold by _no-one_](https://fonnts.com/font_weights/domus_extrabold-otf/) on [**fonnts.com**](https://fonnts.com/)
-- Icons, [Lucide (For Roblox) by KoteraHQ/7kayoh](https://gitlab.com/koterahq/luciderblx/plugin)
+- Icons, [<img src="https://cdn.simpleicons.org/gitlab/000/18A497" width="15" /> Lucide (For Roblox) by KoteraHQ/7kayoh](https://gitlab.com/koterahq/luciderblx/plugin) and [<img src="https://cdn.simpleicons.org/robloxstudio/000/18A497" width="15" /> Material Icons (plugin) @qwreey_moe](https://devforum.roblox.com/t/plugin-material-icons-1400/906640)
+
 
 **Backend** ( [J4KEWasNotHere](https://github.com/J4KEWasNotHere) )
 
