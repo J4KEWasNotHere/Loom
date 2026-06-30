@@ -49,13 +49,14 @@ To come..
 ____
 
 # Acknowledgements
-I want to give thanks to the users and thier resources toward the making of **Loom**
+I want to give thanks to the users resources or softwares toward the making of **Loom**
 
 **Graphical Design** ( [J4KEWasNotHere](https://github.com/J4KEWasNotHere) )
 
 - All visuals and graphics were designed in
  [<img src="https://cdn.simpleicons.org/photopea/000/18A497" width="15" /> Photopea](https://www.photopea.com/)
 - Font, [Domus-Extra Bold by _no-one_](https://fonnts.com/font_weights/domus_extrabold-otf/) on [**fonnts.com**](https://fonnts.com/)
+- Icons, Lucide
 
 **Backend** ( [J4KEWasNotHere](https://github.com/J4KEWasNotHere) )
 
