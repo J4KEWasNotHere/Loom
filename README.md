@@ -51,21 +51,21 @@ ____
 # Acknowledgements
 I want to give thanks to the users resources or softwares toward the making of **Loom**
 
-**Graphical Design** ( [J4KEWasNotHere](https://github.com/J4KEWasNotHere) )
+**Graphical Design** ( [JakeyRoundHead](https://github.com/J4KEWasNotHere) )
 
 - All visuals and graphics were designed in
  [<img src="https://cdn.simpleicons.org/photopea/000/18A497" width="15" /> Photopea](https://www.photopea.com/)
 - Font, [Domus-Extra Bold by _no-one_](https://fonnts.com/font_weights/domus_extrabold-otf/) on [**fonnts.com**](https://fonnts.com/)
-- Icons, [<img src="https://cdn.simpleicons.org/gitlab/000/18A497" width="15" /> Lucide (For Roblox) by KoteraHQ/7kayoh](https://gitlab.com/koterahq/luciderblx/plugin) and [<img src="https://cdn.simpleicons.org/robloxstudio/000/18A497" width="15" /> Material Icons (plugin) @qwreey_moe](https://devforum.roblox.com/t/plugin-material-icons-1400/906640)
+- Icons, [<img src="https://cdn.simpleicons.org/gitlab/000/18A497" width="15" /> Lucide (For Roblox; plugin) by KoteraHQ/@7kayoh](https://gitlab.com/koterahq/luciderblx/plugin) and [<img src="https://cdn.simpleicons.org/robloxstudio/000/18A497" width="15" /> Material Icons (plugin) @qwreey_moe](https://devforum.roblox.com/t/plugin-material-icons-1400/906640)
 
 
-**Backend** ( [J4KEWasNotHere](https://github.com/J4KEWasNotHere) )
+**Backend** ( [JakeyRoundHead](https://github.com/J4KEWasNotHere) )
 
 - Plugin Framework is a modified reposity of [<img src="https://cdn.simpleicons.org/github/000/fff" width="15" /> **PluginEssentials** by mvyasu](https://github.com/mvyasu/PluginEssentials) accompanied by [**Fusion 0.2** by elttob](https://elttob.uk/Fusion/0.2/)
 - Decompression of files, [<img src="https://cdn.simpleicons.org/codeberg/000/2185D0" width="15" /> **ZZLib** by zerkman](https://codeberg.org/zerkman/zzlib)
 
 # <img src="github/images/LoomIcon.png" width="46" /> License & Holder Agreement
-Loom is available under the <kbd>MPL-2.0 License <img src="https://cdn.simpleicons.org/mozilla/000/fff" width="15" /></kbd>. Terms and conditions are available in [LICENSE.txt](https://github.com/J4KEWasNotHere/Loom/blob/main/LICENSE) or at the [Official Website](https://www.mozilla.org/en-GB/MPL/2.0).
+Loom is available under the (Inherited) <kbd>MPL-2.0 License <img src="https://cdn.simpleicons.org/mozilla/000/fff" width="15" /></kbd>. Terms and conditions are available in [LICENSE.txt](https://github.com/J4KEWasNotHere/Loom/blob/main/LICENSE) or at the [Official Website](https://www.mozilla.org/en-GB/MPL/2.0).
 
 With respect of </b>[@UpliftGames](https://github.com/UpliftGames)</b>, and <kbd>[<img src="https://cdn.simpleicons.org/mozilla/000/4493f8" width="15" /> Wally's License (MPL-2.0 License)](https://github.com/UpliftGames/wally/blob/main/LICENSE.txt)</kbd>. I hereby consent to any actions or modifications, including deletion, that they may make toward <kbd>[<img src="github/images/LoomIcon.png" width="16" />  J4KEWasNotHere/**Loom**](https://github.com/J4KEWasNotHere/Loom)</kbd>.
 
