@@ -127,6 +127,8 @@ In side the settings tab, you can change the way Loom behaves.
 * **By Enabling Experimental Mode**: **Version Control** will appear, this is where you can refer Loom to different versions.
 * **Resetting to defaults** just reverts the settings you've changed to thier original values.
 
+Other features may be mentioned in the changelogs of [newer versions](https://github.com/J4KEWasNotHere/Loom/releases).
+
 - Please remember that Loom's unpacking process isnt the best and can very unpredicatable, please [Post Issues](https://github.com/J4KEWasNotHere/Loom/issues) to the GitHub to fix these issues for future versions or changes to the latest version if needed.
 
 </details>
