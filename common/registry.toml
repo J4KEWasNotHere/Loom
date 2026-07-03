@@ -4,3 +4,4 @@ description = "Native Wally package manager for Roblox Studio."
 
 [versions]
 "0.0.1" = {ref = "https://github.com/J4KEWasNotHere/Loom/releases/download/v0.0.1/LoomPlugin.rbxm"}
+"0.1.0" = {ref = "https://github.com/J4KEWasNotHere/Loom/releases/download/v0.1.0/LoomPlugin.rbxm"}
