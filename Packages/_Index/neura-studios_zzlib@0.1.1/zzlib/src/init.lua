@@ -3,7 +3,7 @@
 -- Copyright (c) 2016-2022 Francois Galea <fgalea at free.fr>
 -- This program is free software. It comes without any warranty, to
 -- the extent permitted by applicable law. You can redistribute it
--- and/or modify it under the terms of the Do What The Fuck You Want
+-- and/or modify it under the terms of the Do What The **** You Want
 -- To Public License, Version 2, as published by Sam Hocevar. See
 -- the COPYING file or http://www.wtfpl.net/ for more details.
 
@@ -172,7 +172,7 @@ function zzlib.files(buf: string)
 	return nextfile, buf, cdoffset
 end
 
-function zzlib.unzip(buf: string, arg1: (string | number), arg2: number?)
+function zzlib.unzip(buf: string, arg1: string | number, arg2: number?)
 	if type(arg1) == "number" then
 		-- mode 1: unpack data from specified position in zip file
 		return inflate_raw(buf, arg1, arg2)
