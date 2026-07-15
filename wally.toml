@@ -1,0 +1,9 @@
+[package]
+name = "j4kewasnothere/loom"
+version = "0.0.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Fusion = "elttob/fusion@0.2.0"
+ZZLib = "neura-studios/zzlib@0.1.1"

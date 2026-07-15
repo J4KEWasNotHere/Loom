@@ -1,0 +1,10 @@
+# This file lists tools managed by Aftman, a cross-platform toolchain manager.
+# For more information, see https://github.com/LPGhatguy/aftman
+
+# To add a new tool, add an entry to this table.
+[tools]
+rojo = "rojo-rbx/rojo@7.2.1"
+selene = "Kampfkarren/selene@0.21.1"   # Lua linter
+wally = "UpliftGames/wally@0.3.1"      # Package manager
+stylua = "JohnnyMorganz/StyLua@0.15.1" # Stylizer
+"stylua.EXE" = "JohnnyMorganz/StyLua@0.15.1" # Precommit weirdness

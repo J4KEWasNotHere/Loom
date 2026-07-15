@@ -1,0 +1,9 @@
+[package]
+name = "neura-studios/zzlib"
+description = "A refactor of the zerkman/zzlib zip unpacker for use in the Roblox engine."
+license = "WTFPL"
+version = "0.1.1"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]

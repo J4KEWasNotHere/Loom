@@ -1,0 +1,16 @@
+{
+  "name": "project",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "J4KEWasNotHere_loom": {
+        "$path": "src/ReplicatedStorage/J4KEWasNotHere_loom",
+
+        "Packages": {
+          "$path": "Packages"
+        }
+      }
+    }
+  }
+}
