@@ -220,7 +220,7 @@ function ZipBuild.__log(...)
 	end)
 end
 
-local initNames = { "init", "init.lua", "init.luau" }
+local initNames = { "init", "init.luau", "init.lua" }
 
 local function isInitFile(filename)
 	return table.find(initNames, filename) ~= nil

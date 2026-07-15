@@ -201,6 +201,7 @@ return {
 
 		local CurrentPage = Value("Start")
 		local StatusText = Value("Ready")
+		local mainWidget = nil
 		local IsImporting = Value(false)
 		local IsInstalling = Value(false)
 		local QueueEntries = Value({})
@@ -783,7 +784,7 @@ return {
 						Text = "v" .. Constants.Version .. Constants.VersionTip,
 						TextSize = 13,
 					}),
-					
+
 					Checkbox({
 						Text = "Create Package-Directors in Package.",
 						Value = Value(settings.includeDirectors),
@@ -792,7 +793,7 @@ return {
 						end),
 						OnChange = function(value)
 							updateSettings("includeDirectors", value)
-						end
+						end,
 					}),
 
 					Checkbox({
@@ -878,6 +879,47 @@ return {
 									end),
 								}),
 							}),
+							Computed(function()
+								if not unwrap(SettingsState).experimentalMode or not unwrap(SettingsState).devMode then
+									return nil
+								end
+
+								return MainButton({
+									Text = "Build from GitHub",
+									Size = UDim2.new(1, 0, 0, 30),
+									Enabled = Computed(function()
+										return unwrap(VersionControlEnabled)
+											and unwrap(SettingsState).devMode
+											and unwrap(SettingsState).experimentalMode
+											and not unwrap(IsVersionInstalling)
+									end),
+									Activated = function()
+										IsVersionInstalling:set(true)
+										StatusText:set("Building from GitHub…")
+										task.spawn(function()
+											local ok, err = version_control.recreateFromGitHub(pluginRoot, function()
+												widgetsEnabled:set(false)
+												task.wait()
+												pcall(function()
+													mainWidget.Enabled = false
+												end)
+											end)
+											if not ok then
+												warn("[VersionControl]: Failed to build from GitHub: " .. tostring(err))
+												StatusText:set("Failed to build from GitHub.")
+												IsVersionInstalling:set(false)
+												pcall(function()
+													mainWidget.Enabled = true
+												end)
+											end
+										end)
+									end,
+								})
+							end, function(instance)
+								if instance then
+									instance:Destroy()
+								end
+							end),
 							MainButton({
 								Text = Computed(function()
 									local ver = unwrap(SelectedVCVersion)
@@ -971,6 +1013,7 @@ return {
 
 								if not embedded then
 									warn("[VersionControl]: Failed to reload")
+									StatusText:set("Failed to reload plugin.")
 									IsVersionInstalling:set(false)
 									pcall(function()
 										mainWidget.Enabled = true
@@ -1038,7 +1081,7 @@ return {
 		for _, entry in ipairs(NAV) do
 			local page = entry.page
 			local size = entry.IconSize or 0.85
-			
+
 			table.insert(
 				navButtons,
 				New("ImageButton")({
@@ -1056,9 +1099,9 @@ return {
 					end,
 					[Children] = {
 						New("UICorner")({
-							CornerRadius = UDim.new(1, 0)
+							CornerRadius = UDim.new(1, 0),
 						}),
-						
+
 						New("ImageLabel")({
 							Size = UDim2.fromOffset(size, size),
 							Image = entry.icon,
@@ -1071,13 +1114,12 @@ return {
 								return unwrap(CurrentPage) == page and Color3.fromRGB(255, 255, 255)
 									or Color3.fromRGB(152, 152, 152)
 							end),
-						})
+						}),
 					},
 				})
 			)
 		end
 
-		local mainWidget
 		mainWidget = AddWidget("Loom | Package Manager", {
 			New("Frame")({
 				Size = UDim2.new(1, 0, 0, 0),

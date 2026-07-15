@@ -345,8 +345,8 @@ PackageModule.addPackage = function(
 	local p, index = find_packages(realm)
 	local reference = data.reference
 		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.lua", true)
 		or data.source:FindFirstChild("init.luau", true)
+		or data.source:FindFirstChild("init.lua", true)
 		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
 
 	data.source.Parent = index
@@ -409,8 +409,8 @@ PackageModule.syncPackage = function(
 
 	local reference = data.reference
 		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.lua", true)
 		or data.source:FindFirstChild("init.luau", true)
+		or data.source:FindFirstChild("init.lua", true)
 		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
 
 	if not reference then

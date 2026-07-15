@@ -17,6 +17,7 @@ export type VersionControl = {
 
 	-- Functions
 	embed: (newPlugin: Instance, pluginRoot: Instance, cleanup: (() -> ())?) -> (boolean, any),
+	recreateFromGitHub: (pluginRoot: Instance, cleanup: (() -> ())?) -> (boolean, any),
 
 	init: () -> (boolean, { [string]: any }? | any),
 	rinit: (max: number?) -> (boolean, { [string]: any }? | any),
