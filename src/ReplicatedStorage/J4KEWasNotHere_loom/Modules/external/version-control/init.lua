@@ -86,11 +86,11 @@ local function getScriptName(name: string): string?
 		return nil
 	end
 
-	if not normalized:match("%.lua$") and not normalized:match("%.luau$") then
+	if not normalized:match("%.lua$") then
 		return nil
 	end
 
-	local scriptName = normalized:gsub("%.lua$", ""):gsub("%.luau$", "")
+	local scriptName = normalized:gsub("%.lua$", "")
 	if scriptName == "" then
 		return nil
 	end
@@ -149,9 +149,9 @@ local function createPluginScript(parent: Instance, name: string, source: string
 	end
 
 	local scriptType = "ModuleScript"
-	if name:match("%.server%.lua$") or name:match("%.server%.luau$") then
+	if name:match("%.server%.lua$") then
 		scriptType = "Script"
-	elseif name:match("%.client%.lua$") or name:match("%.client%.luau$") then
+	elseif name:match("%.client%.lua$") then
 		scriptType = "LocalScript"
 	end
 

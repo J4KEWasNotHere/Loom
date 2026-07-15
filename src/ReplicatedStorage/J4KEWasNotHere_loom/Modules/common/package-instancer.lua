@@ -18,8 +18,8 @@ PackageModule.DevPackagesTag = DevPackagesTag
 
 -- Utility
 
-local function insertAll(tb: {[any]: any}, ...: any)
-	local args = {...}
+local function insertAll(tb: { [any]: any }, ...: any)
+	local args = { ... }
 	for _, v in ipairs(args) do
 		table.insert(tb, v)
 	end
@@ -253,10 +253,14 @@ local function create_packages(name, realm)
 end
 
 local function createLocalDependencyDirectors(source, wallyData, realm)
-	if not wallyData then return end
+	if not wallyData then
+		return
+	end
 
 	local packages = find_packages(realm)
-	if not packages then return end
+	if not packages then
+		return
+	end
 
 	local dependencies = {}
 	if wallyData.dependencies then
@@ -272,8 +276,8 @@ local function createLocalDependencyDirectors(source, wallyData, realm)
 
 	for alias, _ in pairs(dependencies) do
 		local existing = source:FindFirstChild(alias)
-		if existing then 
-			existing:Destroy() 
+		if existing then
+			existing:Destroy()
 		end
 
 		local targetDirector = packages:FindFirstChild(alias)
@@ -295,16 +299,20 @@ PackageModule.createPackages = create_packages
 
 PackageModule.linkAllLocalDependencies = function(realm)
 	local p = find_packages(realm)
-	if not p then return end
+	if not p then
+		return
+	end
 	local index = p:FindFirstChild("_Index")
-	if not index then return end
+	if not index then
+		return
+	end
 
 	for _, sourceFolder in ipairs(index:GetChildren()) do
 		local wallyTomlModule = sourceFolder:FindFirstChild(".wally") or sourceFolder:FindFirstChild("wally")
 		-- Fallback to attempting to find a parsed configuration matrix if available
 		local rawAttributes = sourceFolder:GetAttributes()
 
-		-- Look for an existing parsed file asset or structure 
+		-- Look for an existing parsed file asset or structure
 		if wallyTomlModule and wallyTomlModule:IsA("ModuleScript") then
 			local success, wallyData = pcall(require, wallyTomlModule)
 			if success and typeof(wallyData) == "table" then
@@ -345,7 +353,6 @@ PackageModule.addPackage = function(
 	local p, index = find_packages(realm)
 	local reference = data.reference
 		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.luau", true)
 		or data.source:FindFirstChild("init.lua", true)
 		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
 
@@ -409,7 +416,6 @@ PackageModule.syncPackage = function(
 
 	local reference = data.reference
 		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.luau", true)
 		or data.source:FindFirstChild("init.lua", true)
 		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
 

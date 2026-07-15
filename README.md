@@ -13,7 +13,7 @@
 
 
 Loom is a native package manager for Roblox Studio that imports and manages Wally packages directly inside the editor.
-Loom is a Roblox Plugin which was created for those unfamiliar with [Rojo](https://rojo.space/), with its simple injection of packages which follow rojo's code structure (```.client.luau```, ```.server.luau```, etc..).
+Loom is a Roblox Plugin which was created for those unfamiliar with [Rojo](https://rojo.space/), with its simple injection of packages which follow rojo's code structure (```.client.lua```, ```.server.lua```, etc..).
 
 ___
 <details>
@@ -30,7 +30,7 @@ Instead of manually downloading and updating dependencies, Wally handles package
 
 Loom brings the power of Wally directly into Roblox Studio, with no command line tools or external setup required.
 
-Loom is a Roblox plugin that makes package management simple for developers who prefer working entirely inside Studio. It provides an easy way to browse, install, and manage Wally packages through a visual interface. Loom also understands Rojo's project structure, supporting file types such as ```.client.luau```, ```.server.luau```, and other context-specific scripts automatically.
+Loom is a Roblox plugin that makes package management simple for developers who prefer working entirely inside Studio. It provides an easy way to browse, install, and manage Wally packages through a visual interface. Loom also understands Rojo's project structure, supporting file types such as ```.client.lua```, ```.server.lua```, and other context-specific scripts automatically.
 
 This allows developers to use modular code and package management without changing their workflow or learning additional tools. Loom helps bridge the gap between traditional Roblox Studio development and modern software engineering practices, making it easier for both individuals and teams to build organized, scalable projects.
 

@@ -26,9 +26,9 @@ local function formatBytes(bytes)
 end
 
 local function getScriptType(filename)
-	if filename:match("%.server%.luau?$") then
+	if filename:match("%.server%.lua$") then
 		return "Script"
-	elseif filename:match("%.client%.luau?$") then
+	elseif filename:match("%.client%.lua$") then
 		return "LocalScript"
 	else
 		return "ModuleScript"
@@ -36,18 +36,18 @@ local function getScriptType(filename)
 end
 
 local function getScriptName(filename)
-	return filename:match("^(.-)%.server%.luau?$")
-		or filename:match("^(.-)%.client%.luau?$")
-		or filename:match("^(.-)%.luau?$")
+	return filename:match("^(.-)%.server%.lua$")
+		or filename:match("^(.-)%.client%.lua$")
+		or filename:match("^(.-)%.lua$")
 		or filename
 end
 
 local function isLuauFile(name)
-	return name:match("%.luau?$") ~= nil
+	return name:match("%.lua$") ~= nil
 end
 
 local function normalizeScriptPath(path)
-	return (path:gsub("%.server%.luau?$", ""):gsub("%.client%.luau?$", ""):gsub("%.luau?$", ""))
+	return (path:gsub("%.server%.lua$", ""):gsub("%.client%.lua$", ""):gsub("%.lua$", ""))
 end
 
 local function applyMetaProperties(object, meta)
@@ -220,7 +220,7 @@ function ZipBuild.__log(...)
 	end)
 end
 
-local initNames = { "init", "init.luau", "init.lua" }
+local initNames = { "init", "init.lua" }
 
 local function isInitFile(filename)
 	return table.find(initNames, filename) ~= nil
