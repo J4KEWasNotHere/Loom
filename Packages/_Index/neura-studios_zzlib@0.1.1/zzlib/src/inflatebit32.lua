@@ -3,7 +3,7 @@
 -- Copyright (c) 2016-2022 Francois Galea <fgalea at free.fr>
 -- This program is free software. It comes without any warranty, to
 -- the extent permitted by applicable law. You can redistribute it
--- and/or modify it under the terms of the Do What The **** You Want
+-- and/or modify it under the terms of the Do What The Fuck You Want
 -- To Public License, Version 2, as published by Sam Hocevar. See
 -- the COPYING file or http://www.wtfpl.net/ for more details.
 
@@ -16,9 +16,9 @@ export type BitStream = {
 	b: number,
 	n: number,
 	flushb: (self: BitStream, number) -> (),
-	peekb: (self: BitStream, number) -> number,
-	getb: (self: BitStream, number) -> number,
-	getv: (self: BitStream, { number }, number) -> number,
+	peekb: (self: BitStream, number) -> (number),
+	getb: (self: BitStream, number) -> (number),
+	getv: (self: BitStream, { number }, number) -> (number),
 }
 
 function inflate.bitstream_init(input)

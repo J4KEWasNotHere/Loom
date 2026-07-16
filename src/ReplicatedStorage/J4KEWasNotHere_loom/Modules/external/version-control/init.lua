@@ -99,14 +99,9 @@ local function getScriptName(name: string): string?
 end
 
 local function tryGetUrl(url: string): (boolean, string)
-	local headers = {
-		["User-Agent"] = "Loom",
-		["Accept"] = "application/vnd.github+json",
-		["X-GitHub-Api-Version"] = "2022-11-28",
-	}
-
+	-- Roblox's HttpService rejects custom User-Agent headers, so keep the request header-free.
 	local success, result = pcall(function()
-		return HttpService:GetAsync(url, false, headers)
+		return HttpService:GetAsync(url, false)
 	end)
 
 	if success then
