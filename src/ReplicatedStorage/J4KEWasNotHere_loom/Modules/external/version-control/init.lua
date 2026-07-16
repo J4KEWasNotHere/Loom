@@ -175,7 +175,7 @@ local function extractArchivePath(parent: Instance, archiveContent: string, targ
 			withoutRoot = withoutRoot:gsub("^[^/]+/", "", 1)
 		end
 
-		local relPath = withoutRoot
+		local relPath: string = withoutRoot
 		if normalizedTarget ~= "" then
 			local prefix = normalizedTarget .. "/"
 			if relPath == normalizedTarget then
@@ -183,7 +183,7 @@ local function extractArchivePath(parent: Instance, archiveContent: string, targ
 			elseif relPath:sub(1, #prefix) == prefix then
 				relPath = relPath:sub(#prefix + 1)
 			else
-				relPath = nil
+				relPath = ""
 			end
 		end
 
@@ -262,7 +262,7 @@ local function cloneSourceTree(sourceParent: Instance, targetParent: Instance)
 	end
 end
 
-local function createPluginScript(parent: Instance, name: string, source: string)
+local function createPluginScript(parent: Instance, name: string, source: string): (BaseScript | ModuleScript)?
 	local scriptName = getScriptName(name)
 	if not scriptName then
 		return nil
@@ -275,11 +275,12 @@ local function createPluginScript(parent: Instance, name: string, source: string
 		scriptType = "LocalScript"
 	end
 
-	local script = Instance.new(scriptType)
-	script.Name = scriptName
-	script.Source = source or ""
-	script.Parent = parent
-	return script
+	local scriptObject: BaseScript | ModuleScript = Instance.new(scriptType)
+	scriptObject.Name = scriptName
+	scriptObject.Source = source or ""
+	scriptObject.Parent = parent
+
+	return scriptObject
 end
 
 local function buildPluginTreeFromGitHub(parent: Instance, path: string): (boolean, any)
