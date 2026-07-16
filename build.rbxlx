@@ -6478,8 +6478,8 @@ PackageModule.DevPackagesTag = DevPackagesTag
 
 -- Utility
 
-local function insertAll(tb: {[any]: any}, ...: any)
-	local args = {...}
+local function insertAll(tb: { [any]: any }, ...: any)
+	local args = { ... }
 	for _, v in ipairs(args) do
 		table.insert(tb, v)
 	end
@@ -6713,10 +6713,14 @@ local function create_packages(name, realm)
 end
 
 local function createLocalDependencyDirectors(source, wallyData, realm)
-	if not wallyData then return end
+	if not wallyData then
+		return
+	end
 
 	local packages = find_packages(realm)
-	if not packages then return end
+	if not packages then
+		return
+	end
 
 	local dependencies = {}
 	if wallyData.dependencies then
@@ -6732,8 +6736,8 @@ local function createLocalDependencyDirectors(source, wallyData, realm)
 
 	for alias, _ in pairs(dependencies) do
 		local existing = source:FindFirstChild(alias)
-		if existing then 
-			existing:Destroy() 
+		if existing then
+			existing:Destroy()
 		end
 
 		local targetDirector = packages:FindFirstChild(alias)
@@ -6755,16 +6759,20 @@ PackageModule.createPackages = create_packages
 
 PackageModule.linkAllLocalDependencies = function(realm)
 	local p = find_packages(realm)
-	if not p then return end
+	if not p then
+		return
+	end
 	local index = p:FindFirstChild("_Index")
-	if not index then return end
+	if not index then
+		return
+	end
 
 	for _, sourceFolder in ipairs(index:GetChildren()) do
 		local wallyTomlModule = sourceFolder:FindFirstChild(".wally") or sourceFolder:FindFirstChild("wally")
 		-- Fallback to attempting to find a parsed configuration matrix if available
 		local rawAttributes = sourceFolder:GetAttributes()
 
-		-- Look for an existing parsed file asset or structure 
+		-- Look for an existing parsed file asset or structure
 		if wallyTomlModule and wallyTomlModule:IsA("ModuleScript") then
 			local success, wallyData = pcall(require, wallyTomlModule)
 			if success and typeof(wallyData) == "table" then
@@ -6805,7 +6813,6 @@ PackageModule.addPackage = function(
 	local p, index = find_packages(realm)
 	local reference = data.reference
 		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.luau", true)
 		or data.source:FindFirstChild("init.lua", true)
 		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
 
@@ -6869,7 +6876,6 @@ PackageModule.syncPackage = function(
 
 	local reference = data.reference
 		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.luau", true)
 		or data.source:FindFirstChild("init.lua", true)
 		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
 
@@ -6962,7 +6968,8 @@ return require("%s")]]):format(rawDetails, getPathTo(m, reference))
 	return m, reference
 end
 
-return PackageModule]]></ProtectedString>
+return PackageModule
+]]></ProtectedString>
 							<string name="ScriptGuid">{571A1C2D-833D-42D9-89BC-0EB6CFC9EE4C}</string>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -8362,11 +8369,11 @@ local function getScriptName(name: string): string?
 		return nil
 	end
 
-	if not normalized:match("%.lua$") and not normalized:match("%.luau$") then
+	if not normalized:match("%.lua$") then
 		return nil
 	end
 
-	local scriptName = normalized:gsub("%.lua$", ""):gsub("%.luau$", "")
+	local scriptName = normalized:gsub("%.lua$", "")
 	if scriptName == "" then
 		return nil
 	end
@@ -8425,9 +8432,9 @@ local function createPluginScript(parent: Instance, name: string, source: string
 	end
 
 	local scriptType = "ModuleScript"
-	if name:match("%.server%.lua$") or name:match("%.server%.luau$") then
+	if name:match("%.server%.lua$") then
 		scriptType = "Script"
-	elseif name:match("%.client%.lua$") or name:match("%.client%.luau$") then
+	elseif name:match("%.client%.lua$") then
 		scriptType = "LocalScript"
 	end
 
@@ -9452,9 +9459,9 @@ local function formatBytes(bytes)
 end
 
 local function getScriptType(filename)
-	if filename:match("%.server%.luau?$") then
+	if filename:match("%.server%.lua$") then
 		return "Script"
-	elseif filename:match("%.client%.luau?$") then
+	elseif filename:match("%.client%.lua$") then
 		return "LocalScript"
 	else
 		return "ModuleScript"
@@ -9462,18 +9469,18 @@ local function getScriptType(filename)
 end
 
 local function getScriptName(filename)
-	return filename:match("^(.-)%.server%.luau?$")
-		or filename:match("^(.-)%.client%.luau?$")
-		or filename:match("^(.-)%.luau?$")
+	return filename:match("^(.-)%.server%.lua$")
+		or filename:match("^(.-)%.client%.lua$")
+		or filename:match("^(.-)%.lua$")
 		or filename
 end
 
 local function isLuauFile(name)
-	return name:match("%.luau?$") ~= nil
+	return name:match("%.lua$") ~= nil
 end
 
 local function normalizeScriptPath(path)
-	return (path:gsub("%.server%.luau?$", ""):gsub("%.client%.luau?$", ""):gsub("%.luau?$", ""))
+	return (path:gsub("%.server%.lua$", ""):gsub("%.client%.lua$", ""):gsub("%.lua$", ""))
 end
 
 local function applyMetaProperties(object, meta)
@@ -9646,7 +9653,7 @@ function ZipBuild.__log(...)
 	end)
 end
 
-local initNames = { "init", "init.luau", "init.lua" }
+local initNames = { "init", "init.lua" }
 
 local function isInitFile(filename)
 	return table.find(initNames, filename) ~= nil
@@ -10184,7 +10191,8 @@ function ZipBuild.createFromRaw(raw, name, folder: Folder?)
 	end
 end
 
-return ZipBuild]]></ProtectedString>
+return ZipBuild
+]]></ProtectedString>
 							<string name="ScriptGuid">{2F7C94D9-3DCD-4B11-BE6A-0A503BB7AE3D}</string>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -15306,7 +15314,7 @@ end
 			<BinaryString name="AttributesSerialize"><![CDATA[BQAAABQAAABSQlhfQmFja3VwQnJpZ2h0bmVzcwUAAIA/HgAAAFJCWF9CYWNrdXBFeHBvc3Vy
 ZUNvbXBlbnNhdGlvbgUAAAAAIQAAAFJCWF9MaWdodGluZ0NvbXBhdGliaWxpdHlNaWdyYXRl
 ZAMBJgAAAFJCWF9MaWdodGluZ1RlY2hub2xvZ3lVbmlmaWVkTWlncmF0aW9uAwEgAAAAUkJY
-X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAgAAAA==]]></BinaryString>
+X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAQAAAA==]]></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
@@ -15373,7 +15381,7 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAgAAAA==]]></BinaryString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000006ea</UniqueId>
 		</Properties>
 	</Item>
-	<Item class="PluginToolbar" referent="RBXA56DCFBB59004601864524755C6C5AC2">
+	<Item class="PluginToolbar" referent="RBXC1F9A003FF7E4D298497666E34A50EEF">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -15382,9 +15390,9 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAgAAAA==]]></BinaryString>
 			<string name="Name">Graph Editor</string>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">43081bf106ede6b70a69856100000654</UniqueId>
+			<UniqueId name="UniqueId">129ef2fff12f9c5b0a6a006600000692</UniqueId>
 		</Properties>
-		<Item class="PluginToolbarButton" referent="RBX456E643178B74F609BDC56598605C004">
+		<Item class="PluginToolbarButton" referent="RBXE2BF8735EE4144DCB0C8E720B2471507">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -15393,7 +15401,7 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAgAAAA==]]></BinaryString>
 				<string name="Name">Button</string>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-				<UniqueId name="UniqueId">43081bf106ede6b70a69856100000655</UniqueId>
+				<UniqueId name="UniqueId">129ef2fff12f9c5b0a6a006600000693</UniqueId>
 			</Properties>
 		</Item>
 	</Item>
