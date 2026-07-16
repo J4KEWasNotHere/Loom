@@ -97,6 +97,8 @@ return function(props: BaseButtonProperties): TextButton
 						end
 					end
 				end
+
+				return nil
 			end)(),
 		}
 	}

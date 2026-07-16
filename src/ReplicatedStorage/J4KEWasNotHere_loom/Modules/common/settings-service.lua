@@ -74,11 +74,7 @@ function PluginSettingsService:reset()
 end
 
 function PluginSettingsService:getDefaultSettings()
-	local cloned = {}
-	for key, value in pairs(DEFAULT_SETTINGS) do
-		cloned[key] = value
-	end
-	return cloned
+	return table.clone(DEFAULT_SETTINGS)
 end
 
 return PluginSettingsService

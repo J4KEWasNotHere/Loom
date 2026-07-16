@@ -102,8 +102,10 @@ local function parseArray(content: string): { any }
 end
 
 local function tableToString(tb): string
-	if typeof(tb) ~= "table" then return {} end
-	
+	if typeof(tb) ~= "table" then
+		return ""
+	end
+
 	local str = "{\n"
 	for key, value in pairs(tb) do
 		local valueType = typeof(value)
@@ -113,9 +115,9 @@ local function tableToString(tb): string
 		end
 		str = str .. (" "):rep(2) .. "[" .. keyStr .. "] = "
 		if valueType == "table" then
-			str = str .. tableToString(value, 2)
+			str = str .. tableToString(value)
 		elseif valueType == "number" then
-			str = str..value
+			str = str .. value
 		else
 			str = str .. string.format(`"%s"`, value)
 		end
@@ -140,10 +142,10 @@ local function create_toml(tomlData: { [string]: any }, parent: Instance?): Modu
 	local m = Instance.new("ModuleScript")
 	m.Name = "wally.toml"
 	m.Source = ("return %s"):format(tableToString(tomlData))
-	
+
 	m.Parent = (typeof(parent) == "Instance" and parent) or nil
 	m:AddTag("_wallytoml")
-	
+
 	return m
 end
 

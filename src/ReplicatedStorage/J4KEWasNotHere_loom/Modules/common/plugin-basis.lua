@@ -50,7 +50,9 @@ local function new(className, properties)
 	return obj
 end
 
-local cachedPlugin = script.Parent:FindFirstAncestor("Modules").Parent:Clone()
+local _cs, cachedPlugin = pcall(function()
+	return script.Parent:FindFirstAncestor("Modules").Parent:Clone()
+end)
 
 return {
 	start = function(pluginInstance, pluginRoot, button)
@@ -58,8 +60,6 @@ return {
 		local Packages = pluginRoot.Packages
 		local PluginComponents = Components:FindFirstChild("PluginComponents")
 		local Widget = require(PluginComponents.Widget)
-		local Toolbar = require(PluginComponents.Toolbar)
-		local ToolbarButton = require(PluginComponents.ToolbarButton)
 		local StudioComponents = Components:FindFirstChild("StudioComponents")
 		local Checkbox = require(StudioComponents.Checkbox)
 		local MainButton = require(StudioComponents.MainButton)
@@ -84,7 +84,7 @@ return {
 
 		local function makeCard(contents, y: NumberRange?)
 			return New("Frame")({
-				Size = UDim2.new(1, 0, 0, 0),
+				Size = UDim2.fromScale(1, 0),
 				AutomaticSize = Enum.AutomaticSize.Y,
 				BackgroundTransparency = 0.7,
 				BackgroundColor3 = Color3.fromRGB(0, 0, 0),
@@ -145,9 +145,6 @@ return {
 		if RunService:IsRunMode() or RunService:IsRunning() then
 			return
 		end
-
-		local uid = tostring(tick()):gsub("%.", "")
-		--local pluginToolbar = toolbar
 
 		local StoredText = Value("")
 
@@ -257,7 +254,7 @@ return {
 				MinHeight = 350,
 			}
 
-			for i, v in (prop or {}) do
+			for i, v in (prop) do
 				properties[i] = v
 			end
 
@@ -267,14 +264,14 @@ return {
 			})
 		end
 
-		local function CreateStoredViewer(prop: {})
+		local function _CreateStoredViewer(prop: {})
 			local properties = {
 				Text = StoredText,
 				MaxHeight = 350,
 				MinHeight = 30,
 			}
 
-			for i, v in (prop or {}) do
+			for i, v in (prop) do
 				properties[i] = v
 			end
 
@@ -363,7 +360,6 @@ return {
 								end
 
 								local realm = (wallyData.package and wallyData.package.realm) or "shared"
-								local isServer = realm == "server"
 
 								-- Remove stale instances with the same name so we don't accumulate duplicates
 								local origin = (realm == "server") and ServerScriptService or ReplicatedStorage
@@ -447,7 +443,7 @@ return {
 					if not unwrap(SettingsState).devMode then
 						return nil
 					end
-					return CreateLogger()
+					return CreateLogger({})
 				end, function(instance)
 					if instance then
 						instance:Destroy()
@@ -1122,7 +1118,7 @@ return {
 
 		mainWidget = AddWidget("Loom | Package Manager", {
 			New("Frame")({
-				Size = UDim2.new(1, 0, 0, 0),
+				Size = UDim2.fromScale(1, 0),
 				BackgroundTransparency = 1,
 				AutomaticSize = Enum.AutomaticSize.Y,
 				LayoutOrder = 0,

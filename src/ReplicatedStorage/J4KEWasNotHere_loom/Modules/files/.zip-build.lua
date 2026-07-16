@@ -1,16 +1,12 @@
 -- PackageZipBuilder-0.4
 
 local HttpService = game:GetService("HttpService")
-local File = script.Parent
 
 -- Modules
-local Modules = File:FindFirstAncestor("Modules")
-local package_instancer = require(Modules.common["package-instancer"])
-local toml_formatter = require(Modules.files[".toml-formatter"])
+local toml_formatter = require("../files/.toml-formatter")
 
 -- Packages
-local Packages = Modules.Parent.Packages
-local zzlib = require(Packages.ZZLib)
+local zzlib = require("../../Packages/ZZLib")
 
 local ZipBuild = { debugCallbacks = {} }
 ZipBuild.__index = ZipBuild
@@ -485,7 +481,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		local object = inst(scriptType, {
 			Name = scriptName or name or "ErrNoName",
 			Source = content or 'return {err = "NoSource"}',
-			Parent = parentInstance or game.ServerStorage,
+			Parent = parentInstance or game:GetService("ServerStorage"),
 		})
 
 		if object then
@@ -626,7 +622,7 @@ function ZipBuild.createFromFile(file: File, folder: Folder?)
 	ZipBuild.__log(`[ZipImporter]: Importing {file.Name}...`)
 
 	local folderWasNil = folder == nil
-	local targetObject = folder or new("Folder", { Name = file.Name, Parent = game.TestService })
+	local targetObject = folder or new("Folder", { Name = file.Name, Parent = game:GetService("TestService") })
 	local raw = file:GetBinaryContents()
 
 	-- Log raw entries
@@ -704,7 +700,7 @@ function ZipBuild.createFromRaw(raw, name, folder: Folder?)
 	ZipBuild.__log(`[ZipImporter]: Importing from raw...`)
 
 	local folderWasNil = folder == nil
-	local targetObject = folder or new("Folder", { Name = name, Parent = game.TestService })
+	local targetObject = folder or new("Folder", { Name = name, Parent = game:GetService("TestService") })
 
 	-- Pre-scan for wally.toml
 	local includes, excludes = {}, {}

@@ -16,13 +16,15 @@ module.__index = module
 local HttpService = game:GetService("HttpService")
 
 -- Modules
-local Modules = script.Parent:FindFirstAncestor("Modules")
-local toml_formatter = require(Modules.files[".toml-formatter"])
+local toml_formatter = require("../files/.toml-formatter")
+local zzlib = require("../../Packages/ZZLib")
 
 -- Variables
-local RegistryUrl = "https://github.com/J4KEWasNotHere/Loom/raw/refs/heads/main/common/registry.toml"
-local GitHubApiBase = "https://api.github.com/repos/J4KEWasNotHere/Loom/contents"
-local GitHubRawBase = "https://raw.githubusercontent.com/J4KEWasNotHere/Loom/main"
+local RegistryUrl = "https://cdn.jsdelivr.net/gh/J4KEWasNotHere/Loom@main/common/registry.toml"
+local GitHubArchiveUrls = {
+	"https://codeload.github.com/J4KEWasNotHere/Loom/zip/refs/heads/main",
+	"https://github.com/J4KEWasNotHere/Loom/archive/refs/heads/main.zip",
+}
 local StoredPlugins = {}
 
 -- Utility
@@ -99,16 +101,139 @@ local function getScriptName(name: string): string?
 end
 
 local function tryGetUrl(url: string): (boolean, string)
-	-- Roblox's HttpService rejects custom User-Agent headers, so keep the request header-free.
-	local success, result = pcall(function()
-		return HttpService:GetAsync(url, false)
-	end)
+	local candidates = { url }
 
-	if success then
-		return true, tostring(result)
+	if url:match("^https://raw.githubusercontent.com/") then
+		local mirror = url:gsub(
+			"^https://raw.githubusercontent.com/([^/]+)/([^/]+)/(.+)$",
+			"https://cdn.jsdelivr.net/gh/%1/%2@main/%3"
+		)
+		table.insert(candidates, mirror)
+	elseif url:match("^https://api.github.com/") then
+		local mirror = url:gsub(
+			"^https://api.github.com/repos/([^/]+)/([^/]+)/contents",
+			"https://cdn.jsdelivr.net/gh/%1/%2@main"
+		)
+		table.insert(candidates, mirror)
 	end
 
-	return false, tostring(result)
+	for _, candidate in ipairs(candidates) do
+		local success, result = pcall(function()
+			return HttpService:GetAsync(candidate, false)
+		end)
+		if success and tostring(result or "") ~= "" then
+			return true, tostring(result)
+		end
+	end
+
+	return false, "fetch failed"
+end
+
+local function tryGetGitHubArchive(): (boolean, string)
+	for _, candidate in ipairs(GitHubArchiveUrls) do
+		local success, result = pcall(function()
+			return HttpService:GetAsync(candidate, false)
+		end)
+		if success and tostring(result or "") ~= "" then
+			return true, tostring(result)
+		end
+	end
+
+	return false, "archive fetch failed"
+end
+
+local function createFolder(parent: Instance, name: string): Instance
+	local existing = parent:FindFirstChild(name)
+	if existing and existing:IsA("Folder") then
+		return existing
+	end
+
+	local folder = Instance.new("Folder")
+	folder.Name = name
+	folder.Parent = parent
+	return folder
+end
+
+local function extractArchivePath(parent: Instance, archiveContent: string, targetPath: string?): (boolean, string?)
+	local entries = {}
+	local ok = pcall(function()
+		for _, name in zzlib.files(archiveContent) do
+			table.insert(entries, tostring(name))
+		end
+	end)
+	if not ok then
+		return false, "invalid archive"
+	end
+
+	local normalizedTarget = tostring(targetPath or ""):gsub("\\", "/"):gsub("^%./", "")
+	normalizedTarget = normalizedTarget:gsub("/$", "")
+
+	for _, entryName in ipairs(entries) do
+		local normalizedEntry = entryName:gsub("\\", "/")
+		local withoutRoot = normalizedEntry
+		if withoutRoot:match("^[^/]+/") then
+			withoutRoot = withoutRoot:gsub("^[^/]+/", "", 1)
+		end
+
+		local relPath = withoutRoot
+		if normalizedTarget ~= "" then
+			local prefix = normalizedTarget .. "/"
+			if relPath == normalizedTarget then
+				relPath = ""
+			elseif relPath:sub(1, #prefix) == prefix then
+				relPath = relPath:sub(#prefix + 1)
+			else
+				relPath = nil
+			end
+		end
+
+		if relPath == nil or relPath == "" then
+			continue
+		end
+
+		local parts = {}
+		for part in relPath:gmatch("([^/]+)") do
+			table.insert(parts, part)
+		end
+		if #parts == 0 then
+			continue
+		end
+
+		local currentParent = parent
+		for i = 1, #parts - 1 do
+			currentParent = createFolder(currentParent, parts[i])
+		end
+
+		local fileName = parts[#parts]
+		local content = nil
+		for _, name, offset, size, packed, crc in zzlib.files(archiveContent) do
+			if tostring(name) == entryName then
+				if packed then
+					local ok2, result = pcall(function()
+						return true, zzlib.unzip(archiveContent, offset, crc)
+					end)
+					if ok2 then
+						content = result
+					end
+				else
+					content = archiveContent:sub(offset, offset + size - 1)
+				end
+				break
+			end
+		end
+
+		if content == nil then
+			continue
+		end
+
+		local created = createPluginScript(currentParent, fileName, tostring(content))
+		if created == nil then
+			-- skip non-Luau files and directories
+			continue
+		end
+	end
+
+	return true, nil
 end
 
 local function cloneSourceTree(sourceParent: Instance, targetParent: Instance)
@@ -158,62 +283,14 @@ local function createPluginScript(parent: Instance, name: string, source: string
 end
 
 local function buildPluginTreeFromGitHub(parent: Instance, path: string): (boolean, any)
-	local encodedPath = path:gsub(" ", "%%20")
-	local success, result = tryGetUrl(("%s/%s"):format(GitHubApiBase, encodedPath))
+	local archiveOk, archiveContent = tryGetGitHubArchive()
+	if not archiveOk then
+		return false, archiveContent
+	end
 
+	local success, err = extractArchivePath(parent, archiveContent, path)
 	if not success then
-		return false, result
-	end
-
-	local decoded
-	local ok, parsed = pcall(function()
-		return HttpService:JSONDecode(tostring(result))
-	end)
-	if ok then
-		decoded = parsed
-	end
-
-	if type(decoded) ~= "table" then
-		return false, "invalid GitHub response"
-	end
-
-	if decoded.download_url then
-		local contentOk, content = tryGetUrl(tostring(decoded.download_url))
-		if not contentOk then
-			return false, content
-		end
-		local created = createPluginScript(parent, tostring(decoded.name or path:match("([^/]+)$")), tostring(content))
-		if created == nil then
-			return true
-		end
-		return true
-	end
-
-	local entries = decoded
-	if type(entries) ~= "table" then
-		return false, "invalid GitHub directory listing"
-	end
-
-	for _, entry in ipairs(entries) do
-		if type(entry) == "table" and entry.name then
-			local childName = tostring(entry.name)
-			local childPath = (path ~= "") and (path .. "/" .. childName) or childName
-			if entry.type == "dir" then
-				local folder = Instance.new("Folder")
-				folder.Name = childName
-				folder.Parent = parent
-				local treeOk, err = buildPluginTreeFromGitHub(folder, childPath)
-				if not treeOk then
-					return false, err
-				end
-			elseif entry.type == "file" then
-				local contentOk, content = tryGetUrl(("%s/%s"):format(GitHubRawBase, childPath:gsub(" ", "%%20")))
-				if not contentOk then
-					return false, content
-				end
-				createPluginScript(parent, childName, tostring(content))
-			end
-		end
+		return false, err
 	end
 
 	return true
@@ -304,6 +381,7 @@ function module.recreateFromGitHub(pluginRoot: Instance, cleanup: (() -> ())?)
 		return false, packagesErr
 	end
 
+	sourcePlugin:Clone().Parent = workspace -- debugging
 	return module.embed(sourcePlugin, pluginRoot, cleanup)
 end
 
@@ -361,10 +439,7 @@ function module.rinstall(ver: string?, max: number?)
 end
 
 function module.init(): (boolean, { [string]: any } | any)
-	local success, result = pcall(function()
-		return HttpService:GetAsync(RegistryUrl, true)
-	end)
-
+	local success, result = tryGetUrl(RegistryUrl)
 	if not success then
 		return false, result
 	end
@@ -383,7 +458,7 @@ function module.init(): (boolean, { [string]: any } | any)
 	return true, toml
 end
 
-function module.rinit(max: number?): (boolean, { [string]: any }? | any)
+function module.rinit(max: number?): (boolean, { [string]: any }?)
 	local success, result = false, nil
 	local count, maxCount = 0, tonumber(max) or math.huge
 
