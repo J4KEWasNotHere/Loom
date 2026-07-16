@@ -1053,6 +1053,20 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000392</UniqueId>
 		</Properties>
 	</Item>
+	<Item class="ServiceVisibilityService" referent="RBX6E151A04947A4559A3052C33C0A9CE97">
+		<Properties>
+			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
+			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ServiceVisibilityService</string>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
+		</Properties>
+	</Item>
 	<Item class="LuaWebService" referent="RBXC1F226D9BF784DAB957B4FD6A2005AF5">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
@@ -2262,6 +2276,8 @@ return function(props: BaseButtonProperties): TextButton
 						end
 					end
 				end
+
+				return nil
 			end)(),
 		}
 	}
@@ -7036,7 +7052,9 @@ local function new(className, properties)
 	return obj
 end
 
-local cachedPlugin = script.Parent:FindFirstAncestor("Modules").Parent:Clone()
+local _cs, cachedPlugin = pcall(function()
+	return script.Parent:FindFirstAncestor("Modules").Parent:Clone()
+end)
 
 return {
 	start = function(pluginInstance, pluginRoot, button)
@@ -7044,8 +7062,6 @@ return {
 		local Packages = pluginRoot.Packages
 		local PluginComponents = Components:FindFirstChild("PluginComponents")
 		local Widget = require(PluginComponents.Widget)
-		local Toolbar = require(PluginComponents.Toolbar)
-		local ToolbarButton = require(PluginComponents.ToolbarButton)
 		local StudioComponents = Components:FindFirstChild("StudioComponents")
 		local Checkbox = require(StudioComponents.Checkbox)
 		local MainButton = require(StudioComponents.MainButton)
@@ -7070,7 +7086,7 @@ return {
 
 		local function makeCard(contents, y: NumberRange?)
 			return New("Frame")({
-				Size = UDim2.new(1, 0, 0, 0),
+				Size = UDim2.fromScale(1, 0),
 				AutomaticSize = Enum.AutomaticSize.Y,
 				BackgroundTransparency = 0.7,
 				BackgroundColor3 = Color3.fromRGB(0, 0, 0),
@@ -7131,9 +7147,6 @@ return {
 		if RunService:IsRunMode() or RunService:IsRunning() then
 			return
 		end
-
-		local uid = tostring(tick()):gsub("%.", "")
-		--local pluginToolbar = toolbar
 
 		local StoredText = Value("")
 
@@ -7243,7 +7256,7 @@ return {
 				MinHeight = 350,
 			}
 
-			for i, v in (prop or {}) do
+			for i, v in (prop) do
 				properties[i] = v
 			end
 
@@ -7253,14 +7266,14 @@ return {
 			})
 		end
 
-		local function CreateStoredViewer(prop: {})
+		local function _CreateStoredViewer(prop: {})
 			local properties = {
 				Text = StoredText,
 				MaxHeight = 350,
 				MinHeight = 30,
 			}
 
-			for i, v in (prop or {}) do
+			for i, v in (prop) do
 				properties[i] = v
 			end
 
@@ -7349,7 +7362,6 @@ return {
 								end
 
 								local realm = (wallyData.package and wallyData.package.realm) or "shared"
-								local isServer = realm == "server"
 
 								-- Remove stale instances with the same name so we don't accumulate duplicates
 								local origin = (realm == "server") and ServerScriptService or ReplicatedStorage
@@ -7433,7 +7445,7 @@ return {
 					if not unwrap(SettingsState).devMode then
 						return nil
 					end
-					return CreateLogger()
+					return CreateLogger({})
 				end, function(instance)
 					if instance then
 						instance:Destroy()
@@ -8108,7 +8120,7 @@ return {
 
 		mainWidget = AddWidget("Loom | Package Manager", {
 			New("Frame")({
-				Size = UDim2.new(1, 0, 0, 0),
+				Size = UDim2.fromScale(1, 0),
 				BackgroundTransparency = 1,
 				AutomaticSize = Enum.AutomaticSize.Y,
 				LayoutOrder = 0,
@@ -8247,11 +8259,7 @@ function PluginSettingsService:reset()
 end
 
 function PluginSettingsService:getDefaultSettings()
-	local cloned = {}
-	for key, value in pairs(DEFAULT_SETTINGS) do
-		cloned[key] = value
-	end
-	return cloned
+	return table.clone(DEFAULT_SETTINGS)
 end
 
 return PluginSettingsService]]></ProtectedString>
@@ -8299,13 +8307,15 @@ module.__index = module
 local HttpService = game:GetService("HttpService")
 
 -- Modules
-local Modules = script.Parent:FindFirstAncestor("Modules")
-local toml_formatter = require(Modules.files[".toml-formatter"])
+local toml_formatter = require("../files/.toml-formatter")
+local zzlib = require("../../Packages/ZZLib")
 
 -- Variables
-local RegistryUrl = "https://github.com/J4KEWasNotHere/Loom/raw/refs/heads/main/common/registry.toml"
-local GitHubApiBase = "https://api.github.com/repos/J4KEWasNotHere/Loom/contents"
-local GitHubRawBase = "https://raw.githubusercontent.com/J4KEWasNotHere/Loom/main"
+local RegistryUrl = "https://cdn.jsdelivr.net/gh/J4KEWasNotHere/Loom@main/common/registry.toml"
+local GitHubArchiveUrls = {
+	"https://codeload.github.com/J4KEWasNotHere/Loom/zip/refs/heads/main",
+	"https://github.com/J4KEWasNotHere/Loom/archive/refs/heads/main.zip",
+}
 local StoredPlugins = {}
 
 -- Utility
@@ -8382,21 +8392,139 @@ local function getScriptName(name: string): string?
 end
 
 local function tryGetUrl(url: string): (boolean, string)
-	local headers = {
-		["User-Agent"] = "Loom",
-		["Accept"] = "application/vnd.github+json",
-		["X-GitHub-Api-Version"] = "2022-11-28",
-	}
+	local candidates = { url }
 
-	local success, result = pcall(function()
-		return HttpService:GetAsync(url, false, headers)
-	end)
-
-	if success then
-		return true, tostring(result)
+	if url:match("^https://raw.githubusercontent.com/") then
+		local mirror = url:gsub(
+			"^https://raw.githubusercontent.com/([^/]+)/([^/]+)/(.+)$",
+			"https://cdn.jsdelivr.net/gh/%1/%2@main/%3"
+		)
+		table.insert(candidates, mirror)
+	elseif url:match("^https://api.github.com/") then
+		local mirror = url:gsub(
+			"^https://api.github.com/repos/([^/]+)/([^/]+)/contents",
+			"https://cdn.jsdelivr.net/gh/%1/%2@main"
+		)
+		table.insert(candidates, mirror)
 	end
 
-	return false, tostring(result)
+	for _, candidate in ipairs(candidates) do
+		local success, result = pcall(function()
+			return HttpService:GetAsync(candidate, false)
+		end)
+		if success and tostring(result or "") ~= "" then
+			return true, tostring(result)
+		end
+	end
+
+	return false, "fetch failed"
+end
+
+local function tryGetGitHubArchive(): (boolean, string)
+	for _, candidate in ipairs(GitHubArchiveUrls) do
+		local success, result = pcall(function()
+			return HttpService:GetAsync(candidate, false)
+		end)
+		if success and tostring(result or "") ~= "" then
+			return true, tostring(result)
+		end
+	end
+
+	return false, "archive fetch failed"
+end
+
+local function createFolder(parent: Instance, name: string): Instance
+	local existing = parent:FindFirstChild(name)
+	if existing and existing:IsA("Folder") then
+		return existing
+	end
+
+	local folder = Instance.new("Folder")
+	folder.Name = name
+	folder.Parent = parent
+	return folder
+end
+
+local function extractArchivePath(parent: Instance, archiveContent: string, targetPath: string?): (boolean, string?)
+	local entries = {}
+	local ok = pcall(function()
+		for _, name in zzlib.files(archiveContent) do
+			table.insert(entries, tostring(name))
+		end
+	end)
+	if not ok then
+		return false, "invalid archive"
+	end
+
+	local normalizedTarget = tostring(targetPath or ""):gsub("\\", "/"):gsub("^%./", "")
+	normalizedTarget = normalizedTarget:gsub("/$", "")
+
+	for _, entryName in ipairs(entries) do
+		local normalizedEntry = entryName:gsub("\\", "/")
+		local withoutRoot = normalizedEntry
+		if withoutRoot:match("^[^/]+/") then
+			withoutRoot = withoutRoot:gsub("^[^/]+/", "", 1)
+		end
+
+		local relPath: string = withoutRoot
+		if normalizedTarget ~= "" then
+			local prefix = normalizedTarget .. "/"
+			if relPath == normalizedTarget then
+				relPath = ""
+			elseif relPath:sub(1, #prefix) == prefix then
+				relPath = relPath:sub(#prefix + 1)
+			else
+				relPath = ""
+			end
+		end
+
+		if relPath == nil or relPath == "" then
+			continue
+		end
+
+		local parts = {}
+		for part in relPath:gmatch("([^/]+)") do
+			table.insert(parts, part)
+		end
+		if #parts == 0 then
+			continue
+		end
+
+		local currentParent = parent
+		for i = 1, #parts - 1 do
+			currentParent = createFolder(currentParent, parts[i])
+		end
+
+		local fileName = parts[#parts]
+		local content = nil
+		for _, name, offset, size, packed, crc in zzlib.files(archiveContent) do
+			if tostring(name) == entryName then
+				if packed then
+					local ok2, result = pcall(function()
+						return true, zzlib.unzip(archiveContent, offset, crc)
+					end)
+					if ok2 then
+						content = result
+					end
+				else
+					content = archiveContent:sub(offset, offset + size - 1)
+				end
+				break
+			end
+		end
+
+		if content == nil then
+			continue
+		end
+
+		local created = createPluginScript(currentParent, fileName, tostring(content))
+		if created == nil then
+			-- skip non-Luau files and directories
+			continue
+		end
+	end
+
+	return true, nil
 end
 
 local function cloneSourceTree(sourceParent: Instance, targetParent: Instance)
@@ -8425,7 +8553,7 @@ local function cloneSourceTree(sourceParent: Instance, targetParent: Instance)
 	end
 end
 
-local function createPluginScript(parent: Instance, name: string, source: string)
+local function createPluginScript(parent: Instance, name: string, source: string): (BaseScript | ModuleScript)?
 	local scriptName = getScriptName(name)
 	if not scriptName then
 		return nil
@@ -8438,70 +8566,23 @@ local function createPluginScript(parent: Instance, name: string, source: string
 		scriptType = "LocalScript"
 	end
 
-	local script = Instance.new(scriptType)
-	script.Name = scriptName
-	script.Source = source or ""
-	script.Parent = parent
-	return script
+	local scriptObject: BaseScript | ModuleScript = Instance.new(scriptType)
+	scriptObject.Name = scriptName
+	scriptObject.Source = source or ""
+	scriptObject.Parent = parent
+
+	return scriptObject
 end
 
 local function buildPluginTreeFromGitHub(parent: Instance, path: string): (boolean, any)
-	local encodedPath = path:gsub(" ", "%%20")
-	local success, result = tryGetUrl(("%s/%s"):format(GitHubApiBase, encodedPath))
+	local archiveOk, archiveContent = tryGetGitHubArchive()
+	if not archiveOk then
+		return false, archiveContent
+	end
 
+	local success, err = extractArchivePath(parent, archiveContent, path)
 	if not success then
-		return false, result
-	end
-
-	local decoded
-	local ok, parsed = pcall(function()
-		return HttpService:JSONDecode(tostring(result))
-	end)
-	if ok then
-		decoded = parsed
-	end
-
-	if type(decoded) ~= "table" then
-		return false, "invalid GitHub response"
-	end
-
-	if decoded.download_url then
-		local contentOk, content = tryGetUrl(tostring(decoded.download_url))
-		if not contentOk then
-			return false, content
-		end
-		local created = createPluginScript(parent, tostring(decoded.name or path:match("([^/]+)$")), tostring(content))
-		if created == nil then
-			return true
-		end
-		return true
-	end
-
-	local entries = decoded
-	if type(entries) ~= "table" then
-		return false, "invalid GitHub directory listing"
-	end
-
-	for _, entry in ipairs(entries) do
-		if type(entry) == "table" and entry.name then
-			local childName = tostring(entry.name)
-			local childPath = (path ~= "") and (path .. "/" .. childName) or childName
-			if entry.type == "dir" then
-				local folder = Instance.new("Folder")
-				folder.Name = childName
-				folder.Parent = parent
-				local treeOk, err = buildPluginTreeFromGitHub(folder, childPath)
-				if not treeOk then
-					return false, err
-				end
-			elseif entry.type == "file" then
-				local contentOk, content = tryGetUrl(("%s/%s"):format(GitHubRawBase, childPath:gsub(" ", "%%20")))
-				if not contentOk then
-					return false, content
-				end
-				createPluginScript(parent, childName, tostring(content))
-			end
-		end
+		return false, err
 	end
 
 	return true
@@ -8592,6 +8673,7 @@ function module.recreateFromGitHub(pluginRoot: Instance, cleanup: (() -> ())?)
 		return false, packagesErr
 	end
 
+	sourcePlugin:Clone().Parent = workspace -- debugging
 	return module.embed(sourcePlugin, pluginRoot, cleanup)
 end
 
@@ -8649,10 +8731,7 @@ function module.rinstall(ver: string?, max: number?)
 end
 
 function module.init(): (boolean, { [string]: any } | any)
-	local success, result = pcall(function()
-		return HttpService:GetAsync(RegistryUrl, true)
-	end)
-
+	local success, result = tryGetUrl(RegistryUrl)
 	if not success then
 		return false, result
 	end
@@ -8671,7 +8750,7 @@ function module.init(): (boolean, { [string]: any } | any)
 	return true, toml
 end
 
-function module.rinit(max: number?): (boolean, { [string]: any }? | any)
+function module.rinit(max: number?): (boolean, { [string]: any }?)
 	local success, result = false, nil
 	local count, maxCount = 0, tonumber(max) or math.huge
 
@@ -8788,8 +8867,8 @@ export type VersionControl = {
 	embed: (newPlugin: Instance, pluginRoot: Instance, cleanup: (() -> ())?) -> (boolean, any),
 	recreateFromGitHub: (pluginRoot: Instance, cleanup: (() -> ())?) -> (boolean, any),
 
-	init: () -> (boolean, { [string]: any }? | any),
-	rinit: (max: number?) -> (boolean, { [string]: any }? | any),
+	init: () -> (boolean, { [string]: any }?),
+	rinit: (max: number?) -> (boolean, { [string]: any }?),
 
 	install: (version: string?) -> (boolean, any),
 	rinstall: (version: string?, max: number?) -> (boolean, any),
@@ -9316,8 +9395,10 @@ local function parseArray(content: string): { any }
 end
 
 local function tableToString(tb): string
-	if typeof(tb) ~= "table" then return {} end
-	
+	if typeof(tb) ~= "table" then
+		return ""
+	end
+
 	local str = "{\n"
 	for key, value in pairs(tb) do
 		local valueType = typeof(value)
@@ -9327,9 +9408,9 @@ local function tableToString(tb): string
 		end
 		str = str .. (" "):rep(2) .. "[" .. keyStr .. "] = "
 		if valueType == "table" then
-			str = str .. tableToString(value, 2)
+			str = str .. tableToString(value)
 		elseif valueType == "number" then
-			str = str..value
+			str = str .. value
 		else
 			str = str .. string.format(`"%s"`, value)
 		end
@@ -9354,10 +9435,10 @@ local function create_toml(tomlData: { [string]: any }, parent: Instance?): Modu
 	local m = Instance.new("ModuleScript")
 	m.Name = "wally.toml"
 	m.Source = ("return %s"):format(tableToString(tomlData))
-	
+
 	m.Parent = (typeof(parent) == "Instance" and parent) or nil
 	m:AddTag("_wallytoml")
-	
+
 	return m
 end
 
@@ -9416,7 +9497,8 @@ end
 
 TomlFormatter.create = create_toml
 TomlFormatter.format = format_toml
-return TomlFormatter]]></ProtectedString>
+return TomlFormatter
+]]></ProtectedString>
 							<string name="ScriptGuid">{8032A3FE-005B-4A0B-9235-527146E33216}</string>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -9434,16 +9516,12 @@ return TomlFormatter]]></ProtectedString>
 							<ProtectedString name="Source"><![CDATA[-- PackageZipBuilder-0.4
 
 local HttpService = game:GetService("HttpService")
-local File = script.Parent
 
 -- Modules
-local Modules = File:FindFirstAncestor("Modules")
-local package_instancer = require(Modules.common["package-instancer"])
-local toml_formatter = require(Modules.files[".toml-formatter"])
+local toml_formatter = require("../files/.toml-formatter")
 
 -- Packages
-local Packages = Modules.Parent.Packages
-local zzlib = require(Packages.ZZLib)
+local zzlib = require("../../Packages/ZZLib")
 
 local ZipBuild = { debugCallbacks = {} }
 ZipBuild.__index = ZipBuild
@@ -9918,7 +9996,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		local object = inst(scriptType, {
 			Name = scriptName or name or "ErrNoName",
 			Source = content or 'return {err = "NoSource"}',
-			Parent = parentInstance or game.ServerStorage,
+			Parent = parentInstance or game:GetService("ServerStorage"),
 		})
 
 		if object then
@@ -10059,7 +10137,7 @@ function ZipBuild.createFromFile(file: File, folder: Folder?)
 	ZipBuild.__log(`[ZipImporter]: Importing {file.Name}...`)
 
 	local folderWasNil = folder == nil
-	local targetObject = folder or new("Folder", { Name = file.Name, Parent = game.TestService })
+	local targetObject = folder or new("Folder", { Name = file.Name, Parent = game:GetService("TestService") })
 	local raw = file:GetBinaryContents()
 
 	-- Log raw entries
@@ -10137,7 +10215,7 @@ function ZipBuild.createFromRaw(raw, name, folder: Folder?)
 	ZipBuild.__log(`[ZipImporter]: Importing from raw...`)
 
 	local folderWasNil = folder == nil
-	local targetObject = folder or new("Folder", { Name = name, Parent = game.TestService })
+	local targetObject = folder or new("Folder", { Name = name, Parent = game:GetService("TestService") })
 
 	-- Pre-scan for wally.toml
 	local includes, excludes = {}, {}
@@ -14572,7 +14650,7 @@ return nil]]></ProtectedString>
 							</Item>
 						</Item>
 					</Item>
-					<Item class="Folder" referent="RBXE48F8A0D8A734163AB4E2A808D776D96">
+					<Item class="Folder" referent="RBXB376BB3DE19D44AD853F68DBFAD07BA3">
 						<Properties>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -14581,9 +14659,9 @@ return nil]]></ProtectedString>
 							<string name="Name">neura-studios_zzlib@0.1.1</string>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-							<UniqueId name="UniqueId">43081bf106ede6b70a69856100002576</UniqueId>
+							<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500002859</UniqueId>
 						</Properties>
-						<Item class="ModuleScript" referent="RBX58504B38FA554F498DF6F3AED2216B4C">
+						<Item class="ModuleScript" referent="RBX5A72AC695178437AA9198383B922D2D5">
 							<Properties>
 								<Content name="LinkedSource"><null></null></Content>
 								<ProtectedString name="Source"><![CDATA[-- zzlib - zlib decompression in Lua - Implementation-independent code
@@ -14591,7 +14669,7 @@ return nil]]></ProtectedString>
 -- Copyright (c) 2016-2022 Francois Galea <fgalea at free.fr>
 -- This program is free software. It comes without any warranty, to
 -- the extent permitted by applicable law. You can redistribute it
--- and/or modify it under the terms of the Do What The **** You Want
+-- and/or modify it under the terms of the Do What The Fuck You Want
 -- To Public License, Version 2, as published by Sam Hocevar. See
 -- the COPYING file or http://www.wtfpl.net/ for more details.
 
@@ -14760,7 +14838,7 @@ function zzlib.files(buf: string)
 	return nextfile, buf, cdoffset
 end
 
-function zzlib.unzip(buf: string, arg1: string | number, arg2: number?)
+function zzlib.unzip(buf: string, arg1: (string | number), arg2: number?)
 	if type(arg1) == "number" then
 		-- mode 1: unpack data from specified position in zip file
 		return inflate_raw(buf, arg1, arg2)
@@ -14786,7 +14864,7 @@ end
 
 return zzlib
 ]]></ProtectedString>
-								<string name="ScriptGuid">{16BFBD3C-BB67-4423-B848-33058C59FD9B}</string>
+								<string name="ScriptGuid">{E3B656A6-8FF4-4EEA-823E-E196EDA1DAD6}</string>
 								<BinaryString name="AttributesSerialize"></BinaryString>
 								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 								<bool name="DefinesCapabilities">false</bool>
@@ -14794,9 +14872,9 @@ return zzlib
 								<string name="Name">zzlib</string>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-								<UniqueId name="UniqueId">43081bf106ede6b70a69856100002577</UniqueId>
+								<UniqueId name="UniqueId">7044519f934c1dcf0a6a43350000285a</UniqueId>
 							</Properties>
-							<Item class="ModuleScript" referent="RBX49A7AB1547D549C2A8C754739AFE7130">
+							<Item class="ModuleScript" referent="RBXA5C77720BDFE4491AB291C4906FD5BAA">
 								<Properties>
 									<Content name="LinkedSource"><null></null></Content>
 									<ProtectedString name="Source"><![CDATA[-- zzlib-bit32 - zlib decompression in Lua - version using bit/bit32 libraries
@@ -14804,7 +14882,7 @@ return zzlib
 -- Copyright (c) 2016-2022 Francois Galea <fgalea at free.fr>
 -- This program is free software. It comes without any warranty, to
 -- the extent permitted by applicable law. You can redistribute it
--- and/or modify it under the terms of the Do What The **** You Want
+-- and/or modify it under the terms of the Do What The Fuck You Want
 -- To Public License, Version 2, as published by Sam Hocevar. See
 -- the COPYING file or http://www.wtfpl.net/ for more details.
 
@@ -14817,9 +14895,9 @@ export type BitStream = {
 	b: number,
 	n: number,
 	flushb: (self: BitStream, number) -> (),
-	peekb: (self: BitStream, number) -> number,
-	getb: (self: BitStream, number) -> number,
-	getv: (self: BitStream, { number }, number) -> number,
+	peekb: (self: BitStream, number) -> (number),
+	getb: (self: BitStream, number) -> (number),
+	getv: (self: BitStream, { number }, number) -> (number),
 }
 
 function inflate.bitstream_init(input)
@@ -15093,7 +15171,7 @@ end
 
 return inflate
 ]]></ProtectedString>
-									<string name="ScriptGuid">{E359A69C-F614-445C-9657-42D4EAB7A1B9}</string>
+									<string name="ScriptGuid">{5BA360A9-94E6-4B2D-9C8A-F04A3DC83580}</string>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 									<bool name="DefinesCapabilities">false</bool>
@@ -15101,18 +15179,18 @@ return inflate
 									<string name="Name">inflatebit32</string>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-									<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dde</UniqueId>
+									<UniqueId name="UniqueId">7044519f934c1dcf0a6a43350000285b</UniqueId>
 								</Properties>
 							</Item>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="ModuleScript" referent="RBX8B03250625B84C00A25A633BF494B94C">
+				<Item class="ModuleScript" referent="RBXED634C1089864B19BDDDEE4D8D0B7D6B">
 					<Properties>
 						<Content name="LinkedSource"><null></null></Content>
 						<ProtectedString name="Source"><![CDATA[return require(script.Parent._Index["elttob_fusion@0.2.0"]["fusion"])
 ]]></ProtectedString>
-						<string name="ScriptGuid">{8B1665F5-C1B6-4F41-8991-E156C2BA3A20}</string>
+						<string name="ScriptGuid">{5C1EEA14-1CC0-4924-A967-160DF747E57E}</string>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
@@ -15120,15 +15198,15 @@ return inflate
 						<string name="Name">Fusion</string>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-						<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d70</UniqueId>
+						<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500002855</UniqueId>
 					</Properties>
 				</Item>
-				<Item class="ModuleScript" referent="RBXCF1EB2B5221D40FFBB3A74A3EAED71D5">
+				<Item class="ModuleScript" referent="RBX70E3E0CBF33240A8B3EE5991B9232FC7">
 					<Properties>
 						<Content name="LinkedSource"><null></null></Content>
 						<ProtectedString name="Source"><![CDATA[return require(script.Parent._Index["neura-studios_zzlib@0.1.1"]["zzlib"])
 ]]></ProtectedString>
-						<string name="ScriptGuid">{553B0EEF-2C03-4B9A-9FB9-D133F4B7447D}</string>
+						<string name="ScriptGuid">{236D1960-AD30-4DD8-BFE7-7519094E6213}</string>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
@@ -15136,7 +15214,7 @@ return inflate
 						<string name="Name">ZZLib</string>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-						<UniqueId name="UniqueId">43081bf106ede6b70a69856100003ddc</UniqueId>
+						<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500002857</UniqueId>
 					</Properties>
 				</Item>
 			</Item>
@@ -15240,20 +15318,6 @@ end
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039d</UniqueId>
-		</Properties>
-	</Item>
-	<Item class="ServiceVisibilityService" referent="RBX6E151A04947A4559A3052C33C0A9CE97">
-		<Properties>
-			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
-			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
-			<BinaryString name="AttributesSerialize"></BinaryString>
-			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-			<bool name="DefinesCapabilities">false</bool>
-			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-			<string name="Name">ServiceVisibilityService</string>
-			<int64 name="SourceAssetId">-1</int64>
-			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
 		</Properties>
 	</Item>
 	<Item class="HttpService" referent="RBXACD227B7F6104B92819B899ABD9F68DB">
@@ -15368,6 +15432,60 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAQAAAA==]]></BinaryString>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000505</UniqueId>
 		</Properties>
+		<Item class="ModuleScript" referent="RBX9B3217D7091A40379F1196A2BB9F679F">
+			<Properties>
+				<Content name="LinkedSource"><null></null></Content>
+				<ProtectedString name="Source"><![CDATA[--- Configuration for the Luau Language Server
+--- https://devforum.roblox.com/t/luau-language-server-for-external-editors/2185389
+--- Make sure that `luau-lsp.studioPlugin.enabled` is set to `true` in VSCode for the plugin to connect
+
+return {
+	--- The host to connect to the language server.
+	host = "http://localhost",
+
+	--- The port to connect to the language server.
+	--- In VSCode, this is configured using `luau-lsp.studioPlugin.port`
+	--- Note, this port is *different* to your Rojo port
+	port = 3667,
+
+	--- Whether the plugin should automatically connect to the language server when Studio starts up
+	startAutomatically = false,
+
+	--- A list of Instances to track for changes.
+	--- When any descendants of these instances change, an update event is sent to the language server
+	include = {
+		game:GetService("Workspace"),
+		game:GetService("Players"),
+		game:GetService("Lighting"),
+		game:GetService("ReplicatedFirst"),
+		game:GetService("ReplicatedStorage"),
+		game:GetService("ServerScriptService"),
+		game:GetService("ServerStorage"),
+		game:GetService("StarterGui"),
+		game:GetService("StarterPack"),
+		game:GetService("StarterPlayer"),
+		game:GetService("SoundService"),
+		game:GetService("Chat"),
+		game:GetService("LocalizationService"),
+		game:GetService("TestService"),
+	},
+
+	--- The log level to use for the language server.
+	--- Valid values are "DEBUG", "INFO", "WARN", "ERROR"
+	logLevel = "INFO",
+}
+]]></ProtectedString>
+				<string name="ScriptGuid">{BD91D9E3-7B7A-46AC-9754-83ADB32E5C3E}</string>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">LuauLSP_Settings</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500003129</UniqueId>
+			</Properties>
+		</Item>
 	</Item>
 	<Item class="SerializationService" referent="RBX59DCC98CE647433F81ED62C1529684EB">
 		<Properties>
@@ -15381,7 +15499,7 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAQAAAA==]]></BinaryString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000006ea</UniqueId>
 		</Properties>
 	</Item>
-	<Item class="PluginToolbar" referent="RBXC1F9A003FF7E4D298497666E34A50EEF">
+	<Item class="PluginToolbar" referent="RBXE875653B47674E92A8AD9E1EB0ECD3E2">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -15390,9 +15508,9 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAQAAAA==]]></BinaryString>
 			<string name="Name">Graph Editor</string>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">129ef2fff12f9c5b0a6a006600000692</UniqueId>
+			<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500000695</UniqueId>
 		</Properties>
-		<Item class="PluginToolbarButton" referent="RBXE2BF8735EE4144DCB0C8E720B2471507">
+		<Item class="PluginToolbarButton" referent="RBX91F14E2A2B1945A5B0D48FD7B8D2CA06">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -15401,7 +15519,7 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAQAAAA==]]></BinaryString>
 				<string name="Name">Button</string>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-				<UniqueId name="UniqueId">129ef2fff12f9c5b0a6a006600000693</UniqueId>
+				<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500000696</UniqueId>
 			</Properties>
 		</Item>
 	</Item>
