@@ -4,6 +4,7 @@ local HttpService = game:GetService("HttpService")
 
 local PackageDetailsUrl = "https://api.wally.run/v1/package-metadata/%s/%s"
 local PackageZipUrl = "https://api.wally.run/v1/package-contents/%s/%s/%s"
+local PackageSearchUrl = "https://api.wally.run/v1/package-search?query=%s"
 
 local UpgradedWallyVersions = {
 	"0.3.2",
@@ -24,6 +25,8 @@ local Constants = require(script.Parent.constants)
 local MAX_CACHED_ZIPS = Constants.MaxCachedZips
 
 -- Utility
+
+
 
 local function requestWithVersionProbe(url)
 	local versionsToTry = if workingWallyVersion then { workingWallyVersion } else UpgradedWallyVersions
@@ -206,6 +209,26 @@ function WallySearch.resolveVersion(scope, package, requirement): (boolean, stri
 end
 
 -- Module API
+
+function WallySearch.SearchForPackage(query)
+	local url = PackageSearchUrl:format(query)
+	local success, response = pcall(function()
+		return HttpService:GetAsync(url)
+	end)
+	if not success then
+		return nil
+	end
+	if success then
+		local data = HttpService:JSONDecode(response)
+		if #data == 0 then
+			return nil
+		end
+		return data
+	else
+		return {}
+	end
+end
+
 
 function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: any }?)
 	if not scope or not package then

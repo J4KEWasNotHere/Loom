@@ -451,39 +451,228 @@ return {
 				end),
 			}
 		end
+		local SearchQuery = nil ::string
+		local SearchResults = nil :: {[string]: any}
+		local function SearchRows()
+			return New("Frame")({
+				Size = UDim2.new(1, 0, 0, 25),
+				BackgroundTransparency = .9,
+				BackgroundColor3 = Color3.fromRGB(40, 41, 49),
+				[Children] = {
+					New("UIListLayout")({
+						FillDirection = Enum.FillDirection.Horizontal,
+						SortOrder = Enum.SortOrder.LayoutOrder,
+						Padding = UDim.new(0, 8),
+					}),
+					New("TextLabel")({ --NAME
+						TextXAlignment = Enum.TextXAlignment.Center,
+						AutomaticSize = Enum.AutomaticSize.Y,
+						Text = "Author/Name",
+						Size = UDim2.new(.2, 0, 0, 25),
+						TextSize = 14,
+						BackgroundTransparency = 1,
+						Font = Enum.Font.SourceSans,
+						TextColor3 = Color3.fromRGB(255,255,255),
+						TextWrapped = true,
+					}),
+					
+					New("TextLabel")({ --DESCRIPTION
+						AutomaticSize = Enum.AutomaticSize.Y,
+						TextXAlignment = Enum.TextXAlignment.Left,
+						Text = "Description",
+						Size = UDim2.new(.6, 0, 0, 25),
+						TextSize = 14,
+						BackgroundTransparency = 1,
+						Font = Enum.Font.SourceSans,
+						TextColor3 = Color3.fromRGB(255,255,255),
+						TextWrapped = true,
+					}),
+				}
+			})
+		end
+		local function CreateSearchResultRow(entry)
+			return New("Frame")({
+				Size = UDim2.new(1, 0, 0, 50),
+				BackgroundTransparency = .9,
+				BackgroundColor3 = Color3.fromRGB(0,0,0),
+				[Children] = {
+					New("UIListLayout")({
+						FillDirection = Enum.FillDirection.Horizontal,
+						SortOrder = Enum.SortOrder.LayoutOrder,
+						Padding = UDim.new(0, 8),
+					}),
+					New("TextLabel")({ --NAME
+						BackgroundColor3 = Color3.fromRGB(40, 41, 49),
+						AutomaticSize = Enum.AutomaticSize.Y,
+						Text = entry.scope.."/"..entry.name,
+						Size = UDim2.new(.2, 0, 0, 50),
+						TextSize = 14,
+						BackgroundTransparency = .6,
+						Font = Enum.Font.SourceSans,
+						TextColor3 = Color3.fromRGB(255,255,255),
+						TextWrapped = true,
+					}),
+					New("TextLabel")({ --DESCRIPTION
+						BackgroundColor3 = Color3.fromRGB(40, 41, 49),
+						AutomaticSize = Enum.AutomaticSize.Y,
+						TextXAlignment = Enum.TextXAlignment.Left,
+						Text = entry.description,
+						Size = UDim2.new(.6, 0, 0, 50),
+						TextSize = 14,
+						BackgroundTransparency = .6,
+						Font = Enum.Font.SourceSans,
+						TextColor3 = Color3.fromRGB(255,255,255),
+						TextWrapped = true,
+					}),
+					New("TextButton")({--ADD
+						Size = UDim2.new(.18, 0, 0, 50),
+						TextColor3 = Color3.fromRGB(255,255,255),
+						Text = "Add",
+						TextSize = 20,
+						TextXAlignment = Enum.TextXAlignment.Center,
+						
+						BackgroundColor3 = Color3.fromRGB(51, 95, 255),
+						[OnEvent "Activated"] = function()
+							setPage("Queue")
+							DraftSearchText:set(entry.scope.."/"..entry.name)
+							if IsVersionInstalling:get() then
+								return
+							end
+							DraftIsSearching:set(true)
+							local scope, pkg = entry.scope, entry.name
+							local ok, versions = wally_search.getPackageDetails(scope, pkg)
+							local normalized = {}
+							if ok then
+								for _, versionData in pairs(versions or {}) do
+									table.insert(normalized, versionData.version)
+								end
+								table.sort(normalized, function(a, b)
+									return a > b
+								end)
+							end
+							DraftPackageResults:set(normalized)
 
+							local specifier = unwrap(DraftPendingSpecifier)
+							local resolvedOk, resolved
+							if specifier then
+								resolvedOk, resolved = wally_search.resolveVersion(scope, pkg, specifier)
+							end
+
+							if resolvedOk then
+								DraftSelectedVersion:set(resolved)
+								DraftVersionCollapsed:set(true) -- collapse, we already picked one
+								DraftIsDropdownOpen:set(#normalized > 0) -- still browsable to override
+								StatusText:set(("Resolved %s to %s"):format(specifier, resolved))
+							else
+								DraftVersionCollapsed:set(false)
+								DraftIsDropdownOpen:set(ok and #normalized > 0)
+								StatusText:set(
+									ok and "Versions loaded for the current package."
+										or "Unable to fetch versions for the current package."
+								)
+							end
+
+							DraftIsSearching:set(false)
+						end,
+					}),
+				}
+			})
+		end
+		local function SearchPage()
+			
+			local results = {}
+			
+			for _,v in pairs(SearchResults) do
+				table.insert(results, CreateSearchResultRow(v))
+			end
+			return {			
+				makeCard({
+
+					
+					makeSectionHeader("Results For "..SearchQuery),
+					New("ImageLabel")({
+						Image = "rbxassetid://110162513850955",
+					}),
+					SearchRows(),
+					Seperator({}),
+					table.unpack(results)
+				})
+			}
+		end
+			
 		local function QueuePage()
 			return {
 				makeCard({
 					makeSectionHeader("Package builder"),
-					TextInput({
-						Text = DraftSearchText,
-						PlaceholderText = "Paste package or author/package",
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						[OnChange("Text")] = function(text)
-							local pastedName = text
-							local key, scopePkg, specifier = text:match('^%s*([%w_%-]+)%s*=%s*"([^@"]+)@([^"]+)"')
-							if scopePkg then
-								pastedName = scopePkg
-							end
-							if key then
-								local scope = scopePkg and scopePkg:match("^([^/]+)/")
-								if scope then
-									DraftOverrideName:set(scope .. "/" .. key)
-								else
-									DraftOverrideName:set(key)
-								end
-							end
-							DraftSearchText:set(pastedName)
-							DraftSelectedVersion:set(nil)
-							DraftPendingSpecifier:set(specifier)
-							DraftPackageResults:set({})
-							DraftVersionCollapsed:set(true)
-							DraftIsDropdownOpen:set(false)
-						end,
+					New ("Frame")({
+						Size = UDim2.new(1, 0, 0, 25),
+						BackgroundTransparency = 1,
+						AutomaticSize = Enum.AutomaticSize.Y,
+						LayoutOrder = 0,
+						AnchorPoint = Vector2.new(0, 0.5),
+						Position = UDim2.fromScale(0, 0.5),
+						[Children] = {
+							New ("UIListLayout")({
+								FillDirection = Enum.FillDirection.Horizontal,
+								SortOrder = Enum.SortOrder.LayoutOrder,
+								HorizontalAlignment = Enum.HorizontalAlignment.Center,
+								Padding = UDim.new(0, 6),
+							}),
+							TextInput({
+								Size = UDim2.new(.9, 0, 0, 25),
+								Text = DraftSearchText,
+								PlaceholderText = "Paste package or author/package",
+								Enabled = Computed(function()
+									return not unwrap(IsVersionInstalling)
+								end),
+								[OnChange("Text")] = function(text)
+									local pastedName = text
+									local key, scopePkg, specifier = text:match('^%s*([%w_%-]+)%s*=%s*"([^@"]+)@([^"]+)"')
+									if scopePkg then
+										pastedName = scopePkg
+									end
+									if key then
+										local scope = scopePkg and scopePkg:match("^([^/]+)/")
+										if scope then
+											DraftOverrideName:set(scope .. "/" .. key)
+										else
+											DraftOverrideName:set(key)
+										end
+									end
+									DraftSearchText:set(pastedName)
+									DraftSelectedVersion:set(nil)
+									DraftPendingSpecifier:set(specifier)
+									DraftPackageResults:set({})
+									DraftVersionCollapsed:set(true)
+									DraftIsDropdownOpen:set(false)
+								end,
+							}),
+							New ("ImageButton")({
+								SizeConstraint = Enum.SizeConstraint.RelativeYY,
+								Size = UDim2.fromOffset(25, 25),
+								Image = "rbxassetid://2804603863",
+								AnchorPoint = Vector2.new(1, 0.5),
+								Position = UDim2.fromScale(1, 0.5),
+								BackgroundTransparency = 1,
+								[OnEvent("Activated")] = function()
+									local query = tostring(DraftSearchText:get())
+									if query == "" then
+										return
+									end
+									local data = wally_search.SearchForPackage(query)
+									if data == nil or #data == 0 then
+										StatusText:set("No results found for "..query)
+										return
+									end
+									SearchQuery = query
+									SearchResults = data
+
+									setPage("Search")
+								end,
+							}),
+						},
 					}),
+					
 					Seperator({}),
 					MainButton({
 						Text = Computed(function()
@@ -1144,6 +1333,8 @@ return {
 						return nil --ManagedPackagesPage()
 					elseif page == "Settings" then
 						return SettingsPage()
+						elseif page == "Search" then
+						return SearchPage()
 					end
 					return {}
 				end, function(instances)
