@@ -1,4 +1,7 @@
 {
     "luau-lsp.studioPlugin.enabled": true,
-    "[lua]": { "editor.defaultFormatter": "JohnnyMorganz.stylua" }
+    "[lua]": {
+        "editor.defaultFormatter": "JohnnyMorganz.stylua"
+    },
+    "luau-lsp.sourcemap.enabled": true
 }
