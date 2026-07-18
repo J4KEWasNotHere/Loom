@@ -10,7 +10,7 @@ local _cs, cachedPlugin = pcall(function()
 end)
 
 return {
-	start = function(pluginInstance, pluginRoot, button)
+	start = function(pluginInstance, pluginRoot, _button)
 		local Components = pluginRoot.Components
 		local Packages = pluginRoot.Packages
 		local PluginComponents = Components:FindFirstChild("PluginComponents")
@@ -332,14 +332,17 @@ return {
 			},
 			{
 				page = "Search",
-				icon = "rbxassetid://6031154871",
+				icon = "rbxassetid://16898730641",
+				RectSize = Vector2.new(256, 256),
+				RectOffset = Vector2.new(257, 0),
+				IconSize = 37,
 				order = 3,
 			},
 			{
 				page = "Settings",
 				icon = "rbxassetid://16898734421",
 				RectSize = Vector2.new(256, 256),
-				RectOffset = Vector2.new(0, 257),
+				RectOffset = Vector2.new(514, 0),
 				IconSize = 37,
 				order = 4,
 			},
@@ -348,7 +351,20 @@ return {
 		local navButtons = {}
 		for _, entry in ipairs(NAV) do
 			local page = entry.page
-			local size = entry.IconSize or 0.85
+			local size = entry.IconSize or 37
+			local iconLabel: ImageLabel = New("ImageLabel")({
+				Size = UDim2.fromOffset(size, size),
+				Image = entry.icon,
+				ImageRectSize = entry.RectSize or Vector2.zero,
+				ImageRectOffset = entry.RectOffset or Vector2.zero,
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				ImageColor3 = Computed(function()
+					return unwrap(CurrentPage) == page and Color3.fromRGB(255, 255, 255)
+						or Color3.fromRGB(152, 152, 152)
+				end),
+			})
 
 			table.insert(
 				navButtons,
@@ -356,8 +372,6 @@ return {
 					LayoutOrder = entry.order,
 					Size = UDim2.fromOffset(47, 47),
 					Image = "",
-					ImageRectSize = entry.RectSize or Vector2.zero,
-					ImageRectOffset = entry.RectOffset or Vector2.zero,
 					BackgroundColor3 = Computed(function()
 						return unwrap(CurrentPage) == page and Color3.fromRGB(95, 120, 210)
 							or Color3.fromRGB(60, 60, 60)
@@ -370,19 +384,31 @@ return {
 							CornerRadius = UDim.new(1, 0),
 						}),
 
-						New("ImageLabel")({
-							Size = UDim2.fromOffset(size, size),
-							Image = entry.icon,
-							ImageRectSize = entry.RectSize or Vector2.zero,
-							ImageRectOffset = entry.RectOffset or Vector2.zero,
-							Position = UDim2.fromScale(0.5, 0.5),
-							AnchorPoint = Vector2.new(0.5, 0.5),
-							BackgroundTransparency = 1,
-							ImageColor3 = Computed(function()
-								return unwrap(CurrentPage) == page and Color3.fromRGB(255, 255, 255)
-									or Color3.fromRGB(152, 152, 152)
-							end),
-						}),
+						iconLabel,
+
+						Computed(function()
+							if
+								unwrap(iconLabel.Image) ~= ""
+								or unwrap(iconLabel.IsLoaded) == true
+							then
+								return nil
+							end
+
+							return New("TextLabel")({
+								AnchorPoint = Vector2.new(0.5, 0.5),
+								Position = UDim2.fromScale(0.5, 0.5),
+								Size = UDim2.fromScale(0.85, 0.85),
+								Font = Enum.Font.SourceSansBold,
+								Text = page,
+								TextColor3 = Color3.fromRGB(180, 180, 180),
+								TextScaled = true,
+								BackgroundTransparency = 1,
+							})
+						end, function(inst)
+							if inst and inst.Destroy then
+								inst:Destroy()
+							end
+						end),
 					},
 				})
 			)

@@ -12,6 +12,7 @@ return function(ctx)
 	local Value = ctx.fusion.Value
 	local Children = ctx.fusion.Children
 	local OnChange = ctx.fusion.OnChange
+	local Observer = ctx.fusion.Observer
 
 	local Label = ctx.components.Label
 	local MainButton = ctx.components.MainButton
@@ -24,6 +25,7 @@ return function(ctx)
 	local makeSectionHeader = ctx.ui.makeSectionHeader
 
 	local wally_search = ctx.modules.wally_search
+	local package_instancer = ctx.modules.package_instancer
 	local Constants = ctx.modules.Constants
 
 	local splitName = ctx.utils.splitName
@@ -38,14 +40,18 @@ return function(ctx)
 	local addQueuedPackage = ctx.actions.addQueuedPackage
 	local setPage = ctx.actions.setPage
 
-	-- Turns a raw `/package-search` entry into the flat shape the UI needs.
 	local function describeResult(entry)
 		local latest = wally_search.pickLatestVersion(entry)
 		if not latest or not latest.name then
 			return nil
 		end
+
+		local scope, pkg = splitName(latest.name)
+
 		return {
-			name = latest.name,
+			raw = latest.name,
+			scope = scope,
+			name = pkg,
 			version = latest.version,
 			description = latest.description,
 			license = latest.license,
@@ -80,7 +86,7 @@ return function(ctx)
 		if not ok then
 			SearchStatusText:set("Search failed. Check your connection and try again.")
 		elseif #results == 0 then
-			SearchStatusText:set(("No packages found for \"%s\"."):format(query))
+			SearchStatusText:set(('No packages found for "%s".'):format(query))
 		else
 			SearchStatusText:set(("Found %d package(s)."):format(#results))
 		end
@@ -88,30 +94,177 @@ return function(ctx)
 		IsSearchingPackages:set(false)
 	end
 
+	SearchStatusText:set("Waiting for input..")
+
+	local _yeildingThread = nil
+	local _yeildTime = 0.75
+
+	local function cancel(thread: thread): nil
+		if typeof(thread) == "thread" and coroutine.status(thread) == "suspended" then
+			task.cancel(thread)
+		end
+		return nil
+	end
+
+	local function queuePackage(result, version)
+		if IsVersionInstalling:get() then
+			return
+		end
+
+		local realm, existingSource, existingReference =
+			package_instancer.findInstalled(result.scope, result.name, version)
+
+		addQueuedPackage({
+			raw = result.raw,
+			scope = result.scope,
+			package = result.name,
+			version = version,
+			name = "",
+			includeDependencies = unwrap(DraftIncludeDependencies),
+			reference = existingReference,
+			existingSource = existingSource,
+			realm = realm,
+		})
+
+		if Constants.warnForLicense then
+			Constants.warnForLicense(result.license, result.raw)
+		end
+
+		setPage("Queue")
+	end
+
+	local function buildResultItem(result)
+		local Collapsed = Value(true)
+		local Versions = Value(nil) -- nil = not fetched yet, table = fetched (may be empty)
+		local requested = false
+
+		local function ensureVersionsLoaded()
+			if requested then
+				return
+			end
+			requested = true
+
+			task.spawn(function()
+				local ok, versions = wally_search.getPackageDetails(result.scope, result.name)
+				if not ok then
+					Versions:set({})
+					return
+				end
+
+				local sorted = {}
+				for _, ver in pairs(versions) do
+					table.insert(sorted, ver)
+				end
+				table.sort(sorted, function(a, b)
+					return wally_search.compareVersions(a.version, b.version) > 0
+				end)
+				Versions:set(sorted)
+			end)
+		end
+
+		Observer(Collapsed):onChange(function()
+			if not unwrap(Collapsed) then
+				ensureVersionsLoaded()
+			end
+		end)
+
+		return VerticalCollapsibleSection({
+			Text = ("%s/%s"):format(result.scope, result.name),
+			Collapsed = Collapsed,
+			[Children] = {
+				makeCard({
+					Paragraph({
+						Text = (result.description and result.description ~= "")
+								and result.description
+							or "No description provided.",
+						MaxHeight = 80,
+						MinHeight = 20,
+						TextColor3 = Color3.fromRGB(200, 200, 200),
+					}),
+					Label({
+						Text = "License: " .. (result.license or "unspecified"),
+						TextSize = 12,
+						TextColor3 = Color3.fromRGB(160, 160, 160),
+					}),
+					Computed(function()
+						local versions = unwrap(Versions)
+
+						if versions == nil then
+							return {
+								Label({
+									Text = "Loading versions…",
+									TextColor3 = Color3.fromRGB(160, 160, 160),
+								}),
+							}
+						end
+
+						if #versions == 0 then
+							return {
+								MainButton({
+									Text = ("Queue %s"):format(result.version),
+									Size = UDim2.new(1, 0, 0, 30),
+									Enabled = Computed(function()
+										return not unwrap(IsVersionInstalling)
+									end),
+									Activated = function()
+										queuePackage(result, result.version)
+									end,
+								}),
+							}
+						end
+
+						local rows = {}
+						for _, v in ipairs(versions) do
+							table.insert(
+								rows,
+								MainButton({
+									Text = ("Queue %s"):format(v.version),
+									Size = UDim2.new(1, 0, 0, 26),
+									Enabled = Computed(function()
+										return not unwrap(IsVersionInstalling)
+									end),
+									Activated = function()
+										queuePackage(result, v.version)
+									end,
+								})
+							)
+						end
+						return rows
+					end, function(instances)
+						for _, inst in ipairs(instances or {}) do
+							if inst and inst.Destroy then
+								inst:Destroy()
+							end
+						end
+					end),
+				}),
+			},
+		})
+	end
+
 	return {
 		makeCard({
 			makeSectionHeader("Search for packages"),
 			TextInput({
 				Text = SearchQueryText,
-				PlaceholderText = "e.g. \"fusion\" or \"sleitnick/net\"",
+				PlaceholderText = 'e.g. "fusion" or "sleitnick/net"',
 				Enabled = Computed(function()
 					return not unwrap(IsVersionInstalling)
 				end),
 				[OnChange("Text")] = function(text)
+					if _yeildingThread then
+						_yeildingThread = cancel(_yeildingThread)
+					end
+
 					SearchQueryText:set(text)
+
+					_yeildingThread = task.delay(_yeildTime, function()
+						if unwrap(SearchQueryText) ~= "" then
+							_yeildingThread = cancel(_yeildingThread)
+							runSearch()
+						end
+					end)
 				end,
-			}),
-			MainButton({
-				Text = Computed(function()
-					return unwrap(IsSearchingPackages) and "Searching…" or "Search"
-				end),
-				Size = UDim2.new(1, 0, 0, 34),
-				Enabled = Computed(function()
-					return not unwrap(IsSearchingPackages)
-						and not unwrap(IsVersionInstalling)
-						and unwrap(SearchQueryText) ~= ""
-				end),
-				Activated = runSearch,
 			}),
 			Label({
 				Text = SearchStatusText,
@@ -133,59 +286,7 @@ return function(ctx)
 
 				local items = {}
 				for _, result in ipairs(results) do
-					table.insert(
-						items,
-						VerticalCollapsibleSection({
-							Text = ("%s @%s"):format(result.name, result.version),
-							Collapsed = Value(true),
-							[Children] = {
-								makeCard({
-									Paragraph({
-										Text = (result.description and result.description ~= "")
-											and result.description
-											or "No description provided.",
-										MaxHeight = 80,
-										MinHeight = 20,
-										TextColor3 = Color3.fromRGB(200, 200, 200),
-									}),
-									Label({
-										Text = "License: " .. (result.license or "unspecified"),
-										TextSize = 12,
-										TextColor3 = Color3.fromRGB(160, 160, 160),
-									}),
-									MainButton({
-										Text = ("Queue %s"):format(result.version),
-										Size = UDim2.new(1, 0, 0, 30),
-										Enabled = Computed(function()
-											return not unwrap(IsVersionInstalling)
-										end),
-										Activated = function()
-											if IsVersionInstalling:get() then
-												return
-											end
-
-											local scope, pkg = splitName(result.name)
-
-											addQueuedPackage({
-												raw = result.name,
-												scope = scope,
-												package = pkg,
-												version = result.version,
-												name = "",
-												includeDependencies = unwrap(DraftIncludeDependencies),
-											})
-
-											if Constants.warnForLicense then
-												Constants.warnForLicense(result.license, result.name)
-											end
-
-											setPage("Queue")
-										end,
-									}),
-								}),
-							},
-						})
-					)
+					table.insert(items, buildResultItem(result))
 				end
 				return items
 			end, function(instances)

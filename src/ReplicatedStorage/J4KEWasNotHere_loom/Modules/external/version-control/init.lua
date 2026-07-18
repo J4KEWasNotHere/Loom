@@ -1,6 +1,5 @@
--- VersionControl-0.3
+-- VersionControl-0.5
 
---!strict
 --!native
 
 local importRbx = require("@self/.import")
@@ -100,6 +99,31 @@ local function getScriptName(name: string): string?
 	return scriptName
 end
 
+local function createPluginScript(
+	parent: Instance,
+	name: string,
+	source: string
+): (BaseScript | ModuleScript)?
+	local scriptName = getScriptName(name)
+	if not scriptName then
+		return nil
+	end
+
+	local scriptType = "ModuleScript"
+	if name:match("%.server%.lua$") then
+		scriptType = "Script"
+	elseif name:match("%.client%.lua$") then
+		scriptType = "LocalScript"
+	end
+
+	local scriptObject: BaseScript | ModuleScript = Instance.new(scriptType)
+	scriptObject.Name = scriptName
+	scriptObject.Source = source or ""
+	scriptObject.Parent = parent
+
+	return scriptObject
+end
+
 local function tryGetUrl(url: string): (boolean, string)
 	local candidates = { url }
 
@@ -129,17 +153,60 @@ local function tryGetUrl(url: string): (boolean, string)
 	return false, "fetch failed"
 end
 
-local function tryGetGitHubArchive(): (boolean, string)
-	for _, candidate in ipairs(GitHubArchiveUrls) do
-		local success, result = pcall(function()
-			return HttpService:GetAsync(candidate, false)
-		end)
-		if success and tostring(result or "") ~= "" then
-			return true, tostring(result)
+-- zzlib.files() assumes the End Of Central Directory record sits in the
+-- last 22 bytes of the buffer (i.e. zero-length comment). GitHub's
+-- codeload archives always append the commit SHA as a ~40-byte EOCD
+-- comment, which breaks that assumption and makes zzlib throw
+-- ".ZIP file comments not supported". Scan backward for the real EOCD
+-- signature and trim the comment off so zzlib sees what it expects.
+local function stripZipComment(buf: string): string
+	local sig = "PK\5\6"
+	local maxCommentLen = 65535 -- comment length field is 16 bits
+	local searchFrom = math.max(1, #buf - 22 - maxCommentLen)
+
+	for i = #buf - 21, searchFrom, -1 do
+		if buf:sub(i, i + 3) == sig then
+			local commentLen = string.byte(buf, i + 20) + string.byte(buf, i + 21) * 256
+			if i + 21 + commentLen == #buf then
+				return buf:sub(1, i + 21)
+			end
 		end
 	end
 
-	return false, "archive fetch failed"
+	return buf
+end
+
+local function tryGetGitHubArchive(): (boolean, string)
+	local lastErr = "archive fetch failed"
+
+	for _, candidate in ipairs(GitHubArchiveUrls) do
+		local ok, response = pcall(function()
+			return HttpService:RequestAsync({
+				Url = candidate,
+				Method = "GET",
+			})
+		end)
+
+		if
+			ok
+			and response.Success
+			and response.StatusCode == 200
+			and tostring(response.Body or "") ~= ""
+		then
+			return true, stripZipComment(response.Body)
+		end
+
+		if ok then
+			lastErr = ("archive fetch failed (%d %s)"):format(
+				response.StatusCode,
+				response.StatusMessage or ""
+			)
+		else
+			lastErr = tostring(response)
+		end
+	end
+
+	return false, lastErr
 end
 
 local function createFolder(parent: Instance, name: string): Instance
@@ -154,7 +221,15 @@ local function createFolder(parent: Instance, name: string): Instance
 	return folder
 end
 
-local function extractArchivePath(parent: Instance, archiveContent: string, targetPath: string?): (boolean, string?)
+local function extractArchivePath(
+	parent: Instance,
+	archiveContent: string,
+	targetPath: string?
+): (boolean, string?)
+	if #archiveContent < 22 or archiveContent:sub(1, 2) ~= "PK" then
+		return false, ("not a zip archive (got %d bytes)"):format(#archiveContent)
+	end
+
 	local entries = {}
 	local ok = pcall(function()
 		for _, name in zzlib.files(archiveContent) do
@@ -210,7 +285,7 @@ local function extractArchivePath(parent: Instance, archiveContent: string, targ
 			if tostring(name) == entryName then
 				if packed then
 					local ok2, result = pcall(function()
-						return true, zzlib.unzip(archiveContent, offset, crc)
+						return zzlib.unzip(archiveContent, offset, crc)
 					end)
 					if ok2 then
 						content = result
@@ -260,27 +335,6 @@ local function cloneSourceTree(sourceParent: Instance, targetParent: Instance)
 			clone:SetAttribute(name, value)
 		end
 	end
-end
-
-local function createPluginScript(parent: Instance, name: string, source: string): (BaseScript | ModuleScript)?
-	local scriptName = getScriptName(name)
-	if not scriptName then
-		return nil
-	end
-
-	local scriptType = "ModuleScript"
-	if name:match("%.server%.lua$") then
-		scriptType = "Script"
-	elseif name:match("%.client%.lua$") then
-		scriptType = "LocalScript"
-	end
-
-	local scriptObject: BaseScript | ModuleScript = Instance.new(scriptType)
-	scriptObject.Name = scriptName
-	scriptObject.Source = source or ""
-	scriptObject.Parent = parent
-
-	return scriptObject
 end
 
 local function buildPluginTreeFromGitHub(parent: Instance, path: string): (boolean, any)
@@ -366,7 +420,8 @@ function module.recreateFromGitHub(pluginRoot: Instance, cleanup: (() -> ())?)
 	local sourcePlugin = Instance.new("Folder")
 	sourcePlugin.Name = "__loom_github_source__"
 
-	local ok, err = buildPluginTreeFromGitHub(sourcePlugin, "src/ReplicatedStorage/J4KEWasNotHere_loom")
+	local ok, err =
+		buildPluginTreeFromGitHub(sourcePlugin, "src/ReplicatedStorage/J4KEWasNotHere_loom")
 	if not ok then
 		sourcePlugin:Destroy()
 		return false, err
@@ -389,7 +444,8 @@ end
 function module.install(ver: string?)
 	local ordered = getOrderedVersions(module.Versions)
 	local cleanVer = typeof(ver) == "string" and stripQuotes(ver) or nil
-	local resolvedVer = (cleanVer and module.Versions[cleanVer] ~= nil) and cleanVer or ordered[#ordered]
+	local resolvedVer = (cleanVer and module.Versions[cleanVer] ~= nil) and cleanVer
+		or ordered[#ordered]
 
 	if not resolvedVer then
 		return false, "no versions available"
@@ -422,7 +478,8 @@ end
 function module.rinstall(ver: string?, max: number?)
 	local ordered = getOrderedVersions(module.Versions)
 	local cleanVer = typeof(ver) == "string" and stripQuotes(ver) or nil
-	local resolvedVer = (cleanVer and module.Versions[cleanVer] ~= nil) and cleanVer or ordered[#ordered]
+	local resolvedVer = (cleanVer and module.Versions[cleanVer] ~= nil) and cleanVer
+		or ordered[#ordered]
 
 	local success, result = false, nil
 	local count, maxCount = 0, tonumber(max) or math.huge
@@ -431,7 +488,9 @@ function module.rinstall(ver: string?, max: number?)
 		success, result = module.install(resolvedVer)
 		count += 1
 		if not success then
-			warn(`[{script.Name}]: Failed to install version-{resolvedVer}, retrying... ({result or "?"})`)
+			warn(
+				`[{script.Name}]: Failed to install version-{resolvedVer}, retrying... ({result or "?"})`
+			)
 			task.wait(1)
 		end
 	end

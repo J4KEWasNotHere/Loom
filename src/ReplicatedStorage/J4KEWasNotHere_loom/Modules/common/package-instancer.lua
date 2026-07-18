@@ -292,10 +292,44 @@ local function createLocalDependencyDirectors(source, wallyData, realm)
 	end
 end
 
+-- Checks all three realms' `_Index` folders for a package matching
+-- scope/packageName (optionally pinned to a specific version). Returns
+-- realm, sourceFolder, reference if found, or nil.
+local function find_installed(scope, packageName, version)
+	local base = ("%s_%s"):format(scope, packageName)
+	local key = version and ("%s@%s"):format(base, version) or nil
+
+	for _, realm in ipairs({ "shared", "server", "dev" }) do
+		local p = find_packages(realm)
+		if p then
+			local index = p:FindFirstChild("_Index")
+			if index then
+				for _, child in ipairs(index:GetChildren()) do
+					local matches = (key and child.Name == key)
+						or (not key and getPackageBase(child.Name) == base)
+
+					if matches then
+						local reference = child:FindFirstChild("init", true)
+							or child:FindFirstChild("init.lua", true)
+							or child:FindFirstChildWhichIsA("ModuleScript", true)
+
+						if reference then
+							return realm, child, reference
+						end
+					end
+				end
+			end
+		end
+	end
+
+	return nil
+end
+
 -- Public Module API
 
 PackageModule.inst = new
 PackageModule.createPackages = create_packages
+PackageModule.findInstalled = find_installed
 
 PackageModule.linkAllLocalDependencies = function(realm)
 	local p = find_packages(realm)

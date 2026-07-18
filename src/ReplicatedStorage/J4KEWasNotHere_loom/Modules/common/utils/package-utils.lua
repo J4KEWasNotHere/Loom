@@ -39,6 +39,12 @@ function PackageUtils.cloneQueue(queue)
 			name = entry.name or "",
 			includeDependencies = entry.includeDependencies ~= false,
 			_depsValue = entry._depsValue,
+			-- Carries a pre-resolved install (found already on disk via
+			-- package_instancer.findInstalled) through queue mutations so
+			-- InstallService can link it instead of re-downloading.
+			reference = entry.reference,
+			existingSource = entry.existingSource,
+			realm = entry.realm,
 		})
 	end
 	return copy

@@ -12,6 +12,7 @@ local WallySearch = {}
 
 local CachedSearches = {}
 local CachedDetailSearches = {}
+local CachedIndexedSearches = {}
 
 local CachedRawZips = {}
 local rawZipsOrder = {}
@@ -209,20 +210,38 @@ end
 -- version strings themselves without re-implementing semver parsing.
 WallySearch.compareVersions = compareVersions
 
--- Picks the newest version entry out of a raw `/package-search` result
--- item (an object shaped like `{ versions = { { package = {...} }, ... } }`).
--- Returns nil if the entry has no parseable versions.
+-- Picks the newest version entry out of a raw `/package-search` result item
 function WallySearch.pickLatestVersion(searchResultEntry): { [string]: any }?
+	if not searchResultEntry or not searchResultEntry.name or not searchResultEntry.scope then
+		return nil
+	end
+
+	local versions = searchResultEntry.versions or {}
 	local best = nil
-	for _, versionData in ipairs((searchResultEntry and searchResultEntry.versions) or {}) do
-		local data = versionData.package
-		if data and data.version then
-			if not best or compareVersions(data.version, best.version) > 0 then
-				best = data
-			end
+	for _, v in ipairs(versions) do
+		if not best or compareVersions(v, best) > 0 then
+			best = v
 		end
 	end
-	return best
+	if not best then
+		return nil
+	end
+
+	return {
+		name = searchResultEntry.scope .. "/" .. searchResultEntry.name,
+		scope = searchResultEntry.scope,
+		version = best,
+		description = searchResultEntry.description,
+	}
+end
+
+-- Returns every version listed on a search result entry, newest first.
+function WallySearch.sortedVersions(searchResultEntry): { string }
+	local versions = table.clone((searchResultEntry and searchResultEntry.versions) or {})
+	table.sort(versions, function(a, b)
+		return compareVersions(a, b) > 0
+	end)
+	return versions
 end
 
 -- Module API
@@ -237,10 +256,11 @@ function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: an
 	end
 	local id = scope .. "/" .. package
 	if CachedDetailSearches[id] then
-		return true, CachedDetailSearches[id], indexed
+		return true, CachedDetailSearches[id], CachedIndexedSearches[id] or {}
 	end
 
 	local versions = nil
+	local indexed = {}
 
 	local success, response = requestWithVersionProbe(PackageDetailsUrl:format(scope, package))
 	local ok = success and response.Success == true and response.StatusCode == 200
@@ -261,7 +281,8 @@ function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: an
 			}
 			table.insert(indexed, ver)
 		end
-		CachedDetailSearches[scope .. "/" .. package] = versions
+		CachedDetailSearches[id] = versions
+		CachedIndexedSearches[id] = indexed
 		return true, versions, indexed
 	else
 		return false, if success then response.Body else response, indexed
@@ -295,33 +316,31 @@ function WallySearch.getPackageZipRaw(scope, package, version): (boolean, string
 end
 
 -- Revised from @BiassedXD
--- https://github.com/J4KEWasNotHere/Loom/pull/3/changes#diff-a599cb2000d3f553490b029e25fab4e2f391862bbc0d86afa60cd93587045472
+-- https://github.com/J4KEWasNotHere/Loom/pull/3/changes
 
 function WallySearch.searchPackages(query: string): (boolean, { [string]: any })
 	if type(query) ~= "string" or query == "" then
 		return false, {}
 	end
 
-	local url = PackageSearchUrl:format(query:lower())
-	local success, response = pcall(function()
-		return HttpService:GetAsync(url)
+	query = query:lower()
+	if CachedSearches[query] then
+		return true, CachedSearches[query]
+	end
+
+	local url = PackageSearchUrl:format(HttpService:UrlEncode(query))
+
+	local ok, result = pcall(function()
+		local response = HttpService:GetAsync(url)
+		return HttpService:JSONDecode(response)
 	end)
-	if not success then
+
+	if not ok or typeof(result) ~= "table" then
 		return false, {}
 	end
-	if success then
-		local data = HttpService:JSONDecode(response)
-		if #data == 0 then
-			return false, {}
-		end
 
-		-- add to cache
-		CachedSearches[query] = data
-
-		return true, data
-	else
-		return false, {}
-	end
+	CachedSearches[query] = result
+	return true, result
 end
 
 return WallySearch

@@ -1,6 +1,6 @@
 local module = {
-	Version = "0.2.2",
-	VersionTip = " (stable)",
+	Version = ".git",
+	VersionTip = " (dev)",
 
 	MaxCachedZips = 2 ^ 3,
 
@@ -71,7 +71,9 @@ function module.warnForLicense(license, name: string)
 	license = (tostring(license or ""):lower()):gsub("%s+", "")
 	if module.TriggerLicenses[license] then
 		local link = module.Licenses[license].link
-		warn(`[License]: {name or "Resource?"} uses a license that may be very restrictive, ( {link} )`)
+		warn(
+			`[License]: {name or "Resource?"} uses a license that may be very restrictive, ( {link} )`
+		)
 	elseif not module.Licenses[license] then
 		warn(`[License-Unknown] Unknown license: {license}`)
 	end

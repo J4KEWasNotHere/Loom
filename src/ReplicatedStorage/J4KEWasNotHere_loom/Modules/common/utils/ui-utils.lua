@@ -49,5 +49,31 @@ return function(New, Children, Label)
 		})
 	end
 
+	function UiUtils.makeScrollFrame(contents, size: UDim2?)
+		return New("ScrollingFrame")({
+			Size = size or UDim2.fromScale(1, 1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			ScrollBarThickness = 6,
+			ScrollBarImageColor3 = Color3.fromRGB(180, 180, 180),
+			ScrollingDirection = Enum.ScrollingDirection.Y,
+			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			CanvasSize = UDim2.fromScale(0, 0), -- required alongside AutomaticCanvasSize, or it's ignored
+			[Children] = {
+				New("UIListLayout")({
+					SortOrder = Enum.SortOrder.LayoutOrder,
+					Padding = UDim.new(0, 8),
+				}),
+				New("UIPadding")({
+					PaddingLeft = UDim.new(0, 4),
+					PaddingRight = UDim.new(0, 10),
+					PaddingTop = UDim.new(0, 4),
+					PaddingBottom = UDim.new(0, 4),
+				}),
+				table.unpack(contents),
+			},
+		})
+	end
+
 	return UiUtils
 end

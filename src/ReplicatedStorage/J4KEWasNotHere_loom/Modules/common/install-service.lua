@@ -31,7 +31,9 @@ local function normalizeDependencyEntries(dependencies, includeDev, debugFn)
 				local ok, resolved = wallySearch.resolveVersion(scope, pkg, requirement)
 				local version = ok and resolved or requirement
 				if not ok and debugFn then
-					debugFn(`[{os.date("%H:%M:%S")}-install]: Could not resolve "{requirement}" for {scope}/{pkg}`)
+					debugFn(
+						`[{os.date("%H:%M:%S")}-install]: Could not resolve "{requirement}" for {scope}/{pkg}`
+					)
 				end
 
 				local key = ("%s/%s@%s"):format(scope, pkg, version)
@@ -71,9 +73,13 @@ function InstallService:debug(message)
 end
 
 function InstallService:installDependencies(dependencyData, options, onProgress)
-	local workQueue = normalizeDependencyEntries(dependencyData, self.settings:get("includeDev", false), function(msg)
-		self:debug(msg)
-	end)
+	local workQueue = normalizeDependencyEntries(
+		dependencyData,
+		self.settings:get("includeDev", false),
+		function(msg)
+			self:debug(msg)
+		end
+	)
 
 	local seen = {}
 	for _, entry in ipairs(workQueue) do
@@ -81,7 +87,7 @@ function InstallService:installDependencies(dependencyData, options, onProgress)
 	end
 	local failed = {}
 	local installedCount = 0
-	
+
 	local includeDirs = self.settings:get("includeDirectors", true)
 
 	local idx = 0
@@ -109,7 +115,7 @@ function InstallService:installDependencies(dependencyData, options, onProgress)
 		end
 		task.wait()
 	end
-	
+
 	if includeDirs then
 		packageInstancer.linkAllLocalDependencies("shared")
 		packageInstancer.linkAllLocalDependencies("server")
@@ -124,13 +130,16 @@ function InstallService:syncFromRaw(raw, pkgLabel, options, dependencyRealm)
 	local sourceFolder, initModule, wallyData, dependencies = zipBuild.createFromRaw(raw, safeName)
 	if not wallyData then
 		warn(("[Loom]: wally.toml not found or failed to parse for %s"):format(pkgLabel))
-		self:debug(`[{os.date("%H:%M:%S")}-install]: wally.toml not found or failed to parse for {pkgLabel}`)
+		self:debug(
+			`[{os.date("%H:%M:%S")}-install]: wally.toml not found or failed to parse for {pkgLabel}`
+		)
 		return false, "wally.toml not found or parsing error?"
 	end
 
 	options = typeof(options) == "table" and options or {}
 
-	local realm = (dependencyRealm == "dev") and "dev" or ((wallyData.package and wallyData.package.realm) or "shared")
+	local realm = (dependencyRealm == "dev") and "dev"
+		or ((wallyData.package and wallyData.package.realm) or "shared")
 	local includeDirs = self.settings:get("includeDirectors", true)
 
 	packageInstancer.syncPackage(realm, {
@@ -153,6 +162,35 @@ function InstallService:installPackage(entry, options)
 		return false, "Missing package information"
 	end
 
+	if entry.reference and entry.existingSource then
+		local realm = entry.realm or "shared"
+		local includeDirs = self.settings:get("includeDirectors", true)
+
+		local wallyModule = entry.existingSource:FindFirstChild("wally.toml")
+		local wallyData = nil
+		if wallyModule and wallyModule:IsA("ModuleScript") then
+			local parseOk, parsed = pcall(require, wallyModule)
+			if parseOk and typeof(parsed) == "table" then
+				wallyData = parsed
+			end
+		end
+
+		packageInstancer.syncPackage(realm, {
+			source = entry.existingSource,
+			reference = entry.reference,
+			name = entry.label or (entry.scope .. "/" .. entry.package),
+			unpackSrc = options.unpackSrc == true,
+			includeDirectors = includeDirs,
+			wally = wallyData,
+		})
+
+		self:debug(
+			`[{os.date("%H:%M:%S")}-install]: Linked already-installed package ({entry.label or entry.package})`
+		)
+
+		return true, {}
+	end
+
 	local ok, raw = wallySearch.getPackageZipRaw(entry.scope, entry.package, entry.version)
 	if not ok or not raw then
 		if typeof(raw) == "table" and raw.Body then
@@ -163,7 +201,9 @@ function InstallService:installPackage(entry, options)
 			if success and parsed.Message then
 				body = parsed.Message
 			end
-			warn(`[Loom-http]: {body}{raw.StatusCode == 426 and " || Wally Version is outdated?" or ""}`)
+			warn(
+				`[Loom-http]: {body}{raw.StatusCode == 426 and " || Wally Version is outdated?" or ""}`
+			)
 		end
 		self:debug(
 			`[{os.date("%H:%M:%S")}-install]: Failed to download package ({entry.label or entry.package}) ; {raw}`
@@ -171,8 +211,12 @@ function InstallService:installPackage(entry, options)
 		return false, "Failed to download package"
 	end
 
-	local installed, dependencies =
-		self:syncFromRaw(raw, entry.label or (entry.scope .. "/" .. entry.package), options, entry.realm)
+	local installed, dependencies = self:syncFromRaw(
+		raw,
+		entry.label or (entry.scope .. "/" .. entry.package),
+		options,
+		entry.realm
+	)
 	if not installed then
 		self:debug(
 			`[{os.date("%H:%M:%S")}-install]: Failed to import package ({entry.label or entry.package}) ; {dependencies}`
@@ -183,9 +227,15 @@ function InstallService:installPackage(entry, options)
 	local nextEntries = {}
 	if options.includeDependencies and dependencies then
 		for _, dep in
-			ipairs(normalizeDependencyEntries(dependencies, self.settings:get("includeDev", false), function(msg)
-				self:debug(msg)
-			end))
+			ipairs(
+				normalizeDependencyEntries(
+					dependencies,
+					self.settings:get("includeDev", false),
+					function(msg)
+						self:debug(msg)
+					end
+				)
+			)
 		do
 			table.insert(nextEntries, dep)
 		end
@@ -207,7 +257,7 @@ function InstallService:installQueue(queue, onProgress)
 		if scope and package and version and not seen[key] then
 			seen[key] = true
 
-			-- Compute the custom display label. If an override name is provided, 
+			-- Compute the custom display label. If an override name is provided,
 			-- make sure it maintains the "author/override" format.
 			local customLabel = entry.raw or entry.name or (scope .. "/" .. package)
 			if entry.name and entry.name ~= "" then
@@ -224,6 +274,9 @@ function InstallService:installQueue(queue, onProgress)
 				version = version,
 				label = customLabel,
 				includeDependencies = entry.includeDependencies ~= false,
+				reference = entry.reference,
+				existingSource = entry.existingSource,
+				realm = entry.realm,
 			})
 		end
 	end
