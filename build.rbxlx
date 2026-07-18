@@ -36,6 +36,7 @@
 			<token name="PhysicsSteppingMethod">0</token>
 			<token name="PlayerCharacterDestroyBehavior">0</token>
 			<token name="PlayerScriptsUseInputActionSystem">0</token>
+			<token name="PredictiveStreamingMode">0</token>
 			<token name="PrimalPhysicsSolver">0</token>
 			<token name="RejectCharacterDeletions">0</token>
 			<token name="RenderingCacheOptimizations">0</token>
@@ -1051,20 +1052,6 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000392</UniqueId>
-		</Properties>
-	</Item>
-	<Item class="ServiceVisibilityService" referent="RBX6E151A04947A4559A3052C33C0A9CE97">
-		<Properties>
-			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
-			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
-			<BinaryString name="AttributesSerialize"></BinaryString>
-			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-			<bool name="DefinesCapabilities">false</bool>
-			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-			<string name="Name">ServiceVisibilityService</string>
-			<int64 name="SourceAssetId">-1</int64>
-			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
 		</Properties>
 	</Item>
 	<Item class="LuaWebService" referent="RBXC1F226D9BF784DAB957B4FD6A2005AF5">
@@ -7007,51 +6994,6 @@ local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local function splitName(name)
-	local scopePackage, version = name:match("^(.-)@(.+)$")
-	if not scopePackage then
-		scopePackage = name
-	end
-	local scope, package = scopePackage:match("^([^/]+)/([^/]+)$")
-	if not scope then
-		return nil, scopePackage, version
-	end
-	return scope, package, version
-end
-
-local function cloneQueue(queue)
-	local copy = {}
-	for _, entry in ipairs(queue or {}) do
-		table.insert(copy, {
-			raw = entry.raw or "",
-			scope = entry.scope,
-			package = entry.package,
-			version = entry.version,
-			name = entry.name or "",
-			includeDependencies = entry.includeDependencies ~= false,
-			_depsValue = entry._depsValue,
-		})
-	end
-	return copy
-end
-
-local function new(className, properties)
-	local ok, obj = pcall(Instance.new, className)
-	if not ok then
-		warn(`[instancer]: {obj}`)
-		return nil
-	end
-	for property, value in pairs(properties) do
-		local setOk, err = pcall(function()
-			obj[property] = value
-		end)
-		if not setOk then
-			warn(`[instancer]: {err}`)
-		end
-	end
-	return obj
-end
-
 local _cs, cachedPlugin = pcall(function()
 	return script.Parent:FindFirstAncestor("Modules").Parent:Clone()
 end)
@@ -7084,61 +7026,27 @@ return {
 		local Computed = Fusion.Computed
 		local unwrap = require(StudioComponents.Util.unwrap)
 
-		local function makeCard(contents, y: NumberRange?)
-			return New("Frame")({
-				Size = UDim2.fromScale(1, 0),
-				AutomaticSize = Enum.AutomaticSize.Y,
-				BackgroundTransparency = 0.7,
-				BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-				BorderSizePixel = 0,
-				[Children] = {
-					New("UICorner")({ CornerRadius = UDim.new(0, 8) }),
-					New("UIPadding")({
-						PaddingLeft = UDim.new(0, 10),
-						PaddingRight = UDim.new(0, 10),
-						PaddingTop = UDim.new(0, 10),
-						PaddingBottom = UDim.new(0, 10),
-					}),
-					New("UIListLayout")({
-						SortOrder = Enum.SortOrder.LayoutOrder,
-						Padding = UDim.new(0, 8),
-					}),
-					New("UISizeConstraint")({
-						MaxSize = Vector2.new(9999, y and y.Max or 9999),
-						MinSize = Vector2.new(0, y and y.Min or 0),
-					}),
-					table.unpack(contents),
-				},
-			})
-		end
-
-		local function makeSectionHeader(text)
-			return Label({
-				Text = text,
-				TextColor3 = Color3.fromRGB(220, 220, 220),
-				TextSize = 14,
-			})
-		end
-
-		local function makeEntryLabel(entry)
-			local label = entry.raw or ""
-			if entry.version and entry.version ~= "" then
-				label = label .. " @" .. entry.version
-			end
-			return label
-		end
-
 		local Modules = pluginRoot.Modules
+		local Utils = Modules.common.utils
+		local Pages = Modules.common.pages
+
 		local zip_build = require(Modules.files[".zip-build"])
 		local package_instancer = require(Modules.common["package-instancer"])
 		local wally_search = require(Modules.external["wally-search"])
 		local logger = require(Modules.common["logger"])
 		local version_control = require(Modules.external["version-control"])
-
 		local Constants = require(Modules.external.constants)
 
 		local SettingsService = require(Modules.common["settings-service"])
 		local InstallService = require(Modules.common["install-service"])
+
+		local PackageUtils = require(Utils["package-utils"])
+		local UiUtils = require(Utils["ui-utils"])(New, Children, Label)
+
+		local StartPage = require(Pages.StartPage)
+		local QueuePage = require(Pages.QueuePage)
+		local SettingsPage = require(Pages.SettingsPage)
+		local SearchPage = require(Pages.SearchPage)
 
 		local settingsService = SettingsService.new(pluginInstance)
 		local installService = InstallService.new(settingsService)
@@ -7147,8 +7055,6 @@ return {
 		if RunService:IsRunMode() or RunService:IsRunning() then
 			return
 		end
-
-		local StoredText = Value("")
 
 		zip_build.bindDebugCallback(function(msg)
 			logger:log(msg)
@@ -7194,13 +7100,13 @@ return {
 			})
 		end
 
-		--task.delay(0.2, function()
-		--	widgetsEnabled:set(true)
-		--end)
-
+		-- Shared reactive state. Anything a page needs to read or mutate
+		-- lives here and is threaded through via `ctx` below, since pages
+		-- are separate modules now and can no longer just close over
+		-- upvalues the way they did as nested functions.
 		local CurrentPage = Value("Start")
 		local StatusText = Value("Ready")
-		local mainWidget = nil
+		local widget = { instance = nil :: Instance? }
 		local IsImporting = Value(false)
 		local IsInstalling = Value(false)
 		local QueueEntries = Value({})
@@ -7215,6 +7121,18 @@ return {
 		local DraftIsDropdownOpen = Value(false)
 		local DraftIsSearching = Value(false)
 		local IsVersionInstalling = Value(false)
+
+		-- Search page state
+		local SearchQueryText = Value("")
+		local SearchResults = Value({})
+		local IsSearchingPackages = Value(false)
+		local SearchStatusText = Value("")
+
+		local VersionControlText = Value("Versions (Loading..)")
+		local VersionControlEnabled = Value(false)
+		local VersionControlVersions = Value({})
+		local SelectedVCVersion = Value(nil)
+		local VersionControlLoaded = Value(false)
 
 		logger:log(`[{os.date("%H:%M:%S")}]: Started Loom!`)
 
@@ -7231,8 +7149,9 @@ return {
 		end
 
 		local function addQueuedPackage(entry)
-			local queue = cloneQueue(QueueEntries:get())
-			entry._depsValue = Value(entry.includeDependencies ~= nil and entry.includeDependencies == true)
+			local queue = PackageUtils.cloneQueue(QueueEntries:get())
+			entry._depsValue =
+				Value(entry.includeDependencies ~= nil and entry.includeDependencies == true)
 			table.insert(queue, entry)
 			QueueEntries:set(queue)
 			StatusText:set(("Queued %s"):format(entry.raw or entry.name or "package"))
@@ -7249,488 +7168,98 @@ return {
 			DraftIsSearching:set(false)
 		end
 
-		local function CreateLogger(prop: {})
-			local properties = {
-				Text = logger.output,
-				MaxHeight = 350,
-				MinHeight = 350,
-			}
-
-			for i, v in (prop) do
-				properties[i] = v
-			end
-
-			return makeCard({
-				Label({ Text = "Logger", TextSize = 16 }),
-				Paragraph(properties),
-			})
-		end
-
-		local function _CreateStoredViewer(prop: {})
-			local properties = {
-				Text = StoredText,
-				MaxHeight = 350,
-				MinHeight = 30,
-			}
-
-			for i, v in (prop) do
-				properties[i] = v
-			end
-
-			return makeCard({
-				Label({ Text = "Stored", TextSize = 16 }),
-				Paragraph(properties),
-			})
-		end
-
-		local function StartPage()
-			return {
-				makeCard({
-					Label({ Text = "Loom Package Manager", TextSize = 18 }),
-					Label({
-						Text = "Install and manage Wally packages directly from Studio.",
-						TextSize = 12,
-						TextColor3 = Color3.fromRGB(180, 180, 180),
-					}),
-					LabelImage({
-						Size = UDim2.new(1, 0, 0, 90),
-						Image = "rbxassetid://110162513850955",
-						BackgroundTransparency = 1,
-					}),
-					MainButton({
-						Text = "Initialize package folders",
-						Size = UDim2.new(1, 0, 0, 34),
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						Activated = function()
-							if IsVersionInstalling:get() then
-								return
-							end
-							ChangeHistoryService:SetWaypoint("LoomInit0")
-							package_instancer.createPackages("Packages", true)
-							package_instancer.createPackages("Packages", false)
-							package_instancer.createPackages("DevPackages", "dev")
-							ChangeHistoryService:SetWaypoint("LoomInit1")
-
-							StatusText:set("Package folders initialized.")
-						end,
-					}),
-					MainButton({
-						Text = "Import packages (.zip)",
-						Size = UDim2.new(1, 0, 0, 34),
-						Enabled = Computed(function()
-							return not unwrap(IsImporting)
-								and not unwrap(IsInstalling)
-								and not unwrap(IsVersionInstalling)
-						end),
-						Activated = function()
-							if IsImporting:get() then
-								return
-							end
-							IsImporting:set(true)
-							IsInstalling:set(true)
-
-							StatusText:set("Waiting for package archives…")
-							local ok, files = pcall(function()
-								return StudioService:PromptImportFilesAsync({ "zip" })
-							end)
-							if not ok or not files or #files == 0 then
-								StatusText:set("No archives selected.")
-								IsImporting:set(false)
-								IsInstalling:set(false)
-								return
-							end
-
-							ChangeHistoryService:SetWaypoint("LoomImport0")
-
-							local importedCount = 0
-							local failedNames = {}
-
-							for _, file in ipairs(files) do
-								StatusText:set(("Importing %s…"):format(file.Name))
-								local sourceFolder, initModule, wallyData, dependencies = zip_build.createFromFile(file)
-								if not wallyData then
-									table.insert(failedNames, file.Name)
-									logger:log(
-										`[{os.date("%H:%M:%S")}]: wally.toml, not found in {file.Name}, is this a wally package?`
-									)
-									if sourceFolder then
-										sourceFolder:Destroy()
-									end
-									continue
-								end
-
-								local realm = (wallyData.package and wallyData.package.realm) or "shared"
-
-								-- Remove stale instances with the same name so we don't accumulate duplicates
-								local origin = (realm == "server") and ServerScriptService or ReplicatedStorage
-								local folderName = (realm == "dev") and "DevPackages" or "Packages"
-								local packagesRoot = origin:FindFirstChild(folderName)
-
-								if packagesRoot and sourceFolder then
-									local staleAlias = packagesRoot:FindFirstChild(sourceFolder.Name)
-									if staleAlias then
-										staleAlias:Destroy()
-									end
-									local indexFolder = packagesRoot:FindFirstChild("_Index")
-									if indexFolder then
-										local staleIndex = indexFolder:FindFirstChild(sourceFolder.Name)
-										if staleIndex then
-											staleIndex:Destroy()
-										end
-									end
-								end
-
-								local importedModule = package_instancer.syncPackage(realm, {
-									source = sourceFolder,
-									reference = initModule,
-									unpackSrc = settingsService:get("unpackSrc", true),
-									wally = wallyData,
-								})
-
-								if not importedModule then
-									table.insert(failedNames, file.Name)
-									if sourceFolder then
-										sourceFolder:Destroy()
-									end
-									continue
-								end
-
-								local depCount, depFailed = 0, {}
-								if dependencies and #dependencies > 0 then
-									StatusText:set("Installing Dependencies..")
-
-									depCount, depFailed = installService:installDependencies(
-										dependencies,
-										{ unpackSrc = settingsService:get("unpackSrc", true) },
-										function(step, total, label)
-											StatusText:set(("Installing %d/%d: %s"):format(step, total, label))
-										end
-									)
-
-									importedCount += depCount
-
-									for _, name in ipairs(depFailed) do
-										table.insert(failedNames, name)
-									end
-								end
-
-								importedCount += 1
-							end
-
-							if #failedNames == 0 then
-								StatusText:set(("Imported %d archive(s) successfully."):format(importedCount))
-							elseif importedCount == 0 then
-								StatusText:set("Import failed for all selected archives.")
-							else
-								StatusText:set(
-									("Imported %d archive(s), %d failed (%s)."):format(
-										importedCount,
-										#failedNames,
-										table.concat(failedNames, ", ")
-									)
-								)
-							end
-
-							IsImporting:set(false)
-							IsInstalling:set(false)
-							ChangeHistoryService:SetWaypoint("LoomImport1")
-						end,
-					}),
-					Label({ Text = StatusText, TextColor3 = Color3.fromRGB(180, 240, 180) }),
-				}),
-
-				Computed(function()
-					if not unwrap(SettingsState).devMode then
-						return nil
-					end
-					return CreateLogger({})
-				end, function(instance)
-					if instance then
-						instance:Destroy()
-					end
-				end),
-			}
-		end
-
-		local function QueuePage()
-			return {
-				makeCard({
-					makeSectionHeader("Package builder"),
-					TextInput({
-						Text = DraftSearchText,
-						PlaceholderText = "Paste package or author/package",
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						[OnChange("Text")] = function(text)
-							local pastedName = text
-							local key, scopePkg, specifier = text:match('^%s*([%w_%-]+)%s*=%s*"([^@"]+)@([^"]+)"')
-							if scopePkg then
-								pastedName = scopePkg
-							end
-							if key then
-								local scope = scopePkg and scopePkg:match("^([^/]+)/")
-								if scope then
-									DraftOverrideName:set(scope .. "/" .. key)
-								else
-									DraftOverrideName:set(key)
-								end
-							end
-							DraftSearchText:set(pastedName)
-							DraftSelectedVersion:set(nil)
-							DraftPendingSpecifier:set(specifier)
-							DraftPackageResults:set({})
-							DraftVersionCollapsed:set(true)
-							DraftIsDropdownOpen:set(false)
-						end,
-					}),
-					Seperator({}),
-					MainButton({
-						Text = Computed(function()
-							return unwrap(DraftIsSearching) and "Searching…" or "Get versions"
-						end),
-						Size = UDim2.new(1, 0, 0, 34),
-						Enabled = Computed(function()
-							return not unwrap(DraftIsSearching) and not unwrap(IsVersionInstalling)
-						end),
-						Activated = function()
-							if IsVersionInstalling:get() then
-								return
-							end
-							DraftIsSearching:set(true)
-							local scope, pkg = splitName(unwrap(DraftSearchText))
-							local ok, versions = wally_search.getPackageDetails(scope, pkg)
-							local normalized = {}
-							if ok then
-								for _, versionData in pairs(versions or {}) do
-									table.insert(normalized, versionData.version)
-								end
-								table.sort(normalized, function(a, b)
-									return a > b
-								end)
-							end
-							DraftPackageResults:set(normalized)
-
-							local specifier = unwrap(DraftPendingSpecifier)
-							local resolvedOk, resolved
-							if specifier then
-								resolvedOk, resolved = wally_search.resolveVersion(scope, pkg, specifier)
-							end
-
-							if resolvedOk then
-								DraftSelectedVersion:set(resolved)
-								DraftVersionCollapsed:set(true) -- collapse, we already picked one
-								DraftIsDropdownOpen:set(#normalized > 0) -- still browsable to override
-								StatusText:set(("Resolved %s to %s"):format(specifier, resolved))
-							else
-								DraftVersionCollapsed:set(false)
-								DraftIsDropdownOpen:set(ok and #normalized > 0)
-								StatusText:set(
-									ok and "Versions loaded for the current package."
-										or "Unable to fetch versions for the current package."
-								)
-							end
-
-							DraftIsSearching:set(false)
-						end,
-					}),
-					VerticalCollapsibleSection({
-						Text = Computed(function()
-							local version = unwrap(DraftSelectedVersion)
-							return version and ("Selected: " .. version) or "Select a version"
-						end),
-						Collapsed = DraftVersionCollapsed,
-						Enabled = DraftIsDropdownOpen,
-						[Children] = Computed(function()
-							local items = {}
-							for _, version in ipairs(unwrap(DraftPackageResults) or {}) do
-								table.insert(
-									items,
-									MainButton({
-										Text = version,
-										Size = UDim2.new(1, 0, 0, 28),
-										Activated = function()
-											DraftSelectedVersion:set(version)
-											DraftVersionCollapsed:set(true)
-										end,
-									})
-								)
-							end
-							return items
-						end, function(instances)
-							for _, inst in ipairs(instances or {}) do
-								if inst and inst.Destroy then
-									inst:Destroy()
-								end
-							end
-						end),
-					}),
-					TextInput({
-						Text = DraftOverrideName,
-						PlaceholderText = "Optional override name",
-						[OnChange("Text")] = function(text)
-							DraftOverrideName:set(text)
-						end,
-					}),
-					Checkbox({
-						Text = "Include dependencies",
-						Value = DraftIncludeDependencies,
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						OnChange = function(value)
-							DraftIncludeDependencies:set(value)
-						end,
-					}),
-					MainButton({
-						Text = "Add to queue",
-						Size = UDim2.new(1, 0, 0, 34),
-						Enabled = Computed(function()
-							return unwrap(DraftSelectedVersion) ~= nil and unwrap(DraftSearchText) ~= ""
-						end),
-						Activated = function()
-							if IsVersionInstalling:get() then
-								return
-							end
-							local scope, pkg = splitName(DraftSearchText:get())
-
-							addQueuedPackage({
-								raw = DraftSearchText:get(),
-								scope = scope,
-								package = pkg,
-								version = DraftSelectedVersion:get(),
-								name = DraftOverrideName:get(),
-								includeDependencies = DraftIncludeDependencies:get(),
-							})
-
-							setPage("Queue")
-							resetDraft()
-						end,
-					}),
-				}),
-				Seperator({}),
-				makeCard({
-					makeSectionHeader("Queued installs"),
-					Computed(function()
-						local queue = unwrap(QueueEntries)
-						if #queue == 0 then
-							return {
-								Label({
-									Text = "Your queue is empty. Add a package to begin.",
-									TextColor3 = Color3.fromRGB(180, 180, 180),
-								}),
-							}
-						end
-
-						local items = {}
-						for index, entry in ipairs(queue) do
-							table.insert(
-								items,
-								VerticalCollapsibleSection({
-									Text = makeEntryLabel(entry),
-									Collapsed = Value(true),
-									[Children] = {
-										makeCard({
-											TextInput({
-												Text = entry.name or "",
-												PlaceholderText = "Override name",
-												[OnChange("Text")] = function(text)
-													entry.name = text
-												end,
-											}),
-											Checkbox({
-												Text = "Include dependencies",
-												Value = entry._depsValue,
-												OnChange = function(value)
-													entry.includeDependencies = value
-													entry._depsValue:set(value)
-												end,
-											}),
-											MainButton({
-												Text = "Remove",
-												Size = UDim2.new(1, 0, 0, 30),
-												Activated = function()
-													if IsVersionInstalling:get() then
-														return
-													end
-													local updated = cloneQueue(queue)
-													table.remove(updated, index)
-													QueueEntries:set(updated)
-												end,
-											}),
-										}),
-									},
-								})
-							)
-						end
-						return items
-					end, function(instances)
-						for _, inst in ipairs(instances or {}) do
-							if inst and inst.Destroy then
-								inst:Destroy()
-							end
-						end
-					end),
-					MainButton({
-						Text = Computed(function()
-							return unwrap(IsInstalling) and "Installing…" or "Install all"
-						end),
-						Size = UDim2.new(1, 0, 0, 34),
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-								and not unwrap(IsInstalling)
-								and not unwrap(IsImporting)
-								and #unwrap(QueueEntries) > 0
-						end),
-						Activated = function()
-							IsInstalling:set(true)
-							task.spawn(function()
-								ChangeHistoryService:SetWaypoint("LoomInstall0")
-								local queue = cloneQueue(QueueEntries:get())
-								local installedCount, failed = installService:installQueue(
-									queue,
-									function(step, total, label)
-										StatusText:set(("Installing %d/%d: %s"):format(step, total, label))
-									end
-								)
-
-								if #failed == 0 then
-									StatusText:set(("Installed %d package(s) successfully."):format(installedCount))
-									QueueEntries:set({})
-								else
-									StatusText:set(("Finished with %d failed install(s)."):format(#failed))
-								end
-								IsInstalling:set(false)
-
-								ChangeHistoryService:SetWaypoint("LoomInstall1")
-							end)
-						end,
-					}),
-					Label({ Text = StatusText, TextColor3 = Color3.fromRGB(180, 240, 180) }),
-					New("Frame")({
-						Size = UDim2.new(1, 0, 0, 34),
-
-						BackgroundTransparency = 1,
-						[Children] = {
-							Loading({ Enabled = IsInstalling }),
-							New("UIListLayout")({
-								HorizontalAlignment = Enum.HorizontalAlignment.Center,
-								VerticalAlignment = Enum.VerticalAlignment.Center,
-							}),
-						},
-					}),
-				}),
-			}
-		end
-
-		local VersionControlText = Value("Versions (Loading..)")
-		local VersionControlEnabled = Value(false)
-
-		local VersionControlVersions = Value({})
-		local SelectedVCVersion = Value(nil)
-		local VersionControlLoaded = Value(false)
+		-- Everything a page module needs, gathered in one place. `widget`
+		-- is a mutable box (rather than the Instance directly) because
+		-- `mainWidget` doesn't exist yet when `ctx` is built below.
+		local ctx = {
+			fusion = {
+				New = New,
+				Value = Value,
+				Children = Children,
+				OnChange = OnChange,
+				OnEvent = OnEvent,
+				Observer = Observer,
+				Computed = Computed,
+				unwrap = unwrap,
+			},
+			components = {
+				Checkbox = Checkbox,
+				MainButton = MainButton,
+				ScrollFrame = ScrollFrame,
+				Label = Label,
+				LabelImage = LabelImage,
+				Paragraph = Paragraph,
+				TextInput = TextInput,
+				VerticalExpandingList = VerticalExpandingList,
+				VerticalCollapsibleSection = VerticalCollapsibleSection,
+				Seperator = Seperator,
+				Loading = Loading,
+			},
+			ui = {
+				makeCard = UiUtils.makeCard,
+				makeSectionHeader = UiUtils.makeSectionHeader,
+			},
+			modules = {
+				zip_build = zip_build,
+				package_instancer = package_instancer,
+				wally_search = wally_search,
+				logger = logger,
+				version_control = version_control,
+				Constants = Constants,
+			},
+			services = {
+				ChangeHistoryService = ChangeHistoryService,
+				StudioService = StudioService,
+				ServerScriptService = ServerScriptService,
+				ReplicatedStorage = ReplicatedStorage,
+			},
+			pluginServices = {
+				settingsService = settingsService,
+				installService = installService,
+			},
+			utils = {
+				splitName = PackageUtils.splitName,
+				cloneQueue = PackageUtils.cloneQueue,
+				makeEntryLabel = PackageUtils.makeEntryLabel,
+			},
+			state = {
+				CurrentPage = CurrentPage,
+				StatusText = StatusText,
+				IsImporting = IsImporting,
+				IsInstalling = IsInstalling,
+				QueueEntries = QueueEntries,
+				SettingsState = SettingsState,
+				DraftSearchText = DraftSearchText,
+				DraftSelectedVersion = DraftSelectedVersion,
+				DraftOverrideName = DraftOverrideName,
+				DraftIncludeDependencies = DraftIncludeDependencies,
+				DraftPendingSpecifier = DraftPendingSpecifier,
+				DraftPackageResults = DraftPackageResults,
+				DraftVersionCollapsed = DraftVersionCollapsed,
+				DraftIsDropdownOpen = DraftIsDropdownOpen,
+				DraftIsSearching = DraftIsSearching,
+				IsVersionInstalling = IsVersionInstalling,
+				SearchQueryText = SearchQueryText,
+				SearchResults = SearchResults,
+				IsSearchingPackages = IsSearchingPackages,
+				SearchStatusText = SearchStatusText,
+				VersionControlText = VersionControlText,
+				VersionControlEnabled = VersionControlEnabled,
+				VersionControlVersions = VersionControlVersions,
+				SelectedVCVersion = SelectedVCVersion,
+				VersionControlLoaded = VersionControlLoaded,
+				widgetsEnabled = widgetsEnabled,
+			},
+			actions = {
+				setPage = setPage,
+				updateSettings = updateSettings,
+				addQueuedPackage = addQueuedPackage,
+				resetDraft = resetDraft,
+			},
+			widget = widget,
+			cachedPlugin = cachedPlugin,
+			pluginRoot = pluginRoot,
+		}
 
 		task.spawn(function()
 			local ok, _ = version_control.rinit(3)
@@ -7773,274 +7302,6 @@ return {
 			end
 		end)
 
-		local function SettingsPage()
-			local settings = unwrap(SettingsState)
-			return {
-				makeCard({
-					makeSectionHeader("Plugin"),
-					Label({
-						Text = "v" .. Constants.Version .. Constants.VersionTip,
-						TextSize = 13,
-					}),
-
-					Checkbox({
-						Text = "Create Package-Directors in Package.",
-						Value = Value(settings.includeDirectors),
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						OnChange = function(value)
-							updateSettings("includeDirectors", value)
-						end,
-					}),
-
-					Checkbox({
-						Text = "Include Developer-Dependencies",
-						Value = Value(settings.includeDev),
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						OnChange = function(value)
-							updateSettings("includeDev", value)
-						end,
-					}),
-
-					Checkbox({
-						Text = "Enable Developer Mode",
-						Value = Value(settings.devMode),
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						OnChange = function(value)
-							updateSettings("devMode", value)
-						end,
-					}),
-
-					Checkbox({
-						Text = "Enable Experimental Mode",
-						Value = Value(settings.experimentalMode),
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						OnChange = function(value)
-							updateSettings("experimentalMode", value)
-						end,
-					}),
-
-					Computed(function()
-						if not unwrap(SettingsState).experimentalMode then
-							return nil
-						end
-
-						return makeCard({
-							Label({ Text = "Version Control" }),
-							makeCard({
-								VerticalCollapsibleSection({
-									Text = VersionControlText,
-									Enabled = Computed(function()
-										return unwrap(VersionControlEnabled) and not unwrap(IsVersionInstalling)
-									end),
-									Collapsed = Value(true),
-									[Children] = Computed(function()
-										local items = {}
-										for _, ver in ipairs(unwrap(VersionControlVersions)) do
-											ver = ver:gsub('"', "")
-											local isCurrent = ver == Constants.Version
-
-											table.insert(
-												items,
-												MainButton({
-													Text = Computed(function()
-														if isCurrent then
-															return ver .. " (current)"
-														end
-														return ver
-													end),
-													Size = UDim2.new(1, 0, 0, 28),
-													Enabled = Computed(function()
-														return not isCurrent or unwrap(SettingsState).devMode
-													end),
-													Activated = function()
-														SelectedVCVersion:set(ver)
-														VersionControlText:set(ver .. " (Selected)")
-													end,
-												})
-											)
-										end
-										return items
-									end, function(instances)
-										for _, inst in ipairs(instances or {}) do
-											if inst and inst.Destroy then
-												inst:Destroy()
-											end
-										end
-									end),
-								}),
-							}),
-							Computed(function()
-								if not unwrap(SettingsState).experimentalMode or not unwrap(SettingsState).devMode then
-									return nil
-								end
-
-								return MainButton({
-									Text = "Build from GitHub",
-									Size = UDim2.new(1, 0, 0, 30),
-									Enabled = Computed(function()
-										return unwrap(VersionControlEnabled)
-											and unwrap(SettingsState).devMode
-											and unwrap(SettingsState).experimentalMode
-											and not unwrap(IsVersionInstalling)
-									end),
-									Activated = function()
-										IsVersionInstalling:set(true)
-										StatusText:set("Building from GitHub…")
-										task.spawn(function()
-											local ok, err = version_control.recreateFromGitHub(pluginRoot, function()
-												widgetsEnabled:set(false)
-												task.wait()
-												pcall(function()
-													mainWidget.Enabled = false
-												end)
-											end)
-											if not ok then
-												warn("[VersionControl]: Failed to build from GitHub: " .. tostring(err))
-												StatusText:set("Failed to build from GitHub.")
-												IsVersionInstalling:set(false)
-												pcall(function()
-													mainWidget.Enabled = true
-												end)
-											end
-										end)
-									end,
-								})
-							end, function(instance)
-								if instance then
-									instance:Destroy()
-								end
-							end),
-							MainButton({
-								Text = Computed(function()
-									local ver = unwrap(SelectedVCVersion)
-									if ver then
-										ver = ver:gsub('"', "")
-									end
-									if ver and ver == Constants.Version and not unwrap(SettingsState).devMode then
-										return "Already on this version"
-									end
-									return "Load Version"
-								end),
-								Size = UDim2.new(1, 0, 0, 30),
-								Enabled = Computed(function()
-									local ver = unwrap(SelectedVCVersion)
-									if ver then
-										ver = ver:gsub('"', "")
-									end
-
-									return unwrap(VersionControlEnabled)
-										and ver ~= nil
-										and (unwrap(SettingsState).devMode or ver ~= Constants.Version)
-										and not unwrap(IsVersionInstalling)
-								end),
-								Activated = function()
-									local ver = SelectedVCVersion:get()
-									if not ver or (ver == Constants.Version and not unwrap(SettingsState).devMode) then
-										return
-									end
-									IsVersionInstalling:set(true)
-									StatusText:set("Installing v" .. ver .. "…")
-									task.spawn(function()
-										local ok, result = version_control.rinstall(ver, 3)
-										if ok then
-											StatusText:set("Loaded v" .. ver .. ". Reloading…")
-											local embedded = version_control.waitFor(
-												30,
-												version_control.embed,
-												result,
-												pluginRoot,
-												function()
-													widgetsEnabled:set(false)
-													task.wait()
-													pcall(function()
-														mainWidget.Enabled = false
-													end)
-												end
-											)
-											if not embedded then
-												warn("[VersionControl]: Failed to install version")
-												StatusText:set("Load succeeded but reload failed.")
-												IsVersionInstalling:set(false)
-											end
-										else
-											StatusText:set("Failed to load v" .. ver .. ".")
-											warn("[VersionControl]: " .. tostring(result))
-											IsVersionInstalling:set(false)
-										end
-									end)
-								end,
-							}),
-						})
-					end, function(instance)
-						if instance then
-							instance:Destroy()
-						end
-					end),
-
-					Label({ Text = "Other" }),
-					Computed(function()
-						if not unwrap(SettingsState).experimentalMode and not unwrap(SettingsState).devMode then
-							return nil
-						end
-
-						return MainButton({
-							Text = "Reload Plugin",
-							Size = UDim2.new(1, 0, 0, 34),
-							Enabled = Computed(function()
-								return not unwrap(IsVersionInstalling)
-							end),
-							Activated = function()
-								IsVersionInstalling:set(true)
-								task.wait()
-
-								local embedded = version_control.embed(cachedPlugin, pluginRoot, function()
-									widgetsEnabled:set(false)
-									task.wait()
-									pcall(function()
-										mainWidget.Enabled = false
-									end)
-								end)
-
-								if not embedded then
-									warn("[VersionControl]: Failed to reload")
-									StatusText:set("Failed to reload plugin.")
-									IsVersionInstalling:set(false)
-									pcall(function()
-										mainWidget.Enabled = true
-									end)
-								end
-							end,
-						})
-					end, function(instance)
-						if instance then
-							instance:Destroy()
-						end
-					end),
-
-					MainButton({
-						Text = "Reset to defaults",
-						Size = UDim2.new(1, 0, 0, 34),
-						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling)
-						end),
-						Activated = function()
-							settingsService:reset()
-							SettingsState:set(settingsService:read())
-							StatusText:set("Settings reset to defaults.")
-						end,
-					}),
-				}),
-			}
-		end
-
 		local NAV = {
 			{
 				page = "Start",
@@ -8058,20 +7319,18 @@ return {
 				IconSize = 37,
 				order = 2,
 			},
-			--{
-			--	page = "Managed",
-			--	icon = "rbxassetid://16898730641",
-			--	RectSize = Vector2.new(256, 256),
-			--	RectOffset = Vector2.new(257, 0),
-			--	order = 3,
-			--},
+			{
+				page = "Search",
+				icon = "rbxassetid://6031154871",
+				order = 3,
+			},
 			{
 				page = "Settings",
 				icon = "rbxassetid://16898734421",
 				RectSize = Vector2.new(256, 256),
 				RectOffset = Vector2.new(0, 257),
 				IconSize = 37,
-				order = 3,
+				order = 4,
 			},
 		}
 
@@ -8118,7 +7377,7 @@ return {
 			)
 		end
 
-		mainWidget = AddWidget("Loom | Package Manager", {
+		local mainWidget = AddWidget("Loom | Package Manager", {
 			New("Frame")({
 				Size = UDim2.fromScale(1, 0),
 				BackgroundTransparency = 1,
@@ -8139,13 +7398,13 @@ return {
 				[Children] = Computed(function()
 					local page = unwrap(CurrentPage)
 					if page == "Start" then
-						return StartPage()
+						return StartPage(ctx)
 					elseif page == "Queue" then
-						return QueuePage()
-					elseif page == "Managed" then -- removed; problematic..
-						return nil --ManagedPackagesPage()
+						return QueuePage(ctx)
+					elseif page == "Search" then
+						return SearchPage(ctx)
 					elseif page == "Settings" then
-						return SettingsPage()
+						return SettingsPage(ctx)
 					end
 					return {}
 				end, function(instances)
@@ -8158,6 +7417,8 @@ return {
 			}),
 		})
 
+		widget.instance = mainWidget
+
 		return function()
 			widgetsEnabled:set(not widgetsEnabled:get(false))
 
@@ -8167,8 +7428,7 @@ return {
 			end
 		end
 	end,
-}
-]]></ProtectedString>
+}]]></ProtectedString>
 							<string name="ScriptGuid">{3C982A66-E4EE-4096-BC6C-1AD39426575D}</string>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -8273,6 +7533,1299 @@ return PluginSettingsService]]></ProtectedString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d92</UniqueId>
 						</Properties>
+					</Item>
+					<Item class="Folder" referent="RBXB45110D426BB4EF996DC6D9B32EE01E9">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+							<string name="Name">utils</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+							<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000238b</UniqueId>
+						</Properties>
+						<Item class="ModuleScript" referent="RBX92043EA9CBB94C40BC617E5D29460838">
+							<Properties>
+								<Content name="LinkedSource"><null></null></Content>
+								<ProtectedString name="Source"><![CDATA[--[[
+	package-utils.lua
+
+	Small, dependency-free helpers for working with package names and
+	the install queue. Split out of plugin-basis.lua so pages can share
+	them without pulling in Fusion/UI code.
+]]
+
+local PackageUtils = {}
+
+-- Splits "scope/package@version" (or any partial form of it) into its
+-- three components. Mirrors the parsing wally-search.lua does for
+-- dependency specifiers, but is kept local here so pages don't need to
+-- pull in the whole search module just to parse a name.
+function PackageUtils.splitName(name: string): (string?, string, string?)
+	local scopePackage, version = name:match("^(.-)@(.+)$")
+	if not scopePackage then
+		scopePackage = name
+	end
+	local scope, package = scopePackage:match("^([^/]+)/([^/]+)$")
+	if not scope then
+		return nil, scopePackage, version
+	end
+	return scope, package, version
+end
+
+-- Shallow-copies the install queue into fresh entry tables (carrying over
+-- the existing per-entry Fusion Value reference used by the "include
+-- dependencies" checkbox) so callers can mutate/remove entries without
+-- touching the previous snapshot.
+function PackageUtils.cloneQueue(queue)
+	local copy = {}
+	for _, entry in ipairs(queue or {}) do
+		table.insert(copy, {
+			raw = entry.raw or "",
+			scope = entry.scope,
+			package = entry.package,
+			version = entry.version,
+			name = entry.name or "",
+			includeDependencies = entry.includeDependencies ~= false,
+			_depsValue = entry._depsValue,
+		})
+	end
+	return copy
+end
+
+-- Builds the label shown for a queued/searched package, e.g. "foo/bar @1.2.3"
+function PackageUtils.makeEntryLabel(entry): string
+	local label = entry.raw or ""
+	if entry.version and entry.version ~= "" then
+		label = label .. " @" .. entry.version
+	end
+	return label
+end
+
+return PackageUtils
+]]></ProtectedString>
+								<string name="ScriptGuid">{D678BA4C-2883-467A-9213-85532C960F89}</string>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">package-utils</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000238c</UniqueId>
+							</Properties>
+						</Item>
+						<Item class="ModuleScript" referent="RBX3CE2C17D4F4E4F338E118370DCC0C724">
+							<Properties>
+								<Content name="LinkedSource"><null></null></Content>
+								<ProtectedString name="Source"><![CDATA[--[[
+	ui-utils.lua
+
+	Small Fusion UI builders shared by every page (the rounded card
+	container and the small section-header label). These need `New`,
+	`Children`, and the `Label` component, so this module is a factory:
+	call it once with those dependencies and it hands back the builders.
+]]
+
+return function(New, Children, Label)
+	local UiUtils = {}
+
+	-- Rounded, padded card container used to group related controls.
+	-- `y` optionally clamps the card's height via a UISizeConstraint.
+	function UiUtils.makeCard(contents, y: NumberRange?)
+		return New("Frame")({
+			Size = UDim2.fromScale(1, 0),
+			AutomaticSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 0.7,
+			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+			BorderSizePixel = 0,
+			[Children] = {
+				New("UICorner")({ CornerRadius = UDim.new(0, 8) }),
+				New("UIPadding")({
+					PaddingLeft = UDim.new(0, 10),
+					PaddingRight = UDim.new(0, 10),
+					PaddingTop = UDim.new(0, 10),
+					PaddingBottom = UDim.new(0, 10),
+				}),
+				New("UIListLayout")({
+					SortOrder = Enum.SortOrder.LayoutOrder,
+					Padding = UDim.new(0, 8),
+				}),
+				New("UISizeConstraint")({
+					MaxSize = Vector2.new(9999, y and y.Max or 9999),
+					MinSize = Vector2.new(0, y and y.Min or 0),
+				}),
+				table.unpack(contents),
+			},
+		})
+	end
+
+	-- Small muted-white label used as a header within a card/section.
+	function UiUtils.makeSectionHeader(text)
+		return Label({
+			Text = text,
+			TextColor3 = Color3.fromRGB(220, 220, 220),
+			TextSize = 14,
+		})
+	end
+
+	return UiUtils
+end
+]]></ProtectedString>
+								<string name="ScriptGuid">{2E386B17-9B7C-47BB-95CF-64424875281B}</string>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">ui-utils</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000238d</UniqueId>
+							</Properties>
+						</Item>
+					</Item>
+					<Item class="Folder" referent="RBX548F8EA788F64429827114BD42B2CC97">
+						<Properties>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+							<string name="Name">pages</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+							<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002390</UniqueId>
+						</Properties>
+						<Item class="ModuleScript" referent="RBX3C9582DDB5BB475F84CB210AB4BFDEB8">
+							<Properties>
+								<Content name="LinkedSource"><null></null></Content>
+								<ProtectedString name="Source"><![CDATA[--[[
+	QueuePage.lua
+
+	Lets the user paste/search a package spec, pick a version, and queue
+	it for install; also renders the current queue with per-entry
+	overrides and the "Install all" action.
+]]
+
+return function(ctx)
+	local Computed = ctx.fusion.Computed
+	local unwrap = ctx.fusion.unwrap
+	local Value = ctx.fusion.Value
+	local Children = ctx.fusion.Children
+	local OnChange = ctx.fusion.OnChange
+
+	local New = ctx.fusion.New
+	local Label = ctx.components.Label
+	local MainButton = ctx.components.MainButton
+	local TextInput = ctx.components.TextInput
+	local Checkbox = ctx.components.Checkbox
+	local Seperator = ctx.components.Seperator
+	local Loading = ctx.components.Loading
+	local VerticalCollapsibleSection = ctx.components.VerticalCollapsibleSection
+
+	local makeCard = ctx.ui.makeCard
+	local makeSectionHeader = ctx.ui.makeSectionHeader
+
+	local wally_search = ctx.modules.wally_search
+
+	local splitName = ctx.utils.splitName
+	local cloneQueue = ctx.utils.cloneQueue
+	local makeEntryLabel = ctx.utils.makeEntryLabel
+
+	local IsVersionInstalling = ctx.state.IsVersionInstalling
+	local DraftSearchText = ctx.state.DraftSearchText
+	local DraftSelectedVersion = ctx.state.DraftSelectedVersion
+	local DraftOverrideName = ctx.state.DraftOverrideName
+	local DraftIncludeDependencies = ctx.state.DraftIncludeDependencies
+	local DraftPendingSpecifier = ctx.state.DraftPendingSpecifier
+	local DraftPackageResults = ctx.state.DraftPackageResults
+	local DraftVersionCollapsed = ctx.state.DraftVersionCollapsed
+	local DraftIsDropdownOpen = ctx.state.DraftIsDropdownOpen
+	local DraftIsSearching = ctx.state.DraftIsSearching
+	local QueueEntries = ctx.state.QueueEntries
+	local StatusText = ctx.state.StatusText
+	local IsInstalling = ctx.state.IsInstalling
+	local IsImporting = ctx.state.IsImporting
+
+	local setPage = ctx.actions.setPage
+	local addQueuedPackage = ctx.actions.addQueuedPackage
+	local resetDraft = ctx.actions.resetDraft
+	local installService = ctx.pluginServices.installService
+
+	local ChangeHistoryService = ctx.services.ChangeHistoryService
+
+	return {
+		makeCard({
+			makeSectionHeader("Package builder"),
+			TextInput({
+				Text = DraftSearchText,
+				PlaceholderText = "Paste package or author/package",
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				[OnChange("Text")] = function(text)
+					local pastedName = text
+					local key, scopePkg, specifier =
+						text:match('^%s*([%w_%-]+)%s*=%s*"([^@"]+)@([^"]+)"')
+					if scopePkg then
+						pastedName = scopePkg
+					end
+					if key then
+						local scope = scopePkg and scopePkg:match("^([^/]+)/")
+						if scope then
+							DraftOverrideName:set(scope .. "/" .. key)
+						else
+							DraftOverrideName:set(key)
+						end
+					end
+					DraftSearchText:set(pastedName)
+					DraftSelectedVersion:set(nil)
+					DraftPendingSpecifier:set(specifier)
+					DraftPackageResults:set({})
+					DraftVersionCollapsed:set(true)
+					DraftIsDropdownOpen:set(false)
+				end,
+			}),
+			Seperator({}),
+			MainButton({
+				Text = Computed(function()
+					return unwrap(DraftIsSearching) and "Searching…" or "Get versions"
+				end),
+				Size = UDim2.new(1, 0, 0, 34),
+				Enabled = Computed(function()
+					return not unwrap(DraftIsSearching) and not unwrap(IsVersionInstalling)
+				end),
+				Activated = function()
+					if IsVersionInstalling:get() then
+						return
+					end
+					DraftIsSearching:set(true)
+					local scope, pkg = splitName(unwrap(DraftSearchText))
+					local ok, versions = wally_search.getPackageDetails(scope, pkg)
+					local normalized = {}
+					if ok then
+						for _, versionData in pairs(versions or {}) do
+							table.insert(normalized, versionData.version)
+						end
+						table.sort(normalized, function(a, b)
+							return a > b
+						end)
+					end
+					DraftPackageResults:set(normalized)
+
+					local specifier = unwrap(DraftPendingSpecifier)
+					local resolvedOk, resolved
+					if specifier then
+						resolvedOk, resolved = wally_search.resolveVersion(scope, pkg, specifier)
+					end
+
+					if resolvedOk then
+						DraftSelectedVersion:set(resolved)
+						DraftVersionCollapsed:set(true) -- collapse, we already picked one
+						DraftIsDropdownOpen:set(#normalized > 0) -- still browsable to override
+						StatusText:set(("Resolved %s to %s"):format(specifier, resolved))
+					else
+						DraftVersionCollapsed:set(false)
+						DraftIsDropdownOpen:set(ok and #normalized > 0)
+						StatusText:set(
+							ok and "Versions loaded for the current package."
+								or "Unable to fetch versions for the current package."
+						)
+					end
+
+					DraftIsSearching:set(false)
+				end,
+			}),
+			VerticalCollapsibleSection({
+				Text = Computed(function()
+					local version = unwrap(DraftSelectedVersion)
+					return version and ("Selected: " .. version) or "Select a version"
+				end),
+				Collapsed = DraftVersionCollapsed,
+				Enabled = DraftIsDropdownOpen,
+				[Children] = Computed(function()
+					local items = {}
+					for _, version in ipairs(unwrap(DraftPackageResults) or {}) do
+						table.insert(
+							items,
+							MainButton({
+								Text = version,
+								Size = UDim2.new(1, 0, 0, 28),
+								Activated = function()
+									DraftSelectedVersion:set(version)
+									DraftVersionCollapsed:set(true)
+								end,
+							})
+						)
+					end
+					return items
+				end, function(instances)
+					for _, inst in ipairs(instances or {}) do
+						if inst and inst.Destroy then
+							inst:Destroy()
+						end
+					end
+				end),
+			}),
+			TextInput({
+				Text = DraftOverrideName,
+				PlaceholderText = "Optional override name",
+				[OnChange("Text")] = function(text)
+					DraftOverrideName:set(text)
+				end,
+			}),
+			Checkbox({
+				Text = "Include dependencies",
+				Value = DraftIncludeDependencies,
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				OnChange = function(value)
+					DraftIncludeDependencies:set(value)
+				end,
+			}),
+			MainButton({
+				Text = "Add to queue",
+				Size = UDim2.new(1, 0, 0, 34),
+				Enabled = Computed(function()
+					return unwrap(DraftSelectedVersion) ~= nil and unwrap(DraftSearchText) ~= ""
+				end),
+				Activated = function()
+					if IsVersionInstalling:get() then
+						return
+					end
+					local scope, pkg = splitName(DraftSearchText:get())
+
+					addQueuedPackage({
+						raw = DraftSearchText:get(),
+						scope = scope,
+						package = pkg,
+						version = DraftSelectedVersion:get(),
+						name = DraftOverrideName:get(),
+						includeDependencies = DraftIncludeDependencies:get(),
+					})
+
+					setPage("Queue")
+					resetDraft()
+				end,
+			}),
+		}),
+		Seperator({}),
+		makeCard({
+			makeSectionHeader("Queued installs"),
+			Computed(function()
+				local queue = unwrap(QueueEntries)
+				if #queue == 0 then
+					return {
+						Label({
+							Text = "Your queue is empty. Add a package to begin.",
+							TextColor3 = Color3.fromRGB(180, 180, 180),
+						}),
+					}
+				end
+
+				local items = {}
+				for index, entry in ipairs(queue) do
+					table.insert(
+						items,
+						VerticalCollapsibleSection({
+							Text = makeEntryLabel(entry),
+							Collapsed = Value(true),
+							[Children] = {
+								makeCard({
+									TextInput({
+										Text = entry.name or "",
+										PlaceholderText = "Override name",
+										[OnChange("Text")] = function(text)
+											entry.name = text
+										end,
+									}),
+									Checkbox({
+										Text = "Include dependencies",
+										Value = entry._depsValue,
+										OnChange = function(value)
+											entry.includeDependencies = value
+											entry._depsValue:set(value)
+										end,
+									}),
+									MainButton({
+										Text = "Remove",
+										Size = UDim2.new(1, 0, 0, 30),
+										Activated = function()
+											if IsVersionInstalling:get() then
+												return
+											end
+											local updated = cloneQueue(queue)
+											table.remove(updated, index)
+											QueueEntries:set(updated)
+										end,
+									}),
+								}),
+							},
+						})
+					)
+				end
+				return items
+			end, function(instances)
+				for _, inst in ipairs(instances or {}) do
+					if inst and inst.Destroy then
+						inst:Destroy()
+					end
+				end
+			end),
+			MainButton({
+				Text = Computed(function()
+					return unwrap(IsInstalling) and "Installing…" or "Install all"
+				end),
+				Size = UDim2.new(1, 0, 0, 34),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+						and not unwrap(IsInstalling)
+						and not unwrap(IsImporting)
+						and #unwrap(QueueEntries) > 0
+				end),
+				Activated = function()
+					IsInstalling:set(true)
+					task.spawn(function()
+						ChangeHistoryService:SetWaypoint("LoomInstall0")
+						local queue = cloneQueue(QueueEntries:get())
+						local installedCount, failed = installService:installQueue(
+							queue,
+							function(step, total, label)
+								StatusText:set(("Installing %d/%d: %s"):format(step, total, label))
+							end
+						)
+
+						if #failed == 0 then
+							StatusText:set(("Installed %d package(s) successfully."):format(installedCount))
+							QueueEntries:set({})
+						else
+							StatusText:set(("Finished with %d failed install(s)."):format(#failed))
+						end
+						IsInstalling:set(false)
+
+						ChangeHistoryService:SetWaypoint("LoomInstall1")
+					end)
+				end,
+			}),
+			Label({ Text = StatusText, TextColor3 = Color3.fromRGB(180, 240, 180) }),
+			New("Frame")({
+				Size = UDim2.new(1, 0, 0, 34),
+				BackgroundTransparency = 1,
+				[Children] = {
+					Loading({ Enabled = IsInstalling }),
+					New("UIListLayout")({
+						HorizontalAlignment = Enum.HorizontalAlignment.Center,
+						VerticalAlignment = Enum.VerticalAlignment.Center,
+					}),
+				},
+			}),
+		}),
+	}
+end
+]]></ProtectedString>
+								<string name="ScriptGuid">{68CABFD1-5F8A-4EF1-8CC6-3670330CC538}</string>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">QueuePage</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002391</UniqueId>
+							</Properties>
+						</Item>
+						<Item class="ModuleScript" referent="RBX302825FDCE97486AB9478ECDB7596414">
+							<Properties>
+								<Content name="LinkedSource"><null></null></Content>
+								<ProtectedString name="Source"><![CDATA[--[[
+	SearchPage.lua
+
+	Lets the user search the Wally registry by keyword and queue a
+	result's latest version directly, using wally-search.lua's existing
+	`searchPackages` / `pickLatestVersion` helpers.
+]]
+
+return function(ctx)
+	local Computed = ctx.fusion.Computed
+	local unwrap = ctx.fusion.unwrap
+	local Value = ctx.fusion.Value
+	local Children = ctx.fusion.Children
+	local OnChange = ctx.fusion.OnChange
+
+	local Label = ctx.components.Label
+	local MainButton = ctx.components.MainButton
+	local TextInput = ctx.components.TextInput
+	local Seperator = ctx.components.Seperator
+	local Paragraph = ctx.components.Paragraph
+	local VerticalCollapsibleSection = ctx.components.VerticalCollapsibleSection
+
+	local makeCard = ctx.ui.makeCard
+	local makeSectionHeader = ctx.ui.makeSectionHeader
+
+	local wally_search = ctx.modules.wally_search
+	local Constants = ctx.modules.Constants
+
+	local splitName = ctx.utils.splitName
+
+	local IsVersionInstalling = ctx.state.IsVersionInstalling
+	local SearchQueryText = ctx.state.SearchQueryText
+	local SearchResults = ctx.state.SearchResults
+	local IsSearchingPackages = ctx.state.IsSearchingPackages
+	local SearchStatusText = ctx.state.SearchStatusText
+	local DraftIncludeDependencies = ctx.state.DraftIncludeDependencies
+
+	local addQueuedPackage = ctx.actions.addQueuedPackage
+	local setPage = ctx.actions.setPage
+
+	-- Turns a raw `/package-search` entry into the flat shape the UI needs.
+	local function describeResult(entry)
+		local latest = wally_search.pickLatestVersion(entry)
+		if not latest or not latest.name then
+			return nil
+		end
+		return {
+			name = latest.name,
+			version = latest.version,
+			description = latest.description,
+			license = latest.license,
+		}
+	end
+
+	local function runSearch()
+		local query = unwrap(SearchQueryText)
+		if query == "" then
+			return
+		end
+		if IsSearchingPackages:get() then
+			return
+		end
+
+		IsSearchingPackages:set(true)
+		SearchStatusText:set("Searching…")
+
+		local ok, data = wally_search.searchPackages(query)
+
+		local results = {}
+		if ok then
+			for _, entry in ipairs(data) do
+				local described = describeResult(entry)
+				if described then
+					table.insert(results, described)
+				end
+			end
+		end
+
+		SearchResults:set(results)
+		if not ok then
+			SearchStatusText:set("Search failed. Check your connection and try again.")
+		elseif #results == 0 then
+			SearchStatusText:set(("No packages found for \"%s\"."):format(query))
+		else
+			SearchStatusText:set(("Found %d package(s)."):format(#results))
+		end
+
+		IsSearchingPackages:set(false)
+	end
+
+	return {
+		makeCard({
+			makeSectionHeader("Search for packages"),
+			TextInput({
+				Text = SearchQueryText,
+				PlaceholderText = "e.g. \"fusion\" or \"sleitnick/net\"",
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				[OnChange("Text")] = function(text)
+					SearchQueryText:set(text)
+				end,
+			}),
+			MainButton({
+				Text = Computed(function()
+					return unwrap(IsSearchingPackages) and "Searching…" or "Search"
+				end),
+				Size = UDim2.new(1, 0, 0, 34),
+				Enabled = Computed(function()
+					return not unwrap(IsSearchingPackages)
+						and not unwrap(IsVersionInstalling)
+						and unwrap(SearchQueryText) ~= ""
+				end),
+				Activated = runSearch,
+			}),
+			Label({
+				Text = SearchStatusText,
+				TextColor3 = Color3.fromRGB(180, 180, 180),
+			}),
+		}),
+		Seperator({}),
+		makeCard({
+			Computed(function()
+				local results = unwrap(SearchResults)
+				if #results == 0 then
+					return {
+						Label({
+							Text = "Search the Wally registry above to find packages.",
+							TextColor3 = Color3.fromRGB(180, 180, 180),
+						}),
+					}
+				end
+
+				local items = {}
+				for _, result in ipairs(results) do
+					table.insert(
+						items,
+						VerticalCollapsibleSection({
+							Text = ("%s @%s"):format(result.name, result.version),
+							Collapsed = Value(true),
+							[Children] = {
+								makeCard({
+									Paragraph({
+										Text = (result.description and result.description ~= "")
+											and result.description
+											or "No description provided.",
+										MaxHeight = 80,
+										MinHeight = 20,
+										TextColor3 = Color3.fromRGB(200, 200, 200),
+									}),
+									Label({
+										Text = "License: " .. (result.license or "unspecified"),
+										TextSize = 12,
+										TextColor3 = Color3.fromRGB(160, 160, 160),
+									}),
+									MainButton({
+										Text = ("Queue %s"):format(result.version),
+										Size = UDim2.new(1, 0, 0, 30),
+										Enabled = Computed(function()
+											return not unwrap(IsVersionInstalling)
+										end),
+										Activated = function()
+											if IsVersionInstalling:get() then
+												return
+											end
+
+											local scope, pkg = splitName(result.name)
+
+											addQueuedPackage({
+												raw = result.name,
+												scope = scope,
+												package = pkg,
+												version = result.version,
+												name = "",
+												includeDependencies = unwrap(DraftIncludeDependencies),
+											})
+
+											if Constants.warnForLicense then
+												Constants.warnForLicense(result.license, result.name)
+											end
+
+											setPage("Queue")
+										end,
+									}),
+								}),
+							},
+						})
+					)
+				end
+				return items
+			end, function(instances)
+				for _, inst in ipairs(instances or {}) do
+					if inst and inst.Destroy then
+						inst:Destroy()
+					end
+				end
+			end),
+		}),
+	}
+end
+]]></ProtectedString>
+								<string name="ScriptGuid">{D62D88EC-1074-4331-9AB6-8AF249BD6425}</string>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">SearchPage</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002392</UniqueId>
+							</Properties>
+						</Item>
+						<Item class="ModuleScript" referent="RBX3B712D26A3A243C295338DBF6BFB8DE3">
+							<Properties>
+								<Content name="LinkedSource"><null></null></Content>
+								<ProtectedString name="Source"><![CDATA[--[[
+	SettingsPage.lua
+
+	Plugin preferences, the (experimental) version control browser used
+	to hot-swap plugin versions, and the reload/reset actions.
+]]
+
+return function(ctx)
+	local Computed = ctx.fusion.Computed
+	local unwrap = ctx.fusion.unwrap
+	local Value = ctx.fusion.Value
+	local Children = ctx.fusion.Children
+
+	local Label = ctx.components.Label
+	local MainButton = ctx.components.MainButton
+	local Checkbox = ctx.components.Checkbox
+	local VerticalCollapsibleSection = ctx.components.VerticalCollapsibleSection
+
+	local makeCard = ctx.ui.makeCard
+	local makeSectionHeader = ctx.ui.makeSectionHeader
+
+	local version_control = ctx.modules.version_control
+	local Constants = ctx.modules.Constants
+
+	local settingsService = ctx.pluginServices.settingsService
+
+	local SettingsState = ctx.state.SettingsState
+	local IsVersionInstalling = ctx.state.IsVersionInstalling
+	local VersionControlText = ctx.state.VersionControlText
+	local VersionControlEnabled = ctx.state.VersionControlEnabled
+	local VersionControlVersions = ctx.state.VersionControlVersions
+	local SelectedVCVersion = ctx.state.SelectedVCVersion
+	local StatusText = ctx.state.StatusText
+	local widgetsEnabled = ctx.state.widgetsEnabled
+
+	local updateSettings = ctx.actions.updateSettings
+	local widget = ctx.widget -- { instance = <mainWidget once created> }
+	local cachedPlugin = ctx.cachedPlugin
+
+	local settings = unwrap(SettingsState)
+
+	return {
+		makeCard({
+			makeSectionHeader("Plugin"),
+			Label({
+				Text = "v" .. Constants.Version .. Constants.VersionTip,
+				TextSize = 13,
+			}),
+
+			Checkbox({
+				Text = "Create Package-Directors in Package.",
+				Value = Value(settings.includeDirectors),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				OnChange = function(value)
+					updateSettings("includeDirectors", value)
+				end,
+			}),
+
+			Checkbox({
+				Text = "Include Developer-Dependencies",
+				Value = Value(settings.includeDev),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				OnChange = function(value)
+					updateSettings("includeDev", value)
+				end,
+			}),
+
+			Checkbox({
+				Text = "Enable Developer Mode",
+				Value = Value(settings.devMode),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				OnChange = function(value)
+					updateSettings("devMode", value)
+				end,
+			}),
+
+			Checkbox({
+				Text = "Enable Experimental Mode",
+				Value = Value(settings.experimentalMode),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				OnChange = function(value)
+					updateSettings("experimentalMode", value)
+				end,
+			}),
+
+			Computed(function()
+				if not unwrap(SettingsState).experimentalMode then
+					return nil
+				end
+
+				return makeCard({
+					Label({ Text = "Version Control" }),
+					makeCard({
+						VerticalCollapsibleSection({
+							Text = VersionControlText,
+							Enabled = Computed(function()
+								return unwrap(VersionControlEnabled) and not unwrap(IsVersionInstalling)
+							end),
+							Collapsed = Value(true),
+							[Children] = Computed(function()
+								local items = {}
+								for _, ver in ipairs(unwrap(VersionControlVersions)) do
+									ver = ver:gsub('"', "")
+									local isCurrent = ver == Constants.Version
+
+									table.insert(
+										items,
+										MainButton({
+											Text = Computed(function()
+												if isCurrent then
+													return ver .. " (current)"
+												end
+												return ver
+											end),
+											Size = UDim2.new(1, 0, 0, 28),
+											Enabled = Computed(function()
+												return not isCurrent or unwrap(SettingsState).devMode
+											end),
+											Activated = function()
+												SelectedVCVersion:set(ver)
+												VersionControlText:set(ver .. " (Selected)")
+											end,
+										})
+									)
+								end
+								return items
+							end, function(instances)
+								for _, inst in ipairs(instances or {}) do
+									if inst and inst.Destroy then
+										inst:Destroy()
+									end
+								end
+							end),
+						}),
+					}),
+					Computed(function()
+						if
+							not unwrap(SettingsState).experimentalMode
+							or not unwrap(SettingsState).devMode
+						then
+							return nil
+						end
+
+						return MainButton({
+							Text = "Build from GitHub",
+							Size = UDim2.new(1, 0, 0, 30),
+							Enabled = Computed(function()
+								return unwrap(VersionControlEnabled)
+									and unwrap(SettingsState).devMode
+									and unwrap(SettingsState).experimentalMode
+									and not unwrap(IsVersionInstalling)
+							end),
+							Activated = function()
+								IsVersionInstalling:set(true)
+								StatusText:set("Building from GitHub…")
+								task.spawn(function()
+									local ok, err = version_control.recreateFromGitHub(
+										ctx.pluginRoot,
+										function()
+											widgetsEnabled:set(false)
+											task.wait()
+											pcall(function()
+												widget.instance.Enabled = false
+											end)
+										end
+									)
+									if not ok then
+										warn("[VersionControl]: Failed to build from GitHub: " .. tostring(err))
+										StatusText:set("Failed to build from GitHub.")
+										IsVersionInstalling:set(false)
+										pcall(function()
+											widget.instance.Enabled = true
+										end)
+									end
+								end)
+							end,
+						})
+					end, function(instance)
+						if instance then
+							instance:Destroy()
+						end
+					end),
+
+					MainButton({
+						Text = Computed(function()
+							local ver = unwrap(SelectedVCVersion)
+							if ver then
+								ver = ver:gsub('"', "")
+							end
+							if ver and ver == Constants.Version and not unwrap(SettingsState).devMode then
+								return "Already on this version"
+							end
+							return "Load Version"
+						end),
+						Size = UDim2.new(1, 0, 0, 30),
+						Enabled = Computed(function()
+							local ver = unwrap(SelectedVCVersion)
+							if ver then
+								ver = ver:gsub('"', "")
+							end
+
+							return unwrap(VersionControlEnabled)
+								and ver ~= nil
+								and (unwrap(SettingsState).devMode or ver ~= Constants.Version)
+								and not unwrap(IsVersionInstalling)
+						end),
+						Activated = function()
+							local ver = SelectedVCVersion:get()
+							if
+								not ver
+								or (ver == Constants.Version and not unwrap(SettingsState).devMode)
+							then
+								return
+							end
+							IsVersionInstalling:set(true)
+							StatusText:set("Installing v" .. ver .. "…")
+							task.spawn(function()
+								local ok, result = version_control.rinstall(ver, 3)
+								if ok then
+									StatusText:set("Loaded v" .. ver .. ". Reloading…")
+									local embedded = version_control.waitFor(
+										30,
+										version_control.embed,
+										result,
+										ctx.pluginRoot,
+										function()
+											widgetsEnabled:set(false)
+											task.wait()
+											pcall(function()
+												widget.instance.Enabled = false
+											end)
+										end
+									)
+									if not embedded then
+										warn("[VersionControl]: Failed to install version")
+										StatusText:set("Load succeeded but reload failed.")
+										IsVersionInstalling:set(false)
+									end
+								else
+									StatusText:set("Failed to load v" .. ver .. ".")
+									warn("[VersionControl]: " .. tostring(result))
+									IsVersionInstalling:set(false)
+								end
+							end)
+						end,
+					}),
+				})
+			end, function(instance)
+				if instance then
+					instance:Destroy()
+				end
+			end),
+
+			Label({ Text = "Other" }),
+			Computed(function()
+				if not unwrap(SettingsState).experimentalMode and not unwrap(SettingsState).devMode then
+					return nil
+				end
+
+				return MainButton({
+					Text = "Reload Plugin",
+					Size = UDim2.new(1, 0, 0, 34),
+					Enabled = Computed(function()
+						return not unwrap(IsVersionInstalling)
+					end),
+					Activated = function()
+						IsVersionInstalling:set(true)
+						task.wait()
+
+						local embedded = version_control.embed(cachedPlugin, ctx.pluginRoot, function()
+							widgetsEnabled:set(false)
+							task.wait()
+							pcall(function()
+								widget.instance.Enabled = false
+							end)
+						end)
+
+						if not embedded then
+							warn("[VersionControl]: Failed to reload")
+							StatusText:set("Failed to reload plugin.")
+							IsVersionInstalling:set(false)
+							pcall(function()
+								widget.instance.Enabled = true
+							end)
+						end
+					end,
+				})
+			end, function(instance)
+				if instance then
+					instance:Destroy()
+				end
+			end),
+
+			MainButton({
+				Text = "Reset to defaults",
+				Size = UDim2.new(1, 0, 0, 34),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				Activated = function()
+					settingsService:reset()
+					SettingsState:set(settingsService:read())
+					StatusText:set("Settings reset to defaults.")
+				end,
+			}),
+		}),
+	}
+end
+]]></ProtectedString>
+								<string name="ScriptGuid">{C066E68D-A135-4FF7-B8C8-8D8C40E5380E}</string>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">SettingsPage</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002393</UniqueId>
+							</Properties>
+						</Item>
+						<Item class="ModuleScript" referent="RBX4717167D82EB4CDE9F0408CA38C8242E">
+							<Properties>
+								<Content name="LinkedSource"><null></null></Content>
+								<ProtectedString name="Source"><![CDATA[--[[
+	StartPage.lua
+
+	The landing page: initialize package folders, import packages from a
+	.zip archive, and (in dev mode) show the debug logger card.
+
+	Called fresh every time the user navigates to the "Start" page, same
+	as the inline function it was extracted from - `ctx` carries every
+	dependency (Fusion primitives, components, services, shared state)
+	that used to be an upvalue inside plugin-basis.lua.
+]]
+
+return function(ctx)
+	local Computed = ctx.fusion.Computed
+	local unwrap = ctx.fusion.unwrap
+
+	local Label = ctx.components.Label
+	local LabelImage = ctx.components.LabelImage
+	local MainButton = ctx.components.MainButton
+	local Paragraph = ctx.components.Paragraph
+
+	local makeCard = ctx.ui.makeCard
+
+	local zip_build = ctx.modules.zip_build
+	local package_instancer = ctx.modules.package_instancer
+	local logger = ctx.modules.logger
+
+	local ChangeHistoryService = ctx.services.ChangeHistoryService
+	local StudioService = ctx.services.StudioService
+	local ServerScriptService = ctx.services.ServerScriptService
+	local ReplicatedStorage = ctx.services.ReplicatedStorage
+
+	local settingsService = ctx.pluginServices.settingsService
+	local installService = ctx.pluginServices.installService
+
+	local IsVersionInstalling = ctx.state.IsVersionInstalling
+	local IsImporting = ctx.state.IsImporting
+	local IsInstalling = ctx.state.IsInstalling
+	local StatusText = ctx.state.StatusText
+	local SettingsState = ctx.state.SettingsState
+
+	local function CreateLogger(prop: {})
+		local properties = {
+			Text = logger.output,
+			MaxHeight = 350,
+			MinHeight = 350,
+		}
+
+		for i, v in prop do
+			properties[i] = v
+		end
+
+		return makeCard({
+			Label({ Text = "Logger", TextSize = 16 }),
+			Paragraph(properties),
+		})
+	end
+
+	return {
+		makeCard({
+			Label({ Text = "Loom Package Manager", TextSize = 18 }),
+			Label({
+				Text = "Install and manage Wally packages directly from Studio.",
+				TextSize = 12,
+				TextColor3 = Color3.fromRGB(180, 180, 180),
+			}),
+			LabelImage({
+				Size = UDim2.new(1, 0, 0, 90),
+				Image = "rbxassetid://110162513850955",
+				BackgroundTransparency = 1,
+			}),
+			MainButton({
+				Text = "Initialize package folders",
+				Size = UDim2.new(1, 0, 0, 34),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				Activated = function()
+					if IsVersionInstalling:get() then
+						return
+					end
+					ChangeHistoryService:SetWaypoint("LoomInit0")
+					package_instancer.createPackages("Packages", true)
+					package_instancer.createPackages("Packages", false)
+					package_instancer.createPackages("DevPackages", "dev")
+					ChangeHistoryService:SetWaypoint("LoomInit1")
+
+					StatusText:set("Package folders initialized.")
+				end,
+			}),
+			MainButton({
+				Text = "Import packages (.zip)",
+				Size = UDim2.new(1, 0, 0, 34),
+				Enabled = Computed(function()
+					return not unwrap(IsImporting)
+						and not unwrap(IsInstalling)
+						and not unwrap(IsVersionInstalling)
+				end),
+				Activated = function()
+					if IsImporting:get() then
+						return
+					end
+					IsImporting:set(true)
+					IsInstalling:set(true)
+
+					StatusText:set("Waiting for package archives…")
+					local ok, files = pcall(function()
+						return StudioService:PromptImportFilesAsync({ "zip" })
+					end)
+					if not ok or not files or #files == 0 then
+						StatusText:set("No archives selected.")
+						IsImporting:set(false)
+						IsInstalling:set(false)
+						return
+					end
+
+					ChangeHistoryService:SetWaypoint("LoomImport0")
+
+					local importedCount = 0
+					local failedNames = {}
+
+					for _, file in ipairs(files) do
+						StatusText:set(("Importing %s…"):format(file.Name))
+						local sourceFolder, initModule, wallyData, dependencies =
+							zip_build.createFromFile(file)
+						if not wallyData then
+							table.insert(failedNames, file.Name)
+							logger:log(
+								`[{os.date("%H:%M:%S")}]: wally.toml, not found in {file.Name}, is this a wally package?`
+							)
+							if sourceFolder then
+								sourceFolder:Destroy()
+							end
+							continue
+						end
+
+						local realm = (wallyData.package and wallyData.package.realm)
+							or "shared"
+
+						-- Remove stale instances with the same name so we don't accumulate duplicates
+						local origin = (realm == "server") and ServerScriptService
+							or ReplicatedStorage
+						local folderName = (realm == "dev") and "DevPackages" or "Packages"
+						local packagesRoot = origin:FindFirstChild(folderName)
+
+						if packagesRoot and sourceFolder then
+							local staleAlias = packagesRoot:FindFirstChild(sourceFolder.Name)
+							if staleAlias then
+								staleAlias:Destroy()
+							end
+							local indexFolder = packagesRoot:FindFirstChild("_Index")
+							if indexFolder then
+								local staleIndex = indexFolder:FindFirstChild(sourceFolder.Name)
+								if staleIndex then
+									staleIndex:Destroy()
+								end
+							end
+						end
+
+						local importedModule = package_instancer.syncPackage(realm, {
+							source = sourceFolder,
+							reference = initModule,
+							unpackSrc = settingsService:get("unpackSrc", true),
+							wally = wallyData,
+						})
+
+						if not importedModule then
+							table.insert(failedNames, file.Name)
+							if sourceFolder then
+								sourceFolder:Destroy()
+							end
+							continue
+						end
+
+						local depCount, depFailed = 0, {}
+						if dependencies and #dependencies > 0 then
+							StatusText:set("Installing Dependencies..")
+
+							depCount, depFailed = installService:installDependencies(
+								dependencies,
+								{ unpackSrc = settingsService:get("unpackSrc", true) },
+								function(step, total, label)
+									StatusText:set(("Installing %d/%d: %s"):format(step, total, label))
+								end
+							)
+
+							importedCount += depCount
+
+							for _, name in ipairs(depFailed) do
+								table.insert(failedNames, name)
+							end
+						end
+
+						importedCount += 1
+					end
+
+					if #failedNames == 0 then
+						StatusText:set(("Imported %d archive(s) successfully."):format(importedCount))
+					elseif importedCount == 0 then
+						StatusText:set("Import failed for all selected archives.")
+					else
+						StatusText:set(
+							("Imported %d archive(s), %d failed (%s)."):format(
+								importedCount,
+								#failedNames,
+								table.concat(failedNames, ", ")
+							)
+						)
+					end
+
+					IsImporting:set(false)
+					IsInstalling:set(false)
+					ChangeHistoryService:SetWaypoint("LoomImport1")
+				end,
+			}),
+			Label({ Text = StatusText, TextColor3 = Color3.fromRGB(180, 240, 180) }),
+		}),
+
+		Computed(function()
+			if not unwrap(SettingsState).devMode then
+				return nil
+			end
+			return CreateLogger({})
+		end, function(instance)
+			if instance then
+				instance:Destroy()
+			end
+		end),
+	}
+end
+]]></ProtectedString>
+								<string name="ScriptGuid">{CFCD28AA-184F-4F37-A9E2-5BB657C4B299}</string>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">StartPage</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002394</UniqueId>
+							</Properties>
+						</Item>
 					</Item>
 				</Item>
 				<Item class="Folder" referent="57">
@@ -8995,20 +9548,18 @@ local HttpService = game:GetService("HttpService")
 
 local PackageDetailsUrl = "https://api.wally.run/v1/package-metadata/%s/%s"
 local PackageZipUrl = "https://api.wally.run/v1/package-contents/%s/%s/%s"
+local PackageSearchUrl = "https://api.wally.run/v1/package-search?query=%s"
 
-local UpgradedWallyVersions = {
-	"0.3.2",
-	"0.3.1",
-	"0.3.0",
-	"0.2.1",
-	"0.1.3",
-}
+local UpgradedWallyVersions = { "0.3.2", "0.3.1", "0.3.0", "0.2.1", "0.1.3" }
 
 local WallySearch = {}
 
+local CachedSearches = {}
 local CachedDetailSearches = {}
+
 local CachedRawZips = {}
 local rawZipsOrder = {}
+
 local workingWallyVersion = nil
 
 local Constants = require(script.Parent.constants)
@@ -9017,7 +9568,9 @@ local MAX_CACHED_ZIPS = Constants.MaxCachedZips
 -- Utility
 
 local function requestWithVersionProbe(url)
-	local versionsToTry = if workingWallyVersion then { workingWallyVersion } else UpgradedWallyVersions
+	local versionsToTry = if workingWallyVersion
+		then { workingWallyVersion }
+		else UpgradedWallyVersions
 
 	local lastOk, lastResponse = false, nil
 	for _, ver in versionsToTry do
@@ -9196,11 +9749,31 @@ function WallySearch.resolveVersion(scope, package, requirement): (boolean, stri
 	return true, best
 end
 
+-- Exposed for callers (e.g. the Search page) that need to sort/compare
+-- version strings themselves without re-implementing semver parsing.
+WallySearch.compareVersions = compareVersions
+
+-- Picks the newest version entry out of a raw `/package-search` result
+-- item (an object shaped like `{ versions = { { package = {...} }, ... } }`).
+-- Returns nil if the entry has no parseable versions.
+function WallySearch.pickLatestVersion(searchResultEntry): { [string]: any }?
+	local best = nil
+	for _, versionData in ipairs((searchResultEntry and searchResultEntry.versions) or {}) do
+		local data = versionData.package
+		if data and data.version then
+			if not best or compareVersions(data.version, best.version) > 0 then
+				best = data
+			end
+		end
+	end
+	return best
+end
+
 -- Module API
 
-function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: any }?)
+function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: any } | any)
 	if not scope or not package then
-		return false, "Invalid scope or package", {}
+		return false, "Invalid scope or package"
 	end
 	local indexed = {}
 	if not HttpService.HttpEnabled then
@@ -9216,9 +9789,9 @@ function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: an
 	local success, response = requestWithVersionProbe(PackageDetailsUrl:format(scope, package))
 	local ok = success and response.Success == true and response.StatusCode == 200
 	if ok then
-		local data = HttpService:JSONDecode(response.Body)
+		local decoded_data = HttpService:JSONDecode(response.Body)
 		versions = {}
-		for index, versionData in data.versions do
+		for _, versionData in decoded_data.versions do
 			local data = versionData.package
 			local description = data.description
 			local license = data.license
@@ -9255,7 +9828,8 @@ function WallySearch.getPackageZipRaw(scope, package, version): (boolean, string
 		end
 		return true, CachedRawZips[id]
 	end
-	local success0, response = requestWithVersionProbe(PackageZipUrl:format(scope, package, version))
+	local success0, response =
+		requestWithVersionProbe(PackageZipUrl:format(scope, package, version))
 	local success = success0 and response.Success == true and response.StatusCode == 200
 	if success then
 		addToZip(response.Body, scope, package, version)
@@ -9264,7 +9838,38 @@ function WallySearch.getPackageZipRaw(scope, package, version): (boolean, string
 	return false, response
 end
 
-return WallySearch]]></ProtectedString>
+-- Revised from @BiassedXD
+-- https://github.com/J4KEWasNotHere/Loom/pull/3/changes#diff-a599cb2000d3f553490b029e25fab4e2f391862bbc0d86afa60cd93587045472
+
+function WallySearch.searchPackages(query: string): (boolean, { [string]: any })
+	if type(query) ~= "string" or query == "" then
+		return false, {}
+	end
+
+	local url = PackageSearchUrl:format(query:lower())
+	local success, response = pcall(function()
+		return HttpService:GetAsync(url)
+	end)
+	if not success then
+		return false, {}
+	end
+	if success then
+		local data = HttpService:JSONDecode(response)
+		if #data == 0 then
+			return false, {}
+		end
+
+		-- add to cache
+		CachedSearches[query] = data
+
+		return true, data
+	else
+		return false, {}
+	end
+end
+
+return WallySearch
+]]></ProtectedString>
 							<string name="ScriptGuid">{8B2A5777-0A5F-4B47-862B-341B5723C5D3}</string>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -15320,6 +15925,20 @@ end
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039d</UniqueId>
 		</Properties>
 	</Item>
+	<Item class="ServiceVisibilityService" referent="RBX6E151A04947A4559A3052C33C0A9CE97">
+		<Properties>
+			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
+			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ServiceVisibilityService</string>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
+		</Properties>
+	</Item>
 	<Item class="HttpService" referent="RBXACD227B7F6104B92819B899ABD9F68DB">
 		<Properties>
 			<bool name="HttpEnabled">true</bool>
@@ -15449,7 +16068,7 @@ return {
 	port = 3667,
 
 	--- Whether the plugin should automatically connect to the language server when Studio starts up
-	startAutomatically = false,
+	startAutomatically = true,
 
 	--- A list of Instances to track for changes.
 	--- When any descendants of these instances change, an update event is sent to the language server
@@ -15499,7 +16118,7 @@ return {
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000006ea</UniqueId>
 		</Properties>
 	</Item>
-	<Item class="PluginToolbar" referent="RBXE875653B47674E92A8AD9E1EB0ECD3E2">
+	<Item class="PluginToolbar" referent="RBX760C26381CFD44269D1954E2A058B6F2">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -15508,9 +16127,9 @@ return {
 			<string name="Name">Graph Editor</string>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500000695</UniqueId>
+			<UniqueId name="UniqueId">3e60f5073f8033070a6cbd00000006f0</UniqueId>
 		</Properties>
-		<Item class="PluginToolbarButton" referent="RBX91F14E2A2B1945A5B0D48FD7B8D2CA06">
+		<Item class="PluginToolbarButton" referent="RBX2CB2692886784905B9C3ADFF8594EF8F">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -15519,7 +16138,7 @@ return {
 				<string name="Name">Button</string>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-				<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500000696</UniqueId>
+				<UniqueId name="UniqueId">3e60f5073f8033070a6cbd00000006f1</UniqueId>
 			</Properties>
 		</Item>
 	</Item>

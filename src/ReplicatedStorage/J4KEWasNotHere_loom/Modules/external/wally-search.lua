@@ -4,20 +4,18 @@ local HttpService = game:GetService("HttpService")
 
 local PackageDetailsUrl = "https://api.wally.run/v1/package-metadata/%s/%s"
 local PackageZipUrl = "https://api.wally.run/v1/package-contents/%s/%s/%s"
+local PackageSearchUrl = "https://api.wally.run/v1/package-search?query=%s"
 
-local UpgradedWallyVersions = {
-	"0.3.2",
-	"0.3.1",
-	"0.3.0",
-	"0.2.1",
-	"0.1.3",
-}
+local UpgradedWallyVersions = { "0.3.2", "0.3.1", "0.3.0", "0.2.1", "0.1.3" }
 
 local WallySearch = {}
 
+local CachedSearches = {}
 local CachedDetailSearches = {}
+
 local CachedRawZips = {}
 local rawZipsOrder = {}
+
 local workingWallyVersion = nil
 
 local Constants = require(script.Parent.constants)
@@ -26,7 +24,9 @@ local MAX_CACHED_ZIPS = Constants.MaxCachedZips
 -- Utility
 
 local function requestWithVersionProbe(url)
-	local versionsToTry = if workingWallyVersion then { workingWallyVersion } else UpgradedWallyVersions
+	local versionsToTry = if workingWallyVersion
+		then { workingWallyVersion }
+		else UpgradedWallyVersions
 
 	local lastOk, lastResponse = false, nil
 	for _, ver in versionsToTry do
@@ -205,11 +205,31 @@ function WallySearch.resolveVersion(scope, package, requirement): (boolean, stri
 	return true, best
 end
 
+-- Exposed for callers (e.g. the Search page) that need to sort/compare
+-- version strings themselves without re-implementing semver parsing.
+WallySearch.compareVersions = compareVersions
+
+-- Picks the newest version entry out of a raw `/package-search` result
+-- item (an object shaped like `{ versions = { { package = {...} }, ... } }`).
+-- Returns nil if the entry has no parseable versions.
+function WallySearch.pickLatestVersion(searchResultEntry): { [string]: any }?
+	local best = nil
+	for _, versionData in ipairs((searchResultEntry and searchResultEntry.versions) or {}) do
+		local data = versionData.package
+		if data and data.version then
+			if not best or compareVersions(data.version, best.version) > 0 then
+				best = data
+			end
+		end
+	end
+	return best
+end
+
 -- Module API
 
-function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: any }?)
+function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: any } | any)
 	if not scope or not package then
-		return false, "Invalid scope or package", {}
+		return false, "Invalid scope or package"
 	end
 	local indexed = {}
 	if not HttpService.HttpEnabled then
@@ -225,9 +245,9 @@ function WallySearch.getPackageDetails(scope, package): (boolean, { [string]: an
 	local success, response = requestWithVersionProbe(PackageDetailsUrl:format(scope, package))
 	local ok = success and response.Success == true and response.StatusCode == 200
 	if ok then
-		local data = HttpService:JSONDecode(response.Body)
+		local decoded_data = HttpService:JSONDecode(response.Body)
 		versions = {}
-		for index, versionData in data.versions do
+		for _, versionData in decoded_data.versions do
 			local data = versionData.package
 			local description = data.description
 			local license = data.license
@@ -264,13 +284,44 @@ function WallySearch.getPackageZipRaw(scope, package, version): (boolean, string
 		end
 		return true, CachedRawZips[id]
 	end
-	local success0, response = requestWithVersionProbe(PackageZipUrl:format(scope, package, version))
+	local success0, response =
+		requestWithVersionProbe(PackageZipUrl:format(scope, package, version))
 	local success = success0 and response.Success == true and response.StatusCode == 200
 	if success then
 		addToZip(response.Body, scope, package, version)
 		return true, response.Body
 	end
 	return false, response
+end
+
+-- Revised from @BiassedXD
+-- https://github.com/J4KEWasNotHere/Loom/pull/3/changes#diff-a599cb2000d3f553490b029e25fab4e2f391862bbc0d86afa60cd93587045472
+
+function WallySearch.searchPackages(query: string): (boolean, { [string]: any })
+	if type(query) ~= "string" or query == "" then
+		return false, {}
+	end
+
+	local url = PackageSearchUrl:format(query:lower())
+	local success, response = pcall(function()
+		return HttpService:GetAsync(url)
+	end)
+	if not success then
+		return false, {}
+	end
+	if success then
+		local data = HttpService:JSONDecode(response)
+		if #data == 0 then
+			return false, {}
+		end
+
+		-- add to cache
+		CachedSearches[query] = data
+
+		return true, data
+	else
+		return false, {}
+	end
 end
 
 return WallySearch
