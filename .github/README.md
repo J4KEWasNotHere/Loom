@@ -1,6 +1,6 @@
 <div align="center"><i>Wally's Little Brother</i></div>
 
-<img src=".images/LoomBanner.png" alt="" width="100%">
+<img src="images/LoomBanner.png" alt="" width="100%">
 
 <h1 align="center">Loom, native <a href="https://github.com/upliftgames/wally">Wally</a> package manager for Roblox Studio</h1>
 
@@ -151,9 +151,9 @@ I want to give thanks to the users resources or softwares toward the making of *
 - Plugin Framework is a modified reposity of [<img src="https://cdn.simpleicons.org/github/000/fff" width="15" /> **PluginEssentials** by mvyasu](https://github.com/mvyasu/PluginEssentials) accompanied by [**Fusion 0.2** by elttob](https://elttob.uk/Fusion/0.2/)
 - Decompression of (.zip) files, [<img src="https://cdn.simpleicons.org/codeberg/000/2185D0" width="15" /> **ZZLib** by zerkman](https://codeberg.org/zerkman/zzlib)
 
-# <img src=".images/LoomIcon.png" width="46" /> License & Holder Agreement
+# <img src="images/LoomIcon.png" width="46" /> License & Holder Agreement
 Loom is available under the (Inherited) <kbd>MPL-2.0 License <img src="https://cdn.simpleicons.org/mozilla/000/fff" width="15" /></kbd>. Terms and conditions are available in [LICENSE.txt](https://github.com/J4KEWasNotHere/Loom/blob/main/LICENSE.txt) or at the [Official Website](https://www.mozilla.org/en-GB/MPL/2.0).
 
-With respect of </b>[@UpliftGames](https://github.com/UpliftGames)</b>, and <kbd>[<img src="https://cdn.simpleicons.org/mozilla/000/4493f8" width="15" /> Wally's License (MPL-2.0 License)](https://github.com/UpliftGames/wally/blob/main/LICENSE.txt)</kbd>. I hereby consent to any actions or modifications, including deletion, that they may make toward <kbd>[<img src=".images/LoomIcon.png" width="16" />  J4KEWasNotHere/**Loom**](https://github.com/J4KEWasNotHere/Loom)</kbd>.
+With respect of </b>[@UpliftGames](https://github.com/UpliftGames)</b>, and <kbd>[<img src="https://cdn.simpleicons.org/mozilla/000/4493f8" width="15" /> Wally's License (MPL-2.0 License)](https://github.com/UpliftGames/wally/blob/main/LICENSE.txt)</kbd>. I hereby consent to any actions or modifications, including deletion, that they may make toward <kbd>[<img src="images/LoomIcon.png" width="16" />  J4KEWasNotHere/**Loom**](https://github.com/J4KEWasNotHere/Loom)</kbd>.
 
-<div align="center"><a href="https://www.roblox.com/communities/34077341/Kalaran#!/about"><img src=".images/KalaranBanner.png" alt="" width="50%"></a></div>
+<div align="center"><a href="https://www.roblox.com/communities/34077341/Kalaran#!/about"><img src="images/KalaranBanner.png" alt="" width="50%"></a></div>
