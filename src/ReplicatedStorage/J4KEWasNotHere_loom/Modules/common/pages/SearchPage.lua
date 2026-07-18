@@ -26,7 +26,6 @@ return function(ctx)
 
 	local wally_search = ctx.modules.wally_search
 	local package_instancer = ctx.modules.package_instancer
-	local Constants = ctx.modules.Constants
 
 	local splitName = ctx.utils.splitName
 
@@ -54,7 +53,6 @@ return function(ctx)
 			name = pkg,
 			version = latest.version,
 			description = latest.description,
-			license = latest.license,
 		}
 	end
 
@@ -126,10 +124,6 @@ return function(ctx)
 			realm = realm,
 		})
 
-		if Constants.warnForLicense then
-			Constants.warnForLicense(result.license, result.raw)
-		end
-
 		setPage("Queue")
 	end
 
@@ -180,11 +174,6 @@ return function(ctx)
 						MaxHeight = 80,
 						MinHeight = 20,
 						TextColor3 = Color3.fromRGB(200, 200, 200),
-					}),
-					Label({
-						Text = "License: " .. (result.license or "unspecified"),
-						TextSize = 12,
-						TextColor3 = Color3.fromRGB(160, 160, 160),
 					}),
 					Computed(function()
 						local versions = unwrap(Versions)
