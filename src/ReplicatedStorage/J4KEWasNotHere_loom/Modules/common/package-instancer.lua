@@ -1,7 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
-local RunService = game:GetService("RunService")
 
 local PackagesTag = "package-directory/@jakeboygamer64"
 local DevPackagesTag = "package-directory-dev/@jakeboygamer64"
@@ -18,18 +17,6 @@ PackageModule.DevPackagesTag = DevPackagesTag
 
 -- Utility
 
-local function insertAll(tb: { [any]: any }, ...: any)
-	local args = { ... }
-	for _, v in ipairs(args) do
-		table.insert(tb, v)
-	end
-
-	return tb
-end
-
--- realm accepts: true/"server", "dev", an explicit Instance to use as the
--- origin (e.g. a folder the user selected in Explorer), or anything
--- else/nil -> shared.
 local function resolveRealm(realm)
 	if typeof(realm) == "Instance" then
 		return realm, "Packages", PackagesTag
@@ -349,8 +336,6 @@ PackageModule.linkAllLocalDependencies = function(realm)
 	for _, sourceFolder in ipairs(index:GetChildren()) do
 		local wallyTomlModule = sourceFolder:FindFirstChild(".wally")
 			or sourceFolder:FindFirstChild("wally")
-		-- Fallback to attempting to find a parsed configuration matrix if available
-		local rawAttributes = sourceFolder:GetAttributes()
 
 		-- Look for an existing parsed file asset or structure
 		if wallyTomlModule and wallyTomlModule:IsA("ModuleScript") then

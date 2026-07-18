@@ -505,19 +505,13 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			end
 		end
 
-		-- The root module is either a top-level "init.lua" (dir == "")
-		-- or an "init.lua" inside a top-level "src" folder (dir == "src"),
-		-- which is the layout most wally packages use and is deliberately
-		-- kept as a real folder instead of being collapsed above.
-		local isRootLevel = dir == "" and parentInstance == root
-		local isRootSrc = dir == "src" and parentInstance and parentInstance.Parent == root
-
 		if
 			not rootInit
+			and dir == ""
 			and object
 			and object:IsA("ModuleScript")
 			and isInitFile(filename)
-			and (isRootLevel or isRootSrc)
+			and parentInstance == root
 		then
 			rootInit = object
 		end

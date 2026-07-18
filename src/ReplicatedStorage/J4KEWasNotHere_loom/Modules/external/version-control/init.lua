@@ -316,6 +316,61 @@ local function extractArchivePath(
 	return true, nil
 end
 
+--[[
+	extractArchivePath mirrors the zip's raw file layout 1:1: a folder that
+	contains an "init.lua" stays a Folder with a script literally named
+	"init" inside it, instead of becoming Rojo's usual "folder + init.lua"
+	shape - a single script named after the folder, with everything else
+	that lived in the folder as ITS children rather than its siblings.
+	That matters here because requires like `require("@self/types")` only
+	resolve `types` as a child of the init script itself.
+
+	resolveNested walks `root` and fixes every such folder, bottom-up so
+	nested folders collapse correctly. `exclude` is a set of child names
+	(matched at every level) to leave untouched entirely - e.g. "Packages",
+	whose layout is intentionally managed by the package installer instead.
+]]
+local function resolveNested(root: Instance, exclude: { [string]: boolean }?)
+	local function resolve(instance: Instance)
+		for _, child in ipairs(instance:GetChildren()) do
+			if child:IsA("Folder") and not (exclude and exclude[child.Name]) then
+				resolve(child)
+			end
+		end
+
+		if not instance:IsA("Folder") then
+			return
+		end
+
+		local initScript = instance:FindFirstChild("init")
+		if not (initScript and initScript:IsA("LuaSourceContainer")) then
+			return
+		end
+
+		local folderName = instance.Name
+		local parent = instance.Parent
+		if not parent then
+			return
+		end
+
+		for _, sibling in ipairs(instance:GetChildren()) do
+			if sibling ~= initScript then
+				sibling.Parent = initScript
+			end
+		end
+
+		initScript.Name = folderName
+		initScript.Parent = parent
+		instance:Destroy()
+	end
+
+	for _, child in ipairs(root:GetChildren()) do
+		if not (exclude and exclude[child.Name]) then
+			resolve(child)
+		end
+	end
+end
+
 local function cloneSourceTree(sourceParent: Instance, targetParent: Instance)
 	for _, child in ipairs(sourceParent:GetChildren()) do
 		local clone
@@ -355,6 +410,8 @@ local function buildPluginTreeFromGitHub(parent: Instance, path: string): (boole
 
 	return true
 end
+
+module.resolveNested = resolveNested
 
 -- detaches the plugin entirely and reloads it.
 function module.embed(newPlugin: Instance, pluginRoot: Instance, cleanup: (() -> ())?)
@@ -504,7 +561,18 @@ function module.recreateFromGitHub(
 		return false, err
 	end
 
+	-- Fix up the raw zip-mirrored tree into proper folder+init modules
+	-- before anything else touches it. "Packages" is excluded since it
+	-- doesn't exist yet at this point anyway, and installPackagesFromGitHub
+	-- below builds it directly with the correct layout regardless.
+	resolveNested(sourcePlugin, { Packages = true })
+
 	if installService then
+		-- Default to sourcePlugin itself: embed() below stashes and destroys
+		-- everything currently in pluginRoot, so installing packages there
+		-- (or leaving them in ReplicatedStorage) would just lose them. They
+		-- need to already be inside the tree that's about to become the
+		-- live plugin.
 		local packagesOk, installedOrErr, failed =
 			module.installPackagesFromGitHub(installService, nil, packagesParent or sourcePlugin)
 		if not packagesOk then
