@@ -133,6 +133,13 @@ Other features may be mentioned in the changelogs of [newer versions](https://gi
 
 </details>
 
+<details>
+<summary>  <h2>Contributors</h2> </summary>
+ 
+* [@BiassedXD](https://github.com/BiassedXD) / [@BIASXED](https://github.com/BIASXED); Assisted in the creation of the search bar. (https://github.com/J4KEWasNotHere/Loom/pull/3)
+
+</details>
+
 ____
 
 # Acknowledgements
