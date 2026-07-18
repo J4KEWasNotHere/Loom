@@ -17,12 +17,17 @@ local HttpService = game:GetService("HttpService")
 -- Modules
 local toml_formatter = require("../files/.toml-formatter")
 local zzlib = require("../../Packages/ZZLib")
+local zipBuild = require("../files/.zip-build")
 
 -- Variables
 local RegistryUrl = "https://cdn.jsdelivr.net/gh/J4KEWasNotHere/Loom@main/common/registry.toml"
 local GitHubArchiveUrls = {
 	"https://codeload.github.com/J4KEWasNotHere/Loom/zip/refs/heads/main",
 	"https://github.com/J4KEWasNotHere/Loom/archive/refs/heads/main.zip",
+}
+local WallyTomlUrls = {
+	"https://raw.githubusercontent.com/J4KEWasNotHere/Loom/main/wally.toml",
+	"https://cdn.jsdelivr.net/gh/J4KEWasNotHere/Loom@main/wally.toml",
 }
 local StoredPlugins = {}
 
@@ -412,7 +417,79 @@ function module.embed(newPlugin: Instance, pluginRoot: Instance, cleanup: (() ->
 	return true
 end
 
-function module.recreateFromGitHub(pluginRoot: Instance, cleanup: (() -> ())?)
+-- Reads the repo's own wally.toml and turns [dependencies] /
+-- [server-dependencies] / [dev-dependencies] into the same entry shape
+-- InstallService already knows how to consume (see zip-build.lua's
+-- getDependenciesFromToml, which this reuses directly).
+function module.getGitHubWallyDependencies(): (boolean, { any } | string)
+	local ok, raw = tryGetUrl(WallyTomlUrls[1])
+	if not ok then
+		for i = 2, #WallyTomlUrls do
+			ok, raw = tryGetUrl(WallyTomlUrls[i])
+			if ok then
+				break
+			end
+		end
+	end
+	if not ok then
+		return false, raw
+	end
+
+	local parseOk, toml = pcall(toml_formatter.format, raw)
+	if not parseOk or typeof(toml) ~= "table" then
+		return false, "failed to parse wally.toml"
+	end
+
+	return true, zipBuild.getDependenciesFromToml(toml)
+end
+
+-- Installs the plugin's own wally.toml dependencies through the normal
+-- InstallService pipeline (registry lookup + package-instancer), the
+-- same code path used for a manual package install or a .zip import.
+--
+-- This replaces the old approach of extracting the repo's prebuilt
+-- Packages folder straight out of the GitHub zip: that extraction only
+-- turned .lua files into scripts, so every dependency lost its own
+-- wally.toml (and any non-.lua files) along the way - Loom had no way
+-- to tell what was installed afterwards, and installs into Packages
+-- silently produced folders with none of the [[dependencies]] metadata
+-- attached, which is presumably why they wouldn't get picked up.
+-- `parent`, if provided, is an Instance (e.g. the plugin's own root, or a
+-- folder the user selected) that packages are installed directly under -
+-- resolveRealm/find_packages never look outside it, so this never touches
+-- ReplicatedStorage/ServerScriptService and never risks picking up
+-- unrelated packages that happen to already live there.
+function module.installPackagesFromGitHub(
+	installService,
+	onProgress: ((number, number, string) -> ())?,
+	parent: Instance?
+): (boolean, number | string, { string }?)
+	if not installService then
+		return false, "installService is required to install packages from wally.toml"
+	end
+
+	local ok, deps = module.getGitHubWallyDependencies()
+	if not ok then
+		return false, deps :: string
+	end
+
+	deps = deps :: { any }
+	if #deps == 0 then
+		return true, 0, {}
+	end
+
+	local installedCount, failed =
+		installService:installDependencies(deps, { parent = parent }, onProgress or function() end)
+
+	return true, installedCount, failed
+end
+
+function module.recreateFromGitHub(
+	pluginRoot: Instance,
+	installService,
+	cleanup: (() -> ())?,
+	packagesParent: Instance?
+)
 	if not pluginRoot then
 		return false, "missing plugin root"
 	end
@@ -427,17 +504,23 @@ function module.recreateFromGitHub(pluginRoot: Instance, cleanup: (() -> ())?)
 		return false, err
 	end
 
-	local packagesFolder = Instance.new("Folder")
-	packagesFolder.Name = "Packages"
-	packagesFolder.Parent = sourcePlugin
-
-	local packagesOk, packagesErr = buildPluginTreeFromGitHub(packagesFolder, "Packages")
-	if not packagesOk then
-		sourcePlugin:Destroy()
-		return false, packagesErr
+	if installService then
+		local packagesOk, installedOrErr, failed =
+			module.installPackagesFromGitHub(installService, nil, packagesParent or sourcePlugin)
+		if not packagesOk then
+			warn(`[VersionControl]: Failed to install packages from wally.toml: {installedOrErr}`)
+		elseif failed and #failed > 0 then
+			warn(
+				`[VersionControl]: {#failed} package(s) failed to install: {table.concat(
+					failed,
+					", "
+				)}`
+			)
+		end
+	else
+		warn(`[VersionControl]: No installService provided - skipping package install`)
 	end
 
-	sourcePlugin:Clone().Parent = workspace -- debugging
 	return module.embed(sourcePlugin, pluginRoot, cleanup)
 end
 

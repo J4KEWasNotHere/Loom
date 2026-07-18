@@ -27,10 +27,13 @@ local function insertAll(tb: { [any]: any }, ...: any)
 	return tb
 end
 
--- realm accepts: true/"server",
--- "dev", or anything else/nil -> shared.
+-- realm accepts: true/"server", "dev", an explicit Instance to use as the
+-- origin (e.g. a folder the user selected in Explorer), or anything
+-- else/nil -> shared.
 local function resolveRealm(realm)
-	if realm == "server" or realm == true then
+	if typeof(realm) == "Instance" then
+		return realm, "Packages", PackagesTag
+	elseif realm == "server" or realm == true then
 		return ServerOrigin, "Packages", PackagesTag
 	elseif realm == "dev" then
 		return SharedOrigin, "DevPackages", DevPackagesTag
@@ -90,7 +93,9 @@ local function getPathTo(origin, object)
 	end
 
 	if not commonAncestor then
-		warn(`[getPathTo]: no common ancestor between "{origin:GetFullName()}" and "{object:GetFullName()}"`)
+		warn(
+			`[getPathTo]: no common ancestor between "{origin:GetFullName()}" and "{object:GetFullName()}"`
+		)
 		return object:GetFullName()
 	end
 
@@ -342,7 +347,8 @@ PackageModule.linkAllLocalDependencies = function(realm)
 	end
 
 	for _, sourceFolder in ipairs(index:GetChildren()) do
-		local wallyTomlModule = sourceFolder:FindFirstChild(".wally") or sourceFolder:FindFirstChild("wally")
+		local wallyTomlModule = sourceFolder:FindFirstChild(".wally")
+			or sourceFolder:FindFirstChild("wally")
 		-- Fallback to attempting to find a parsed configuration matrix if available
 		local rawAttributes = sourceFolder:GetAttributes()
 
@@ -397,7 +403,9 @@ PackageModule.addPackage = function(
 		p, index = create_packages(nil, realm)
 	end
 	if not reference then
-		warn(`[PackageModule]: no reference found for package {data.name}, did you forget to pass it?`)
+		warn(
+			`[PackageModule]: no reference found for package {data.name}, did you forget to pass it?`
+		)
 		return
 	end
 

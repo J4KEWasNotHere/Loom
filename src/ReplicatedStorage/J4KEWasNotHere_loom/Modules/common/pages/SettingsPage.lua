@@ -23,6 +23,7 @@ return function(ctx)
 	local Constants = ctx.modules.Constants
 
 	local settingsService = ctx.pluginServices.settingsService
+	local installService = ctx.pluginServices.installService
 
 	local SettingsState = ctx.state.SettingsState
 	local IsVersionInstalling = ctx.state.IsVersionInstalling
@@ -102,7 +103,8 @@ return function(ctx)
 						VerticalCollapsibleSection({
 							Text = VersionControlText,
 							Enabled = Computed(function()
-								return unwrap(VersionControlEnabled) and not unwrap(IsVersionInstalling)
+								return unwrap(VersionControlEnabled)
+									and not unwrap(IsVersionInstalling)
 							end),
 							Collapsed = Value(true),
 							[Children] = Computed(function()
@@ -122,7 +124,8 @@ return function(ctx)
 											end),
 											Size = UDim2.new(1, 0, 0, 28),
 											Enabled = Computed(function()
-												return not isCurrent or unwrap(SettingsState).devMode
+												return not isCurrent
+													or unwrap(SettingsState).devMode
 											end),
 											Activated = function()
 												SelectedVCVersion:set(ver)
@@ -164,6 +167,7 @@ return function(ctx)
 								task.spawn(function()
 									local ok, err = version_control.recreateFromGitHub(
 										ctx.pluginRoot,
+										installService,
 										function()
 											widgetsEnabled:set(false)
 											task.wait()
@@ -173,7 +177,10 @@ return function(ctx)
 										end
 									)
 									if not ok then
-										warn("[VersionControl]: Failed to build from GitHub: " .. tostring(err))
+										warn(
+											"[VersionControl]: Failed to build from GitHub: "
+												.. tostring(err)
+										)
 										StatusText:set("Failed to build from GitHub.")
 										IsVersionInstalling:set(false)
 										pcall(function()
@@ -195,7 +202,11 @@ return function(ctx)
 							if ver then
 								ver = ver:gsub('"', "")
 							end
-							if ver and ver == Constants.Version and not unwrap(SettingsState).devMode then
+							if
+								ver
+								and ver == Constants.Version
+								and not unwrap(SettingsState).devMode
+							then
 								return "Already on this version"
 							end
 							return "Load Version"
@@ -261,7 +272,9 @@ return function(ctx)
 
 			Label({ Text = "Other" }),
 			Computed(function()
-				if not unwrap(SettingsState).experimentalMode and not unwrap(SettingsState).devMode then
+				if
+					not unwrap(SettingsState).experimentalMode and not unwrap(SettingsState).devMode
+				then
 					return nil
 				end
 
@@ -275,13 +288,17 @@ return function(ctx)
 						IsVersionInstalling:set(true)
 						task.wait()
 
-						local embedded = version_control.embed(cachedPlugin, ctx.pluginRoot, function()
-							widgetsEnabled:set(false)
-							task.wait()
-							pcall(function()
-								widget.instance.Enabled = false
-							end)
-						end)
+						local embedded = version_control.embed(
+							cachedPlugin,
+							ctx.pluginRoot,
+							function()
+								widgetsEnabled:set(false)
+								task.wait()
+								pcall(function()
+									widget.instance.Enabled = false
+								end)
+							end
+						)
 
 						if not embedded then
 							warn("[VersionControl]: Failed to reload")

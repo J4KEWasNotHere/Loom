@@ -72,6 +72,12 @@ function InstallService:debug(message)
 	end
 end
 
+-- `options.parent`, if provided, is an Instance that every package in this
+-- batch is installed directly under, instead of the shared/server/dev
+-- realms resolving to ReplicatedStorage/ServerScriptService. This is a real
+-- install target, not a folder that gets built elsewhere and moved after
+-- the fact - resolveRealm/find_packages only ever look inside `parent`, so
+-- nothing outside it is touched or picked up by accident.
 function InstallService:installDependencies(dependencyData, options, onProgress)
 	local workQueue = normalizeDependencyEntries(
 		dependencyData,
@@ -89,6 +95,7 @@ function InstallService:installDependencies(dependencyData, options, onProgress)
 	local installedCount = 0
 
 	local includeDirs = self.settings:get("includeDirectors", true)
+	local parent = options.parent
 
 	local idx = 0
 	while idx < #workQueue do
@@ -99,6 +106,7 @@ function InstallService:installDependencies(dependencyData, options, onProgress)
 			includeDependencies = true,
 			unpackSrc = options.unpackSrc == true,
 			includeDirs = includeDirs,
+			parent = parent,
 		})
 
 		if not ok then
@@ -117,9 +125,13 @@ function InstallService:installDependencies(dependencyData, options, onProgress)
 	end
 
 	if includeDirs then
-		packageInstancer.linkAllLocalDependencies("shared")
-		packageInstancer.linkAllLocalDependencies("server")
-		packageInstancer.linkAllLocalDependencies("dev")
+		if parent then
+			packageInstancer.linkAllLocalDependencies(parent)
+		else
+			packageInstancer.linkAllLocalDependencies("shared")
+			packageInstancer.linkAllLocalDependencies("server")
+			packageInstancer.linkAllLocalDependencies("dev")
+		end
 	end
 
 	return installedCount, failed
@@ -138,8 +150,14 @@ function InstallService:syncFromRaw(raw, pkgLabel, options, dependencyRealm)
 
 	options = typeof(options) == "table" and options or {}
 
-	local realm = (dependencyRealm == "dev") and "dev"
-		or ((wallyData.package and wallyData.package.realm) or "shared")
+	-- An explicit parent instance always wins: it takes the package
+	-- straight to that target rather than resolving a shared/server/dev
+	-- realm to ReplicatedStorage/ServerScriptService.
+	local realm = options.parent
+	if not realm then
+		realm = (dependencyRealm == "dev") and "dev"
+			or ((wallyData.package and wallyData.package.realm) or "shared")
+	end
 	local includeDirs = self.settings:get("includeDirectors", true)
 
 	packageInstancer.syncPackage(realm, {
@@ -163,7 +181,7 @@ function InstallService:installPackage(entry, options)
 	end
 
 	if entry.reference and entry.existingSource then
-		local realm = entry.realm or "shared"
+		local realm = options.parent or entry.realm or "shared"
 		local includeDirs = self.settings:get("includeDirectors", true)
 
 		local wallyModule = entry.existingSource:FindFirstChild("wally.toml")
@@ -244,7 +262,10 @@ function InstallService:installPackage(entry, options)
 	return true, nextEntries
 end
 
-function InstallService:installQueue(queue, onProgress)
+function InstallService:installQueue(queue, onProgress, options)
+	options = typeof(options) == "table" and options or {}
+	local parent = options.parent
+
 	local workQueue = {}
 	local seen = {}
 	local failed = {}
@@ -292,6 +313,7 @@ function InstallService:installQueue(queue, onProgress)
 		local ok, result = self:installPackage(entry, {
 			includeDependencies = entry.includeDependencies ~= false,
 			unpackSrc = unpackSrc,
+			parent = parent,
 		})
 
 		if not ok then
@@ -310,9 +332,13 @@ function InstallService:installQueue(queue, onProgress)
 	end
 
 	if includeDirs then
-		packageInstancer.linkAllLocalDependencies("shared")
-		packageInstancer.linkAllLocalDependencies("server")
-		packageInstancer.linkAllLocalDependencies("dev")
+		if parent then
+			packageInstancer.linkAllLocalDependencies(parent)
+		else
+			packageInstancer.linkAllLocalDependencies("shared")
+			packageInstancer.linkAllLocalDependencies("server")
+			packageInstancer.linkAllLocalDependencies("dev")
+		end
 	end
 
 	return installedCount, failed

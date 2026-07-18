@@ -368,7 +368,10 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 
 	local entries = {}
 	for _, name, offset, size, packed, crc in zzlib.files(buf) do
-		table.insert(entries, { name = name, offset = offset, size = size, packed = packed, crc = crc })
+		table.insert(
+			entries,
+			{ name = name, offset = offset, size = size, packed = packed, crc = crc }
+		)
 	end
 
 	table.sort(entries, function(a, b)
@@ -502,13 +505,19 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			end
 		end
 
+		-- The root module is either a top-level "init.lua" (dir == "")
+		-- or an "init.lua" inside a top-level "src" folder (dir == "src"),
+		-- which is the layout most wally packages use and is deliberately
+		-- kept as a real folder instead of being collapsed above.
+		local isRootLevel = dir == "" and parentInstance == root
+		local isRootSrc = dir == "src" and parentInstance and parentInstance.Parent == root
+
 		if
 			not rootInit
-			and dir == ""
 			and object
 			and object:IsA("ModuleScript")
 			and isInitFile(filename)
-			and parentInstance == root
+			and (isRootLevel or isRootSrc)
 		then
 			rootInit = object
 		end
@@ -549,7 +558,9 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		end
 
 		applyMetaProperties(target, parsed)
-		ZipBuild.__log(`[ZipImporter] Applied meta properties from "{meta.name}" to "{target:GetFullName()}"`)
+		ZipBuild.__log(
+			`[ZipImporter] Applied meta properties from "{meta.name}" to "{target:GetFullName()}"`
+		)
 	end
 
 	return imported, skipped, rootInit, wallyData
@@ -587,7 +598,9 @@ local function getDependenciesFromToml(toml)
 		if type(entries) == "table" then
 			for depName, specifier in pairs(entries) do
 				table.insert(deps, { name = depName, specifier = specifier, realm = section.realm })
-				ZipBuild.__log(`[ZipImporter] Dependency: {depName} = "{specifier}" ({section.realm})`)
+				ZipBuild.__log(
+					`[ZipImporter] Dependency: {depName} = "{specifier}" ({section.realm})`
+				)
 			end
 		end
 	end
@@ -622,12 +635,18 @@ function ZipBuild.createFromFile(file: File, folder: Folder?)
 	ZipBuild.__log(`[ZipImporter]: Importing {file.Name}...`)
 
 	local folderWasNil = folder == nil
-	local targetObject = folder or new("Folder", { Name = file.Name, Parent = game:GetService("TestService") })
+	local targetObject = folder
+		or new("Folder", { Name = file.Name, Parent = game:GetService("TestService") })
 	local raw = file:GetBinaryContents()
 
 	-- Log raw entries
 	for _, name, offset, size, packed, crc in zzlib.files(raw) do
-		ZipBuild.__log("[ZipImporter]:", name, formatBytes(size), packed and "(compressed)" or "(stored)")
+		ZipBuild.__log(
+			"[ZipImporter]:",
+			name,
+			formatBytes(size),
+			packed and "(compressed)" or "(stored)"
+		)
 	end
 
 	-- Pre-scan for wally.toml to get include/exclude before importing
@@ -648,10 +667,14 @@ function ZipBuild.createFromFile(file: File, folder: Folder?)
 				if ok and toml then
 					includes, excludes = getFilterFromToml(toml)
 					if #includes > 0 then
-						ZipBuild.__log(`[ZipImporter] Include filter: {table.concat(includes, ", ")}`)
+						ZipBuild.__log(
+							`[ZipImporter] Include filter: {table.concat(includes, ", ")}`
+						)
 					end
 					if #excludes > 0 then
-						ZipBuild.__log(`[ZipImporter] Exclude filter: {table.concat(excludes, ", ")}`)
+						ZipBuild.__log(
+							`[ZipImporter] Exclude filter: {table.concat(excludes, ", ")}`
+						)
 					end
 				end
 			end
@@ -664,7 +687,8 @@ function ZipBuild.createFromFile(file: File, folder: Folder?)
 		ZipBuild.__log(`[ZipImporter] Found project file remapping ({#pathMappings} path(s))`)
 	end
 
-	local ok, imported, skipped, init, wally = pcall(importZip, raw, targetObject, includes, excludes, pathMappings)
+	local ok, imported, skipped, init, wally =
+		pcall(importZip, raw, targetObject, includes, excludes, pathMappings)
 	if ok then
 		if init then
 			ZipBuild.__log(`[ZipImporter]: Root module -> {init:GetFullName()}`)
@@ -681,7 +705,9 @@ function ZipBuild.createFromFile(file: File, folder: Folder?)
 			targetObject:SetAttribute("license", license ~= "" and license or nil)
 			targetObject:SetAttribute("description", description)
 			dependencies = getDependenciesFromToml(wally)
-			ZipBuild.__log(`[ZipImporter]: {#dependencies} dependenc{#dependencies == 1 and "y" or "ies"} found`)
+			ZipBuild.__log(
+				`[ZipImporter]: {#dependencies} dependenc{#dependencies == 1 and "y" or "ies"} found`
+			)
 		end
 
 		ZipBuild.__log(`[ZipImporter]: Done – {imported} scripts imported, {skipped} skipped`)
@@ -700,7 +726,8 @@ function ZipBuild.createFromRaw(raw, name, folder: Folder?)
 	ZipBuild.__log(`[ZipImporter]: Importing from raw...`)
 
 	local folderWasNil = folder == nil
-	local targetObject = folder or new("Folder", { Name = name, Parent = game:GetService("TestService") })
+	local targetObject = folder
+		or new("Folder", { Name = name, Parent = game:GetService("TestService") })
 
 	-- Pre-scan for wally.toml
 	local includes, excludes = {}, {}
@@ -730,7 +757,8 @@ function ZipBuild.createFromRaw(raw, name, folder: Folder?)
 		ZipBuild.__log(`[ZipImporter] Found project file remapping ({#pathMappings} path(s))`)
 	end
 
-	local ok, imported, skipped, init, wally = pcall(importZip, raw, targetObject, includes, excludes, pathMappings)
+	local ok, imported, skipped, init, wally =
+		pcall(importZip, raw, targetObject, includes, excludes, pathMappings)
 	if ok then
 		local dependencies = nil
 		if wally then
@@ -742,7 +770,9 @@ function ZipBuild.createFromRaw(raw, name, folder: Folder?)
 			targetObject:SetAttribute("license", license ~= "" and license or nil)
 			targetObject:SetAttribute("description", description)
 			dependencies = getDependenciesFromToml(wally)
-			ZipBuild.__log(`[ZipImporter]: {#dependencies} dependenc{#dependencies == 1 and "y" or "ies"} found`)
+			ZipBuild.__log(
+				`[ZipImporter]: {#dependencies} dependenc{#dependencies == 1 and "y" or "ies"} found`
+			)
 		end
 
 		ZipBuild.__log(`[ZipImporter]: Done – {imported} scripts imported, {skipped} skipped`)
@@ -752,6 +782,10 @@ function ZipBuild.createFromRaw(raw, name, folder: Folder?)
 		ZipBuild.__log(`[ZipImporter]: Failed to import {name} – {err}`)
 		return nil, nil, nil, nil
 	end
+end
+
+function ZipBuild.getDependenciesFromToml(toml)
+	return getDependenciesFromToml(toml)
 end
 
 return ZipBuild

@@ -10,8 +10,6 @@
 return function(New, Children, Label)
 	local UiUtils = {}
 
-	-- Rounded, padded card container used to group related controls.
-	-- `y` optionally clamps the card's height via a UISizeConstraint.
 	function UiUtils.makeCard(contents, y: NumberRange?)
 		return New("Frame")({
 			Size = UDim2.fromScale(1, 0),
@@ -58,7 +56,7 @@ return function(New, Children, Label)
 			ScrollBarImageColor3 = Color3.fromRGB(180, 180, 180),
 			ScrollingDirection = Enum.ScrollingDirection.Y,
 			AutomaticCanvasSize = Enum.AutomaticSize.Y,
-			CanvasSize = UDim2.fromScale(0, 0), -- required alongside AutomaticCanvasSize, or it's ignored
+			CanvasSize = UDim2.fromScale(0, 0),
 			[Children] = {
 				New("UIListLayout")({
 					SortOrder = Enum.SortOrder.LayoutOrder,

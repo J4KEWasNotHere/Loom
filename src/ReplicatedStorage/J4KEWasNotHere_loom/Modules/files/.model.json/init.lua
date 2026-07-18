@@ -38,7 +38,7 @@ RojoInstancer.add = function(rjs: string | { [string]: any })
 	return RojoInstancer.create(nil, rjs)
 end
 
-RojoInstancer.fromFile = function(file: File)
+RojoInstancer.fromFile = function(file: File): Instance
 	assert(file:IsA("File"), "Argument must be a File instance")
 	assert(file.Name:match(ext), "File is not a .model.json file")
 
@@ -52,4 +52,5 @@ end
 return RojoInstancer :: {
 	create: (key: string?, rjs: string | { [string]: any }) -> Instance,
 	add: (rjs: string | { [string]: any }) -> Instance,
+	fromFile: (file: File) -> Instance,
 }
