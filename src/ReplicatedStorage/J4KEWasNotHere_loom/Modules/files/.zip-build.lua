@@ -4,6 +4,7 @@ local HttpService = game:GetService("HttpService")
 
 -- Modules
 local toml_formatter = require("../files/.toml-formatter")
+local model_json = require("../files/.model.json")
 
 -- Packages
 local zzlib = require("../../Packages/ZZLib")
@@ -393,6 +394,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		local isLuau = isLuauFile(name)
 		local isWally = name:match("wally%.toml$") ~= nil
 		local isMeta = name:match("%.meta%.json$") ~= nil
+		local isModel = name:match("%.model%.json$") ~= nil
 		local isDir = name:match("/$") ~= nil
 
 		if isDir then
@@ -406,7 +408,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			continue
 		end
 
-		if not isLuau and not isWally and not isMeta then
+		if not isLuau and not isWally and not isMeta and not isModel then
 			skipped += 1
 			continue
 		end
@@ -439,6 +441,38 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			local remappedMetaName = remapPhysicalPath(name, pathMappings)
 			local key = normalizeScriptPath((remappedMetaName:gsub("%.meta%.json$", "")))
 			table.insert(metaFiles, { key = key, content = content, name = name })
+			continue
+		end
+
+		if isModel then
+			local remappedModelName = remapPhysicalPath(name, pathMappings)
+			local modelDir, modelFilename = remappedModelName:match("^(.*)/([^/]+)$")
+			if not modelDir then
+				modelDir = ""
+				modelFilename = remappedModelName
+			end
+
+			local modelName = modelFilename:gsub("%.model%.json$", "")
+			local modelParent = resolveParent(root, modelDir, folderCache)
+
+			local ok, result = pcall(model_json.create, modelName, content)
+			if ok and typeof(result) == "Instance" then
+				result.Parent = modelParent or game:GetService("ServerStorage")
+
+				local logicalPath = modelDir == "" and modelName or `{modelDir}/{modelName}`
+				local modelKey = normalizeScriptPath(logicalPath)
+				createdByKey[modelKey] = result
+				if not folderCache[logicalPath] then
+					folderCache[logicalPath] = result
+				end
+
+				ZipBuild.__log(`[ZipImporter] Imported model "{modelName}" from "{name}"`)
+				imported += 1
+			else
+				ZipBuild.__log(`[ZipImporter] Failed to build model "{name}": {tostring(result)}`)
+				skipped += 1
+			end
+
 			continue
 		end
 
