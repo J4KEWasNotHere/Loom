@@ -226,27 +226,27 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 		<Item class="Camera" referent="RBX3E75499D6B2C4D69B27E7EBE8C3EA2DB">
 			<Properties>
 				<CoordinateFrame name="CFrame">
-					<X>1.06686234</X>
-					<Y>2.62997389</Y>
-					<Z>4.85895348</Z>
-					<R00>0.976733327</R00>
-					<R01>-0.100232273</R01>
-					<R02>0.189593256</R02>
-					<R10>7.4505806e-09</R10>
-					<R11>0.884059072</R11>
-					<R12>0.467375457</R12>
-					<R20>-0.214457706</R20>
-					<R21>-0.456501186</R21>
-					<R22>0.863489866</R22>
+					<X>398.770477</X>
+					<Y>127.303543</Y>
+					<Z>293.420441</Z>
+					<R00>0.959965229</R00>
+					<R01>-0.145624518</R01>
+					<R02>0.239291385</R02>
+					<R10>-7.4505806e-09</R10>
+					<R11>0.854247987</R11>
+					<R12>0.51986593</R12>
+					<R20>-0.280119359</R20>
+					<R21>-0.49905321</R21>
+					<R22>0.820048273</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>0.687675893</X>
-					<Y>1.69522309</Y>
-					<Z>3.13197398</Z>
+					<X>398.291901</X>
+					<Y>126.263824</Y>
+					<Z>291.780365</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -7510,20 +7510,47 @@ return {
 			)
 		end
 
+		local function spacedNavButtons()
+			return {
+				New("Frame")({
+					Size = UDim2.fromOffset(0, 1),
+					LayoutOrder = -1,
+					BackgroundTransparency = 1,
+					[Children] = {
+						New("UIFlexItem")({ FlexMode = Enum.UIFlexMode.Fill }),
+					},
+				}),
+
+				navButtons,
+
+				New("Frame")({
+					Size = UDim2.fromOffset(0, 1),
+					LayoutOrder = 11,
+					BackgroundTransparency = 1,
+					[Children] = {
+						New("UIFlexItem")({ FlexMode = Enum.UIFlexMode.Fill }),
+					},
+				}),
+			}
+		end
+
 		local mainWidget = AddWidget("Loom | Package Manager", {
-			New("Frame")({
-				Size = UDim2.fromScale(1, 0),
-				BackgroundTransparency = 1,
+			New("ScrollingFrame")({
+				Size = UDim2.new(1, 0, 0, 0),
 				AutomaticSize = Enum.AutomaticSize.Y,
-				LayoutOrder = 0,
+				AutomaticCanvasSize = Enum.AutomaticSize.X,
+				CanvasSize = UDim2.new(),
+				ScrollingDirection = Enum.ScrollingDirection.X,
+				ScrollBarThickness = 0,
+				BackgroundTransparency = 1,
 				[Children] = {
 					New("UIListLayout")({
 						FillDirection = Enum.FillDirection.Horizontal,
 						SortOrder = Enum.SortOrder.LayoutOrder,
-						HorizontalAlignment = Enum.HorizontalAlignment.Center,
 						Padding = UDim.new(0, 6),
 					}),
-					table.unpack(navButtons),
+
+					spacedNavButtons(),
 				},
 			}),
 			Seperator({}),
@@ -16809,28 +16836,71 @@ end
 					<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d72</UniqueId>
 				</Properties>
 			</Item>
-		</Item>
-		<Item class="Folder" referent="RBXA982CA6AFF4F4C55B00F18D124BB09C2">
-			<Properties>
-				<BinaryString name="AttributesSerialize"></BinaryString>
-				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-				<bool name="DefinesCapabilities">false</bool>
-				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-				<string name="Name">Packages</string>
-				<int64 name="SourceAssetId">-1</int64>
-				<SharedString name="Tags">vq3zFj7ddPsNc4SVANyGyw==</SharedString>
-				<UniqueId name="UniqueId">2f58106e905302ef0a6dff2c00003e59</UniqueId>
-			</Properties>
-			<Item class="Folder" referent="RBX3BDE2E7BF19F46D383DC4E32C3424606">
+			<Item class="Frame" referent="RBX1D54C414C072481E853294F425F643F0">
 				<Properties>
+					<token name="Style">0</token>
+					<bool name="Active">false</bool>
+					<Vector2 name="AnchorPoint">
+						<X>0</X>
+						<Y>0</Y>
+					</Vector2>
+					<token name="AutomaticSize">0</token>
+					<Color3 name="BackgroundColor3">
+						<R>1</R>
+						<G>1</G>
+						<B>1</B>
+					</Color3>
+					<float name="BackgroundTransparency">0</float>
+					<Color3 name="BorderColor3">
+						<R>0</R>
+						<G>0</G>
+						<B>0</B>
+					</Color3>
+					<token name="BorderMode">0</token>
+					<int name="BorderSizePixel">0</int>
+					<bool name="ClipsDescendants">false</bool>
+					<bool name="Draggable">false</bool>
+					<token name="InputSink">0</token>
+					<bool name="Interactable">true</bool>
+					<int name="LayoutOrder">0</int>
+					<Ref name="NextSelectionDown">null</Ref>
+					<Ref name="NextSelectionLeft">null</Ref>
+					<Ref name="NextSelectionRight">null</Ref>
+					<Ref name="NextSelectionUp">null</Ref>
+					<UDim2 name="Position">
+						<XS>0</XS>
+						<XO>0</XO>
+						<YS>0</YS>
+						<YO>0</YO>
+					</UDim2>
+					<float name="Rotation">0</float>
+					<bool name="Selectable">false</bool>
+					<Ref name="SelectionImageObject">null</Ref>
+					<int name="SelectionOrder">0</int>
+					<UDim2 name="Size">
+						<XS>0</XS>
+						<XO>100</XO>
+						<YS>0</YS>
+						<YO>100</YO>
+					</UDim2>
+					<token name="SizeConstraint">0</token>
+					<bool name="Visible">true</bool>
+					<int name="ZIndex">1</int>
+					<bool name="AutoLocalize">true</bool>
+					<Ref name="RootLocalizationTable">null</Ref>
+					<token name="SelectionBehaviorDown">0</token>
+					<token name="SelectionBehaviorLeft">0</token>
+					<token name="SelectionBehaviorRight">0</token>
+					<token name="SelectionBehaviorUp">0</token>
+					<bool name="SelectionGroup">false</bool>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 					<bool name="DefinesCapabilities">false</bool>
 					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-					<string name="Name">_Index</string>
+					<string name="Name">Frame</string>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-					<UniqueId name="UniqueId">2f58106e905302ef0a6dff2c00003e5a</UniqueId>
+					<UniqueId name="UniqueId">2f58106e905302ef0a6dff2c00004224</UniqueId>
 				</Properties>
 			</Item>
 		</Item>
@@ -17092,7 +17162,6 @@ AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
 		</Item>
 	</Item>
 	<SharedStrings>
-		<SharedString md5="vq3zFj7ddPsNc4SVANyGyw==">cGFja2FnZS1kaXJlY3RvcnkvQGpha2Vib3lnYW1lcjY0</SharedString>
 		<SharedString md5="yuZpQdnvvUBOTYh1jqZ2cA=="></SharedString>
 	</SharedStrings>
 </roblox>
