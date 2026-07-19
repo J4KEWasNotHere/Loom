@@ -10614,6 +10614,7 @@ local HttpService = game:GetService("HttpService")
 
 -- Modules
 local toml_formatter = require("../files/.toml-formatter")
+local model_json = require("../files/.model.json")
 
 -- Packages
 local zzlib = require("../../Packages/ZZLib")
@@ -11003,6 +11004,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		local isLuau = isLuauFile(name)
 		local isWally = name:match("wally%.toml$") ~= nil
 		local isMeta = name:match("%.meta%.json$") ~= nil
+		local isModel = name:match("%.model%.json$") ~= nil
 		local isDir = name:match("/$") ~= nil
 
 		if isDir then
@@ -11016,7 +11018,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			continue
 		end
 
-		if not isLuau and not isWally and not isMeta then
+		if not isLuau and not isWally and not isMeta and not isModel then
 			skipped += 1
 			continue
 		end
@@ -11049,6 +11051,38 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			local remappedMetaName = remapPhysicalPath(name, pathMappings)
 			local key = normalizeScriptPath((remappedMetaName:gsub("%.meta%.json$", "")))
 			table.insert(metaFiles, { key = key, content = content, name = name })
+			continue
+		end
+
+		if isModel then
+			local remappedModelName = remapPhysicalPath(name, pathMappings)
+			local modelDir, modelFilename = remappedModelName:match("^(.*)/([^/]+)$")
+			if not modelDir then
+				modelDir = ""
+				modelFilename = remappedModelName
+			end
+
+			local modelName = modelFilename:gsub("%.model%.json$", "")
+			local modelParent = resolveParent(root, modelDir, folderCache)
+
+			local ok, result = pcall(model_json.create, modelName, content)
+			if ok and typeof(result) == "Instance" then
+				result.Parent = modelParent or game:GetService("ServerStorage")
+
+				local logicalPath = modelDir == "" and modelName or `{modelDir}/{modelName}`
+				local modelKey = normalizeScriptPath(logicalPath)
+				createdByKey[modelKey] = result
+				if not folderCache[logicalPath] then
+					folderCache[logicalPath] = result
+				end
+
+				ZipBuild.__log(`[ZipImporter] Imported model "{modelName}" from "{name}"`)
+				imported += 1
+			else
+				ZipBuild.__log(`[ZipImporter] Failed to build model "{name}": {tostring(result)}`)
+				skipped += 1
+			end
+
 			continue
 		end
 
@@ -16776,6 +16810,30 @@ end
 				</Properties>
 			</Item>
 		</Item>
+		<Item class="Folder" referent="RBXA982CA6AFF4F4C55B00F18D124BB09C2">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">Packages</string>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">vq3zFj7ddPsNc4SVANyGyw==</SharedString>
+				<UniqueId name="UniqueId">2f58106e905302ef0a6dff2c00003e59</UniqueId>
+			</Properties>
+			<Item class="Folder" referent="RBX3BDE2E7BF19F46D383DC4E32C3424606">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">_Index</string>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">2f58106e905302ef0a6dff2c00003e5a</UniqueId>
+				</Properties>
+			</Item>
+		</Item>
 	</Item>
 	<Item class="ServerScriptService" referent="RBX21B75B852B064780A7E660B29D9436F8">
 		<Properties>
@@ -17034,6 +17092,7 @@ AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
 		</Item>
 	</Item>
 	<SharedStrings>
+		<SharedString md5="vq3zFj7ddPsNc4SVANyGyw==">cGFja2FnZS1kaXJlY3RvcnkvQGpha2Vib3lnYW1lcjY0</SharedString>
 		<SharedString md5="yuZpQdnvvUBOTYh1jqZ2cA=="></SharedString>
 	</SharedStrings>
 </roblox>
