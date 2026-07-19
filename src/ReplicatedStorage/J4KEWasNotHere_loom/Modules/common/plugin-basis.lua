@@ -414,20 +414,47 @@ return {
 			)
 		end
 
+		local function spacedNavButtons()
+			return {
+				New("Frame")({
+					Size = UDim2.fromOffset(0, 1),
+					LayoutOrder = -1,
+					BackgroundTransparency = 1,
+					[Children] = {
+						New("UIFlexItem")({ FlexMode = Enum.UIFlexMode.Fill }),
+					},
+				}),
+
+				navButtons,
+
+				New("Frame")({
+					Size = UDim2.fromOffset(0, 1),
+					LayoutOrder = 11,
+					BackgroundTransparency = 1,
+					[Children] = {
+						New("UIFlexItem")({ FlexMode = Enum.UIFlexMode.Fill }),
+					},
+				}),
+			}
+		end
+
 		local mainWidget = AddWidget("Loom | Package Manager", {
-			New("Frame")({
-				Size = UDim2.fromScale(1, 0),
-				BackgroundTransparency = 1,
+			New("ScrollingFrame")({
+				Size = UDim2.new(1, 0, 0, 0),
 				AutomaticSize = Enum.AutomaticSize.Y,
-				LayoutOrder = 0,
+				AutomaticCanvasSize = Enum.AutomaticSize.X,
+				CanvasSize = UDim2.new(),
+				ScrollingDirection = Enum.ScrollingDirection.X,
+				ScrollBarThickness = 0,
+				BackgroundTransparency = 1,
 				[Children] = {
 					New("UIListLayout")({
 						FillDirection = Enum.FillDirection.Horizontal,
 						SortOrder = Enum.SortOrder.LayoutOrder,
-						HorizontalAlignment = Enum.HorizontalAlignment.Center,
 						Padding = UDim.new(0, 6),
 					}),
-					table.unpack(navButtons),
+
+					spacedNavButtons(),
 				},
 			}),
 			Seperator({}),
