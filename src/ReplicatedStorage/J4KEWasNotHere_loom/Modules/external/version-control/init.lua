@@ -20,7 +20,8 @@ local zzlib = require("../../Packages/ZZLib")
 local zipBuild = require("../files/.zip-build")
 
 -- Variables
-local RegistryUrl = "https://cdn.jsdelivr.net/gh/J4KEWasNotHere/Loom@main/common/registry.toml"
+local RegistryUrl =
+	"https://raw.githubusercontent.com/J4KEWasNotHere/Loom/refs/heads/main/common/registry.toml"
 local GitHubArchiveUrls = {
 	"https://codeload.github.com/J4KEWasNotHere/Loom/zip/refs/heads/main",
 	"https://github.com/J4KEWasNotHere/Loom/archive/refs/heads/main.zip",
