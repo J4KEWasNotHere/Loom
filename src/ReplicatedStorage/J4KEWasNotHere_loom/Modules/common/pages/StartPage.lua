@@ -161,7 +161,7 @@ return function(ctx)
 							end
 						end
 
-						local importedModule, reference, ok = package_instancer.syncPackage(realm, {
+						local _, _, ok2 = package_instancer.syncPackage(realm, {
 							source = sourceFolder,
 							reference = initModule,
 							unpackSrc = settingsService:get("unpackSrc", true),
@@ -169,7 +169,7 @@ return function(ctx)
 							wally = wallyData,
 						})
 
-						if not ok then
+						if not ok2 then
 							table.insert(failedNames, file.Name)
 							if sourceFolder then
 								sourceFolder:Destroy()
@@ -202,11 +202,6 @@ return function(ctx)
 					end
 
 					if settingsService:get("includeDirectors", true) then
-						-- Directors are linked against whatever's already sitting in
-						-- each realm's Packages root. Dependencies for the archives
-						-- above may only just have finished installing, so re-run the
-						-- linking pass now rather than relying on the one attempt made
-						-- inside syncPackage (which ran before deps existed).
 						package_instancer.linkAllLocalDependencies("shared")
 						package_instancer.linkAllLocalDependencies("server")
 						package_instancer.linkAllLocalDependencies("dev")

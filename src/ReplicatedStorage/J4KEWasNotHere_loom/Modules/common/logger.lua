@@ -8,15 +8,15 @@ local function color(hex, text)
 end
 
 local COLORS = {
-	bracket = "#808080",      -- [Zi[Importer]:
+	bracket = "#808080", -- [Zi[Importer]:
 	timestamp = "#9CDCFE",
 	filename = "#D4D4D4",
-	module = "#4EC994",       -- ModuleScript
-	package = "#DCDCAA",      -- package names
+	module = "#4EC994", -- ModuleScript
+	package = "#DCDCAA", -- package names
 	path = "#569CD6",
 	size = "#B5CEA8",
 	unit = "#7FB0D6",
-	status = "#4EC994",       -- compressed, skipped, etc.
+	status = "#4EC994", -- compressed, skipped, etc.
 	keyword = "#C586C0",
 	error = "#F14C4C",
 	success = "#4EC994",
@@ -25,50 +25,56 @@ local COLORS = {
 
 local function formatLine(line)
 	local prefix, body = line:match("^(%[.-%]:?)%s*(.*)$")
-	if not prefix then return line end
+	if not prefix then
+		return line
+	end
 
 	prefix = color(COLORS.bracket, prefix)
 
-	-- === Specific patterns from your screenshot ===
-
-	-- Imported ModuleScript
-	if body:match("^Imported ModuleScript") then
-		local name = body:match('from "([^"]+)"')
+	-- Imported ModuleScript / Script / LocalScript
+	local scriptType, name, fromPath = body:match('^Imported (%a+) "([^"]*)" from "(.-)"$')
+	if scriptType then
 		return table.concat({
-			prefix, " ",
+			prefix,
+			" ",
 			color(COLORS.keyword, "Imported "),
-			color(COLORS.module, "ModuleScript "),
-			'"', color(COLORS.package, name or ""), '"',
+			color(COLORS.module, scriptType .. " "),
+			'"',
+			color(COLORS.package, name),
+			'"',
+			fromPath ~= "" and (' from "' .. color(COLORS.path, fromPath) .. '"') or "",
 		})
 	end
 
 	-- Importing from raw... / Importing package
 	if body:match("^Importing") then
-		local pkg = body:match("Importing from raw%.%.%.") or body:match("Importing%s+(.+)%.%.%.$")
+		local pkg = body:match("^Importing%s+(.-)%.%.%.$")
 		return table.concat({
-			prefix, " ",
+			prefix,
+			" ",
 			color(COLORS.keyword, "Importing "),
-			color(COLORS.package, pkg or body),
+			color(COLORS.package, pkg or body:gsub("^Importing%s*", "")),
 			pkg and "..." or "",
 		})
 	end
 
 	-- Parsed / Done messages
 	if body:match("^Parsed") or body:match("^Done") then
-		local doneText = body:match("^(Done.-imported)") or body
-		return prefix .. " " .. color(COLORS.success, doneText)
+		return prefix .. " " .. color(COLORS.success, body)
 	end
 
 	-- Size + status line (e.g. init.lua 1.7 KB (compressed))
-	local file, size, status = body:match("^(.-)%s+(%d+%s*%a+)%s+(%b())$")
+	local file, size, status = body:match("^(.-)%s+([%d%.]+%s*%a+)%s+(%b())$")
 	if file and size and status then
-		local num, unit = size:match("^(%d+)%s*(%a+)$")
-		local coloredSize = num and unit 
-			and color(COLORS.size, num) .. " " .. color(COLORS.unit, unit)
+		local num, unit = size:match("^([%d%.]+)%s*(%a+)$")
+		local coloredSize = num
+				and unit
+				and color(COLORS.size, num) .. " " .. color(COLORS.unit, unit)
 			or color(COLORS.size, size)
 
 		return table.concat({
-			prefix, " ",
+			prefix,
+			" ",
 			color(COLORS.filename, file),
 			" ",
 			coloredSize,
@@ -102,7 +108,7 @@ local module = { output = Value(""), raw = Value("") }
 module.__index = module
 
 function module:log(...)
-	local text = table.concat({...}, " ")
+	local text = table.concat({ ... }, " ")
 	self.raw:set(self.raw:get() .. text .. "\n")
 	self.output:set(formatString(self.raw:get()))
 end
