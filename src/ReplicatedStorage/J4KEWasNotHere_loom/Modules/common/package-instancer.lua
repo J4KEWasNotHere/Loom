@@ -33,6 +33,49 @@ local function getPackageBase(name)
 	return name:match("^(.-)@") or name
 end
 
+local function getPackageIdentifier(name)
+	local scopePackage = name:match("^(.-)@") or name
+	local scope, package = scopePackage:match("^([^/]+)/([^/]+)$")
+	if scope and package then
+		return scope .. "/" .. package
+	end
+	return scopePackage
+end
+
+local function getFolderVersion(name)
+	return (tostring(name or ""):match("@(.+)$")) or nil
+end
+
+local function serializeList(values)
+	local normalized = {}
+	for _, value in ipairs(values or {}) do
+		if value and tostring(value) ~= "" then
+			table.insert(normalized, tostring(value))
+		end
+	end
+	table.sort(normalized)
+	return table.concat(normalized, ",")
+end
+
+local function getDependencyKeys(wallyData)
+	local keys = {}
+	if type(wallyData) ~= "table" then
+		return keys
+	end
+
+	for _, section in ipairs({ "dependencies", "dev-dependencies" }) do
+		local deps = wallyData[section]
+		if type(deps) == "table" then
+			for alias in pairs(deps) do
+				table.insert(keys, tostring(alias))
+			end
+		end
+	end
+
+	table.sort(keys)
+	return keys
+end
+
 local function toString(str)
 	local a1 = (type(str) == "string") and str or nil
 	return (a1 and #a1 > 0) and a1 or nil
@@ -122,6 +165,20 @@ local function unpackTo(inst, parent)
 	end
 
 	inst:Destroy()
+end
+
+local function getPackageEntryPoint(folder)
+	folder = toInstance(folder)
+	if not folder then
+		return nil
+	end
+
+	local explicit = folder:FindFirstChild("init", true) or folder:FindFirstChild("init.lua", true)
+	if explicit and explicit:IsA("ModuleScript") then
+		return explicit
+	end
+
+	return nil
 end
 
 local function unpackModuleRoot(source, reference)
@@ -275,13 +332,121 @@ local function createLocalDependencyDirectors(source, wallyData, realm)
 		local targetDirector = packages:FindFirstChild(alias)
 		if targetDirector and targetDirector:IsA("ModuleScript") then
 			local path = getPathTo(source, targetDirector)
-			new("ModuleScript", {
+			local moduleRef = new("ModuleScript", {
 				Name = alias,
 				Parent = source,
 				Source = `return require("{path}")`,
 			})
+			if moduleRef then
+				moduleRef:SetAttribute("loomManaged", true)
+				moduleRef:SetAttribute("loomManagedTag", PackagesTag)
+				moduleRef:SetAttribute("loomDependencyAlias", alias)
+				moduleRef:SetAttribute("loomPackageRealm", tostring(realm))
+			end
 		end
 	end
+end
+
+local function setPackageMetadata(source, realm, wallyData, packageIdentifier, version)
+	if not source or not source:IsA("Folder") then
+		return
+	end
+
+	local sourceTag = (realm == "dev") and DevPackagesTag or PackagesTag
+	local deps = getDependencyKeys(wallyData)
+	local packageId =
+		tostring(packageIdentifier or getPackageIdentifier(source.Name) or source.Name)
+	local installedVersion = tostring(version or getFolderVersion(source.Name) or "")
+
+	source:SetAttribute("loomManaged", true)
+	source:SetAttribute("loomManagedTag", sourceTag)
+	source:SetAttribute("loomPackageIdentifier", packageId)
+	source:SetAttribute("loomPackageVersion", installedVersion)
+	source:SetAttribute("loomPackageRealm", tostring(realm or "shared"))
+	source:SetAttribute(
+		"loomInstallationSource",
+		(realm == "server") and "server" or (realm == "dev") and "dev" or "shared"
+	)
+	source:SetAttribute("loomDependencyList", serializeList(deps))
+	source:SetAttribute("loomReferenceCount", 0)
+	source:SetAttribute("loomRootPackage", true)
+end
+
+local function getPackageRecord(folder, realm)
+	if not folder or not folder:IsA("Folder") then
+		return nil
+	end
+
+	local packageId = tostring(
+		folder:GetAttribute("loomPackageIdentifier")
+			or getPackageIdentifier(folder.Name)
+			or folder.Name
+	)
+	local version =
+		tostring(folder:GetAttribute("loomPackageVersion") or getFolderVersion(folder.Name) or "")
+	local dependencies = {}
+	local wallyToml = folder:FindFirstChild("wally.toml")
+		or folder:FindFirstChild(".wally")
+		or folder:FindFirstChild("wally")
+	if wallyToml and wallyToml:IsA("ModuleScript") then
+		local ok, wallyData = pcall(require, wallyToml)
+		if ok and typeof(wallyData) == "table" then
+			for _, alias in ipairs(getDependencyKeys(wallyData)) do
+				table.insert(dependencies, alias)
+			end
+		end
+	end
+
+	local rootModule = nil
+	local rootPackages = find_packages(realm)
+	if rootPackages then
+		for _, child in ipairs(rootPackages:GetChildren()) do
+			if child:IsA("ModuleScript") and child.Name == packageId then
+				rootModule = child
+				break
+			end
+		end
+	end
+
+	return {
+		id = packageId,
+		name = packageId,
+		version = version,
+		realm = tostring(realm or "shared"),
+		folder = folder,
+		dependencies = dependencies,
+		rootModule = rootModule,
+		isRoot = rootModule ~= nil,
+		managedTag = tostring(folder:GetAttribute("loomManagedTag") or ""),
+		installedSource = tostring(
+			folder:GetAttribute("loomInstallationSource") or realm or "shared"
+		),
+		referenceCount = tonumber(folder:GetAttribute("loomReferenceCount")) or 0,
+	}
+end
+
+local function scanManagedPackages(realm)
+	local results = {}
+	local packages = find_packages(realm)
+	if not packages then
+		return results
+	end
+
+	local index = packages:FindFirstChild("_Index")
+	if not index then
+		return results
+	end
+
+	for _, child in ipairs(index:GetChildren()) do
+		if child:IsA("Folder") then
+			local record = getPackageRecord(child, realm)
+			if record then
+				table.insert(results, record)
+			end
+		end
+	end
+
+	return results
 end
 
 -- Checks all three realms' `_Index` folders for a package matching
@@ -301,13 +466,8 @@ local function find_installed(scope, packageName, version)
 						or (not key and getPackageBase(child.Name) == base)
 
 					if matches then
-						local reference = child:FindFirstChild("init", true)
-							or child:FindFirstChild("init.lua", true)
-							or child:FindFirstChildWhichIsA("ModuleScript", true)
-
-						if reference then
-							return realm, child, reference
-						end
+						local reference = getPackageEntryPoint(child)
+						return reference, child
 					end
 				end
 			end
@@ -317,11 +477,63 @@ local function find_installed(scope, packageName, version)
 	return nil
 end
 
--- Public Module API
-
 PackageModule.inst = new
 PackageModule.createPackages = create_packages
 PackageModule.findInstalled = find_installed
+PackageModule.scanManagedPackages = scanManagedPackages
+
+PackageModule.getManagedPackageSummary = function()
+	local entries = {}
+	for _, realm in ipairs({ "shared", "server", "dev" }) do
+		for _, entry in ipairs(scanManagedPackages(realm)) do
+			table.insert(entries, entry)
+		end
+	end
+	return entries
+end
+
+PackageModule.removePackage = function(realm, packageId, version)
+	local packages = find_packages(realm)
+	if not packages then
+		return false
+	end
+
+	local index = packages:FindFirstChild("_Index")
+	if not index then
+		return false
+	end
+
+	local targetId = tostring(packageId or "")
+	local targetVersion = tostring(version or "")
+	local removed = false
+
+	for _, child in ipairs(index:GetChildren()) do
+		if child:IsA("Folder") then
+			local childId = tostring(child:GetAttribute("loomPackageIdentifier") or "")
+			local childVersion = tostring(
+				child:GetAttribute("loomPackageVersion") or getFolderVersion(child.Name) or ""
+			)
+			local nameMatches = childId == targetId or getPackageBase(child.Name) == targetId
+			local versionMatches = targetVersion == "" or childVersion == targetVersion
+			if nameMatches and versionMatches then
+				child:Destroy()
+				removed = true
+			end
+		end
+	end
+
+	for _, child in ipairs(packages:GetChildren()) do
+		if child:IsA("ModuleScript") then
+			local childId = tostring(child:GetAttribute("loomPackageIdentifier") or "")
+			if childId == targetId or child.Name == targetId then
+				child:Destroy()
+				removed = true
+			end
+		end
+	end
+
+	return removed
+end
 
 PackageModule.linkAllLocalDependencies = function(realm)
 	local p = find_packages(realm)
@@ -334,7 +546,8 @@ PackageModule.linkAllLocalDependencies = function(realm)
 	end
 
 	for _, sourceFolder in ipairs(index:GetChildren()) do
-		local wallyTomlModule = sourceFolder:FindFirstChild(".wally")
+		local wallyTomlModule = sourceFolder:FindFirstChild("wally.toml")
+			or sourceFolder:FindFirstChild(".wally")
 			or sourceFolder:FindFirstChild("wally")
 
 		-- Look for an existing parsed file asset or structure
@@ -373,25 +586,49 @@ PackageModule.addPackage = function(
 		source: Folder,
 		display: string?,
 		reference: ModuleScript?,
+		includeDirectors: boolean?,
 	}
 )
 	local p, index = find_packages(realm)
-	local reference = data.reference
-		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.lua", true)
-		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
+	local reference = data.reference or getPackageEntryPoint(data.source)
 
 	data.source.Parent = index
+	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
+		or ((data.creator and data.name) and (tostring(data.creator) .. "/" .. tostring(data.name)))
+		or (data.name or data.source.Name)
+	setPackageMetadata(
+		data.source,
+		realm,
+		data.wally,
+		packageIdentifier,
+		(
+			data.source.Name:match("@(.+)$")
+			or tostring(data.major)
+				.. "."
+				.. tostring(data.minor)
+				.. "."
+				.. tostring(data.patch)
+		)
+	)
 
 	if not p then
 		warn(`[PackageModule]: no package folder found for realm "{tostring(realm)}", creating..`)
 		p, index = create_packages(nil, realm)
 	end
+
+	if data.wally then
+		toml_formatter.create(data.wally, data.source)
+		if data.includeDirectors ~= false then
+			createLocalDependencyDirectors(data.source, data.wally, realm)
+		end
+	end
+
 	if not reference then
-		warn(
-			`[PackageModule]: no reference found for package {data.name}, did you forget to pass it?`
-		)
-		return
+		-- No init/entry point was found (via zip decompression or folder
+		-- search). Rather than aborting the import, leave the package
+		-- as-is under _Index and skip creating a director (proxy
+		-- require) ModuleScript for it, since there's nothing to point to.
+		return nil, nil, true
 	end
 
 	local f = create_package_directory(data.creator, data.name, data.major, data.minor, data.patch)
@@ -412,12 +649,7 @@ PackageModule.addPackage = function(
 		m = new("ModuleScript", { Name = name, Source = code, Parent = p })
 	end
 
-	if data.wally then
-		toml_formatter.create(data.wally, data.source)
-		createLocalDependencyDirectors(data.source, data.wally, realm)
-	end
-
-	return m, reference
+	return m, reference, true
 end
 
 PackageModule.syncPackage = function(
@@ -428,6 +660,7 @@ PackageModule.syncPackage = function(
 		name: string?,
 		reference: ModuleScript?,
 		unpackSrc: boolean?,
+		includeDirectors: boolean?,
 	}
 )
 	local p = find_packages(realm)
@@ -441,15 +674,7 @@ PackageModule.syncPackage = function(
 		index = new("Folder", { Name = "_Index", Parent = p })
 	end
 
-	local reference = data.reference
-		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.lua", true)
-		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
-
-	if not reference then
-		warn(`[PackageModule]: no reference found for package, did you forget to pass it?`)
-		return
-	end
+	local reference = data.reference or getPackageEntryPoint(data.source)
 
 	local displayName = (data.name and data.name ~= "") and data.name or data.source.Name
 
@@ -473,6 +698,30 @@ PackageModule.syncPackage = function(
 	end
 
 	data.source.Parent = index
+	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
+		or (data.name or data.source.Name)
+	setPackageMetadata(
+		data.source,
+		realm,
+		data.wally,
+		packageIdentifier,
+		(data.source.Name:match("@(.+)$") or "")
+	)
+
+	if data.wally then
+		toml_formatter.create(data.wally, data.source)
+		if data.includeDirectors ~= false then
+			createLocalDependencyDirectors(data.source, data.wally, realm)
+		end
+	end
+
+	if not reference then
+		-- No init/entry point was found (via zip decompression or folder
+		-- search). Rather than aborting the import, leave the package
+		-- as-is under _Index and skip creating a director (proxy
+		-- require) ModuleScript for it, since there's nothing to point to.
+		return nil, nil, true
+	end
 
 	local m
 
@@ -519,20 +768,15 @@ PackageModule.syncPackage = function(
 --%s]]
 
 		if desc and license then
-			rawDetails = descFormat:format(data.source.Name, desc, `License: {license}`)
+			rawDetails = descFormat:format(data.source.Name, desc, "License: " .. license)
 		else
-			rawDetails = descFormat:format(data.source.Name, desc or `License: {license}`)
+			rawDetails = descFormat:format(data.source.Name, desc or "License: " .. license)
 		end
 	end
 	m.Source = ([[%s
 return require("%s")]]):format(rawDetails, getPathTo(m, reference))
 
-	if data.wally then
-		toml_formatter.create(data.wally, data.source)
-		createLocalDependencyDirectors(data.source, data.wally, realm)
-	end
-
-	return m, reference
+	return m, reference, true
 end
 
 return PackageModule

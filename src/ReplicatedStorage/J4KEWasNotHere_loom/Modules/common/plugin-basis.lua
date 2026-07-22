@@ -56,8 +56,9 @@ return {
 
 		local StartPage = require(Pages.StartPage)
 		local QueuePage = require(Pages.QueuePage)
-		local SettingsPage = require(Pages.SettingsPage)
 		local SearchPage = require(Pages.SearchPage)
+		local PackagesPage = require(Pages.PackagesPage)
+		local SettingsPage = require(Pages.SettingsPage)
 
 		local settingsService = SettingsService.new(pluginInstance)
 		local installService = InstallService.new(settingsService)
@@ -339,12 +340,20 @@ return {
 				order = 3,
 			},
 			{
+				page = "Packages",
+				icon = "rbxassetid://16898671019",
+				RectSize = Vector2.new(256, 256),
+				RectOffset = Vector2.new(514, 514),
+				IconSize = 33,
+				order = 4,
+			},
+			{
 				page = "Settings",
 				icon = "rbxassetid://16898734421",
 				RectSize = Vector2.new(256, 256),
 				RectOffset = Vector2.new(514, 0),
 				IconSize = 37,
-				order = 4,
+				order = 5,
 			},
 		}
 
@@ -467,6 +476,8 @@ return {
 						return QueuePage(ctx)
 					elseif page == "Search" then
 						return SearchPage(ctx)
+					elseif page == "Packages" then
+						return PackagesPage(ctx)
 					elseif page == "Settings" then
 						return SettingsPage(ctx)
 					end

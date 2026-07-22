@@ -123,18 +123,22 @@ return function(ctx)
 						StatusText:set(("Importing %s…"):format(file.Name))
 						local sourceFolder, initModule, wallyData, dependencies =
 							zip_build.createFromFile(file)
-						if not wallyData then
+
+						if not sourceFolder then
 							table.insert(failedNames, file.Name)
 							logger:log(
-								`[{os.date("%H:%M:%S")}]: wally.toml, not found in {file.Name}, is this a wally package?`
+								`[{os.date("%H:%M:%S")}]: failed to unpack archive {file.Name}`
 							)
-							if sourceFolder then
-								sourceFolder:Destroy()
-							end
 							continue
 						end
 
-						local realm = (wallyData.package and wallyData.package.realm)
+						if not wallyData then
+							logger:log(
+								`[{os.date("%H:%M:%S")}]: no wally.toml found in {file.Name}, importing as a plain package`
+							)
+						end
+
+						local realm = (wallyData and wallyData.package and wallyData.package.realm)
 							or "shared"
 
 						-- Remove stale instances with the same name so we don't accumulate duplicates
@@ -157,14 +161,15 @@ return function(ctx)
 							end
 						end
 
-						local importedModule = package_instancer.syncPackage(realm, {
+						local importedModule, reference, ok = package_instancer.syncPackage(realm, {
 							source = sourceFolder,
 							reference = initModule,
 							unpackSrc = settingsService:get("unpackSrc", true),
+							includeDirectors = settingsService:get("includeDirectors", true),
 							wally = wallyData,
 						})
 
-						if not importedModule then
+						if not ok then
 							table.insert(failedNames, file.Name)
 							if sourceFolder then
 								sourceFolder:Destroy()
@@ -180,7 +185,9 @@ return function(ctx)
 								dependencies,
 								{ unpackSrc = settingsService:get("unpackSrc", true) },
 								function(step, total, label)
-									StatusText:set(("Installing %d/%d: %s"):format(step, total, label))
+									StatusText:set(
+										("Installing %d/%d: %s"):format(step, total, label)
+									)
 								end
 							)
 
@@ -194,8 +201,21 @@ return function(ctx)
 						importedCount += 1
 					end
 
+					if settingsService:get("includeDirectors", true) then
+						-- Directors are linked against whatever's already sitting in
+						-- each realm's Packages root. Dependencies for the archives
+						-- above may only just have finished installing, so re-run the
+						-- linking pass now rather than relying on the one attempt made
+						-- inside syncPackage (which ran before deps existed).
+						package_instancer.linkAllLocalDependencies("shared")
+						package_instancer.linkAllLocalDependencies("server")
+						package_instancer.linkAllLocalDependencies("dev")
+					end
+
 					if #failedNames == 0 then
-						StatusText:set(("Imported %d archive(s) successfully."):format(importedCount))
+						StatusText:set(
+							("Imported %d archive(s) successfully."):format(importedCount)
+						)
 					elseif importedCount == 0 then
 						StatusText:set("Import failed for all selected archives.")
 					else
