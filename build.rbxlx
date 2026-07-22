@@ -226,27 +226,27 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 		<Item class="Camera" referent="RBX3E75499D6B2C4D69B27E7EBE8C3EA2DB">
 			<Properties>
 				<CoordinateFrame name="CFrame">
-					<X>398.770477</X>
-					<Y>127.303543</Y>
-					<Z>293.420441</Z>
-					<R00>0.959965229</R00>
-					<R01>-0.145624518</R01>
-					<R02>0.239291385</R02>
+					<X>390.801025</X>
+					<Y>250.137909</Y>
+					<Z>257.316254</Z>
+					<R00>0.864100337</R00>
+					<R01>0.142268255</R01>
+					<R02>-0.482794315</R02>
 					<R10>-7.4505806e-09</R10>
-					<R11>0.854247987</R11>
-					<R12>0.51986593</R12>
-					<R20>-0.280119359</R20>
-					<R21>-0.49905321</R21>
-					<R22>0.820048273</R22>
+					<R11>0.959220171</R11>
+					<R12>0.282659888</R12>
+					<R20>0.503319561</R20>
+					<R21>-0.244246498</R21>
+					<R22>0.828862548</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<token name="FieldOfViewMode">0</token>
 				<CoordinateFrame name="Focus">
-					<X>398.291901</X>
-					<Y>126.263824</Y>
-					<Z>291.780365</Z>
+					<X>391.766724</X>
+					<Y>249.572525</Y>
+					<Z>255.65834</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -6415,15 +6415,15 @@ local function color(hex, text)
 end
 
 local COLORS = {
-	bracket = "#808080",      -- [Zi[Importer]:
+	bracket = "#808080", -- [Zi[Importer]:
 	timestamp = "#9CDCFE",
 	filename = "#D4D4D4",
-	module = "#4EC994",       -- ModuleScript
-	package = "#DCDCAA",      -- package names
+	module = "#4EC994", -- ModuleScript
+	package = "#DCDCAA", -- package names
 	path = "#569CD6",
 	size = "#B5CEA8",
 	unit = "#7FB0D6",
-	status = "#4EC994",       -- compressed, skipped, etc.
+	status = "#4EC994", -- compressed, skipped, etc.
 	keyword = "#C586C0",
 	error = "#F14C4C",
 	success = "#4EC994",
@@ -6432,50 +6432,56 @@ local COLORS = {
 
 local function formatLine(line)
 	local prefix, body = line:match("^(%[.-%]:?)%s*(.*)$")
-	if not prefix then return line end
+	if not prefix then
+		return line
+	end
 
 	prefix = color(COLORS.bracket, prefix)
 
-	-- === Specific patterns from your screenshot ===
-
-	-- Imported ModuleScript
-	if body:match("^Imported ModuleScript") then
-		local name = body:match('from "([^"]+)"')
+	-- Imported ModuleScript / Script / LocalScript
+	local scriptType, name, fromPath = body:match('^Imported (%a+) "([^"]*)" from "(.-)"$')
+	if scriptType then
 		return table.concat({
-			prefix, " ",
+			prefix,
+			" ",
 			color(COLORS.keyword, "Imported "),
-			color(COLORS.module, "ModuleScript "),
-			'"', color(COLORS.package, name or ""), '"',
+			color(COLORS.module, scriptType .. " "),
+			'"',
+			color(COLORS.package, name),
+			'"',
+			fromPath ~= "" and (' from "' .. color(COLORS.path, fromPath) .. '"') or "",
 		})
 	end
 
 	-- Importing from raw... / Importing package
 	if body:match("^Importing") then
-		local pkg = body:match("Importing from raw%.%.%.") or body:match("Importing%s+(.+)%.%.%.$")
+		local pkg = body:match("^Importing%s+(.-)%.%.%.$")
 		return table.concat({
-			prefix, " ",
+			prefix,
+			" ",
 			color(COLORS.keyword, "Importing "),
-			color(COLORS.package, pkg or body),
+			color(COLORS.package, pkg or body:gsub("^Importing%s*", "")),
 			pkg and "..." or "",
 		})
 	end
 
 	-- Parsed / Done messages
 	if body:match("^Parsed") or body:match("^Done") then
-		local doneText = body:match("^(Done.-imported)") or body
-		return prefix .. " " .. color(COLORS.success, doneText)
+		return prefix .. " " .. color(COLORS.success, body)
 	end
 
 	-- Size + status line (e.g. init.lua 1.7 KB (compressed))
-	local file, size, status = body:match("^(.-)%s+(%d+%s*%a+)%s+(%b())$")
+	local file, size, status = body:match("^(.-)%s+([%d%.]+%s*%a+)%s+(%b())$")
 	if file and size and status then
-		local num, unit = size:match("^(%d+)%s*(%a+)$")
-		local coloredSize = num and unit 
-			and color(COLORS.size, num) .. " " .. color(COLORS.unit, unit)
+		local num, unit = size:match("^([%d%.]+)%s*(%a+)$")
+		local coloredSize = num
+				and unit
+				and color(COLORS.size, num) .. " " .. color(COLORS.unit, unit)
 			or color(COLORS.size, size)
 
 		return table.concat({
-			prefix, " ",
+			prefix,
+			" ",
 			color(COLORS.filename, file),
 			" ",
 			coloredSize,
@@ -6509,7 +6515,7 @@ local module = { output = Value(""), raw = Value("") }
 module.__index = module
 
 function module:log(...)
-	local text = table.concat({...}, " ")
+	local text = table.concat({ ... }, " ")
 	self.raw:set(self.raw:get() .. text .. "\n")
 	self.output:set(formatString(self.raw:get()))
 end
@@ -6526,7 +6532,8 @@ function module.new()
 	}, module)
 end
 
-return module]]></ProtectedString>
+return module
+]]></ProtectedString>
 							<string name="ScriptGuid">{458376B2-F4C8-4243-860C-BE37E90A7A77}</string>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -6574,6 +6581,49 @@ end
 
 local function getPackageBase(name)
 	return name:match("^(.-)@") or name
+end
+
+local function getPackageIdentifier(name)
+	local scopePackage = name:match("^(.-)@") or name
+	local scope, package = scopePackage:match("^([^/]+)/([^/]+)$")
+	if scope and package then
+		return scope .. "/" .. package
+	end
+	return scopePackage
+end
+
+local function getFolderVersion(name)
+	return (tostring(name or ""):match("@(.+)$")) or nil
+end
+
+local function serializeList(values)
+	local normalized = {}
+	for _, value in ipairs(values or {}) do
+		if value and tostring(value) ~= "" then
+			table.insert(normalized, tostring(value))
+		end
+	end
+	table.sort(normalized)
+	return table.concat(normalized, ",")
+end
+
+local function getDependencyKeys(wallyData)
+	local keys = {}
+	if type(wallyData) ~= "table" then
+		return keys
+	end
+
+	for _, section in ipairs({ "dependencies", "dev-dependencies" }) do
+		local deps = wallyData[section]
+		if type(deps) == "table" then
+			for alias in pairs(deps) do
+				table.insert(keys, tostring(alias))
+			end
+		end
+	end
+
+	table.sort(keys)
+	return keys
 end
 
 local function toString(str)
@@ -6665,6 +6715,20 @@ local function unpackTo(inst, parent)
 	end
 
 	inst:Destroy()
+end
+
+local function getPackageEntryPoint(folder)
+	folder = toInstance(folder)
+	if not folder then
+		return nil
+	end
+
+	local explicit = folder:FindFirstChild("init", true) or folder:FindFirstChild("init.lua", true)
+	if explicit and explicit:IsA("ModuleScript") then
+		return explicit
+	end
+
+	return nil
 end
 
 local function unpackModuleRoot(source, reference)
@@ -6818,13 +6882,121 @@ local function createLocalDependencyDirectors(source, wallyData, realm)
 		local targetDirector = packages:FindFirstChild(alias)
 		if targetDirector and targetDirector:IsA("ModuleScript") then
 			local path = getPathTo(source, targetDirector)
-			new("ModuleScript", {
+			local moduleRef = new("ModuleScript", {
 				Name = alias,
 				Parent = source,
 				Source = `return require("{path}")`,
 			})
+			if moduleRef then
+				moduleRef:SetAttribute("loomManaged", true)
+				moduleRef:SetAttribute("loomManagedTag", PackagesTag)
+				moduleRef:SetAttribute("loomDependencyAlias", alias)
+				moduleRef:SetAttribute("loomPackageRealm", tostring(realm))
+			end
 		end
 	end
+end
+
+local function setPackageMetadata(source, realm, wallyData, packageIdentifier, version)
+	if not source or not source:IsA("Folder") then
+		return
+	end
+
+	local sourceTag = (realm == "dev") and DevPackagesTag or PackagesTag
+	local deps = getDependencyKeys(wallyData)
+	local packageId =
+		tostring(packageIdentifier or getPackageIdentifier(source.Name) or source.Name)
+	local installedVersion = tostring(version or getFolderVersion(source.Name) or "")
+
+	source:SetAttribute("loomManaged", true)
+	source:SetAttribute("loomManagedTag", sourceTag)
+	source:SetAttribute("loomPackageIdentifier", packageId)
+	source:SetAttribute("loomPackageVersion", installedVersion)
+	source:SetAttribute("loomPackageRealm", tostring(realm or "shared"))
+	source:SetAttribute(
+		"loomInstallationSource",
+		(realm == "server") and "server" or (realm == "dev") and "dev" or "shared"
+	)
+	source:SetAttribute("loomDependencyList", serializeList(deps))
+	source:SetAttribute("loomReferenceCount", 0)
+	source:SetAttribute("loomRootPackage", true)
+end
+
+local function getPackageRecord(folder, realm)
+	if not folder or not folder:IsA("Folder") then
+		return nil
+	end
+
+	local packageId = tostring(
+		folder:GetAttribute("loomPackageIdentifier")
+			or getPackageIdentifier(folder.Name)
+			or folder.Name
+	)
+	local version =
+		tostring(folder:GetAttribute("loomPackageVersion") or getFolderVersion(folder.Name) or "")
+	local dependencies = {}
+	local wallyToml = folder:FindFirstChild("wally.toml")
+		or folder:FindFirstChild(".wally")
+		or folder:FindFirstChild("wally")
+	if wallyToml and wallyToml:IsA("ModuleScript") then
+		local ok, wallyData = pcall(require, wallyToml)
+		if ok and typeof(wallyData) == "table" then
+			for _, alias in ipairs(getDependencyKeys(wallyData)) do
+				table.insert(dependencies, alias)
+			end
+		end
+	end
+
+	local rootModule = nil
+	local rootPackages = find_packages(realm)
+	if rootPackages then
+		for _, child in ipairs(rootPackages:GetChildren()) do
+			if child:IsA("ModuleScript") and child.Name == packageId then
+				rootModule = child
+				break
+			end
+		end
+	end
+
+	return {
+		id = packageId,
+		name = packageId,
+		version = version,
+		realm = tostring(realm or "shared"),
+		folder = folder,
+		dependencies = dependencies,
+		rootModule = rootModule,
+		isRoot = rootModule ~= nil,
+		managedTag = tostring(folder:GetAttribute("loomManagedTag") or ""),
+		installedSource = tostring(
+			folder:GetAttribute("loomInstallationSource") or realm or "shared"
+		),
+		referenceCount = tonumber(folder:GetAttribute("loomReferenceCount")) or 0,
+	}
+end
+
+local function scanManagedPackages(realm)
+	local results = {}
+	local packages = find_packages(realm)
+	if not packages then
+		return results
+	end
+
+	local index = packages:FindFirstChild("_Index")
+	if not index then
+		return results
+	end
+
+	for _, child in ipairs(index:GetChildren()) do
+		if child:IsA("Folder") then
+			local record = getPackageRecord(child, realm)
+			if record then
+				table.insert(results, record)
+			end
+		end
+	end
+
+	return results
 end
 
 -- Checks all three realms' `_Index` folders for a package matching
@@ -6844,13 +7016,8 @@ local function find_installed(scope, packageName, version)
 						or (not key and getPackageBase(child.Name) == base)
 
 					if matches then
-						local reference = child:FindFirstChild("init", true)
-							or child:FindFirstChild("init.lua", true)
-							or child:FindFirstChildWhichIsA("ModuleScript", true)
-
-						if reference then
-							return realm, child, reference
-						end
+						local reference = getPackageEntryPoint(child)
+						return reference, child
 					end
 				end
 			end
@@ -6860,11 +7027,63 @@ local function find_installed(scope, packageName, version)
 	return nil
 end
 
--- Public Module API
-
 PackageModule.inst = new
 PackageModule.createPackages = create_packages
 PackageModule.findInstalled = find_installed
+PackageModule.scanManagedPackages = scanManagedPackages
+
+PackageModule.getManagedPackageSummary = function()
+	local entries = {}
+	for _, realm in ipairs({ "shared", "server", "dev" }) do
+		for _, entry in ipairs(scanManagedPackages(realm)) do
+			table.insert(entries, entry)
+		end
+	end
+	return entries
+end
+
+PackageModule.removePackage = function(realm, packageId, version)
+	local packages = find_packages(realm)
+	if not packages then
+		return false
+	end
+
+	local index = packages:FindFirstChild("_Index")
+	if not index then
+		return false
+	end
+
+	local targetId = tostring(packageId or "")
+	local targetVersion = tostring(version or "")
+	local removed = false
+
+	for _, child in ipairs(index:GetChildren()) do
+		if child:IsA("Folder") then
+			local childId = tostring(child:GetAttribute("loomPackageIdentifier") or "")
+			local childVersion = tostring(
+				child:GetAttribute("loomPackageVersion") or getFolderVersion(child.Name) or ""
+			)
+			local nameMatches = childId == targetId or getPackageBase(child.Name) == targetId
+			local versionMatches = targetVersion == "" or childVersion == targetVersion
+			if nameMatches and versionMatches then
+				child:Destroy()
+				removed = true
+			end
+		end
+	end
+
+	for _, child in ipairs(packages:GetChildren()) do
+		if child:IsA("ModuleScript") then
+			local childId = tostring(child:GetAttribute("loomPackageIdentifier") or "")
+			if childId == targetId or child.Name == targetId then
+				child:Destroy()
+				removed = true
+			end
+		end
+	end
+
+	return removed
+end
 
 PackageModule.linkAllLocalDependencies = function(realm)
 	local p = find_packages(realm)
@@ -6877,7 +7096,8 @@ PackageModule.linkAllLocalDependencies = function(realm)
 	end
 
 	for _, sourceFolder in ipairs(index:GetChildren()) do
-		local wallyTomlModule = sourceFolder:FindFirstChild(".wally")
+		local wallyTomlModule = sourceFolder:FindFirstChild("wally.toml")
+			or sourceFolder:FindFirstChild(".wally")
 			or sourceFolder:FindFirstChild("wally")
 
 		-- Look for an existing parsed file asset or structure
@@ -6916,25 +7136,49 @@ PackageModule.addPackage = function(
 		source: Folder,
 		display: string?,
 		reference: ModuleScript?,
+		includeDirectors: boolean?,
 	}
 )
 	local p, index = find_packages(realm)
-	local reference = data.reference
-		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.lua", true)
-		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
+	local reference = data.reference or getPackageEntryPoint(data.source)
 
 	data.source.Parent = index
+	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
+		or ((data.creator and data.name) and (tostring(data.creator) .. "/" .. tostring(data.name)))
+		or (data.name or data.source.Name)
+	setPackageMetadata(
+		data.source,
+		realm,
+		data.wally,
+		packageIdentifier,
+		(
+			data.source.Name:match("@(.+)$")
+			or tostring(data.major)
+				.. "."
+				.. tostring(data.minor)
+				.. "."
+				.. tostring(data.patch)
+		)
+	)
 
 	if not p then
 		warn(`[PackageModule]: no package folder found for realm "{tostring(realm)}", creating..`)
 		p, index = create_packages(nil, realm)
 	end
+
+	if data.wally then
+		toml_formatter.create(data.wally, data.source)
+		if data.includeDirectors ~= false then
+			createLocalDependencyDirectors(data.source, data.wally, realm)
+		end
+	end
+
 	if not reference then
-		warn(
-			`[PackageModule]: no reference found for package {data.name}, did you forget to pass it?`
-		)
-		return
+		-- No init/entry point was found (via zip decompression or folder
+		-- search). Rather than aborting the import, leave the package
+		-- as-is under _Index and skip creating a director (proxy
+		-- require) ModuleScript for it, since there's nothing to point to.
+		return nil, nil, true
 	end
 
 	local f = create_package_directory(data.creator, data.name, data.major, data.minor, data.patch)
@@ -6955,12 +7199,7 @@ PackageModule.addPackage = function(
 		m = new("ModuleScript", { Name = name, Source = code, Parent = p })
 	end
 
-	if data.wally then
-		toml_formatter.create(data.wally, data.source)
-		createLocalDependencyDirectors(data.source, data.wally, realm)
-	end
-
-	return m, reference
+	return m, reference, true
 end
 
 PackageModule.syncPackage = function(
@@ -6971,6 +7210,7 @@ PackageModule.syncPackage = function(
 		name: string?,
 		reference: ModuleScript?,
 		unpackSrc: boolean?,
+		includeDirectors: boolean?,
 	}
 )
 	local p = find_packages(realm)
@@ -6984,15 +7224,7 @@ PackageModule.syncPackage = function(
 		index = new("Folder", { Name = "_Index", Parent = p })
 	end
 
-	local reference = data.reference
-		or data.source:FindFirstChild("init", true)
-		or data.source:FindFirstChild("init.lua", true)
-		or data.source:FindFirstChildWhichIsA("ModuleScript", true)
-
-	if not reference then
-		warn(`[PackageModule]: no reference found for package, did you forget to pass it?`)
-		return
-	end
+	local reference = data.reference or getPackageEntryPoint(data.source)
 
 	local displayName = (data.name and data.name ~= "") and data.name or data.source.Name
 
@@ -7016,6 +7248,30 @@ PackageModule.syncPackage = function(
 	end
 
 	data.source.Parent = index
+	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
+		or (data.name or data.source.Name)
+	setPackageMetadata(
+		data.source,
+		realm,
+		data.wally,
+		packageIdentifier,
+		(data.source.Name:match("@(.+)$") or "")
+	)
+
+	if data.wally then
+		toml_formatter.create(data.wally, data.source)
+		if data.includeDirectors ~= false then
+			createLocalDependencyDirectors(data.source, data.wally, realm)
+		end
+	end
+
+	if not reference then
+		-- No init/entry point was found (via zip decompression or folder
+		-- search). Rather than aborting the import, leave the package
+		-- as-is under _Index and skip creating a director (proxy
+		-- require) ModuleScript for it, since there's nothing to point to.
+		return nil, nil, true
+	end
 
 	local m
 
@@ -7062,20 +7318,15 @@ PackageModule.syncPackage = function(
 --%s]]
 
 		if desc and license then
-			rawDetails = descFormat:format(data.source.Name, desc, `License: {license}`)
+			rawDetails = descFormat:format(data.source.Name, desc, "License: " .. license)
 		else
-			rawDetails = descFormat:format(data.source.Name, desc or `License: {license}`)
+			rawDetails = descFormat:format(data.source.Name, desc or "License: " .. license)
 		end
 	end
 	m.Source = ([[%s
 return require("%s")]]):format(rawDetails, getPathTo(m, reference))
 
-	if data.wally then
-		toml_formatter.create(data.wally, data.source)
-		createLocalDependencyDirectors(data.source, data.wally, realm)
-	end
-
-	return m, reference
+	return m, reference, true
 end
 
 return PackageModule
@@ -7152,8 +7403,9 @@ return {
 
 		local StartPage = require(Pages.StartPage)
 		local QueuePage = require(Pages.QueuePage)
-		local SettingsPage = require(Pages.SettingsPage)
 		local SearchPage = require(Pages.SearchPage)
+		local PackagesPage = require(Pages.PackagesPage)
+		local SettingsPage = require(Pages.SettingsPage)
 
 		local settingsService = SettingsService.new(pluginInstance)
 		local installService = InstallService.new(settingsService)
@@ -7435,12 +7687,20 @@ return {
 				order = 3,
 			},
 			{
+				page = "Packages",
+				icon = "rbxassetid://16898671019",
+				RectSize = Vector2.new(256, 256),
+				RectOffset = Vector2.new(514, 514),
+				IconSize = 33,
+				order = 4,
+			},
+			{
 				page = "Settings",
 				icon = "rbxassetid://16898734421",
 				RectSize = Vector2.new(256, 256),
 				RectOffset = Vector2.new(514, 0),
 				IconSize = 37,
-				order = 4,
+				order = 5,
 			},
 		}
 
@@ -7563,6 +7823,8 @@ return {
 						return QueuePage(ctx)
 					elseif page == "Search" then
 						return SearchPage(ctx)
+					elseif page == "Packages" then
+						return PackagesPage(ctx)
 					elseif page == "Settings" then
 						return SettingsPage(ctx)
 					end
@@ -8995,18 +9257,22 @@ return function(ctx)
 						StatusText:set(("Importing %s…"):format(file.Name))
 						local sourceFolder, initModule, wallyData, dependencies =
 							zip_build.createFromFile(file)
-						if not wallyData then
+
+						if not sourceFolder then
 							table.insert(failedNames, file.Name)
 							logger:log(
-								`[{os.date("%H:%M:%S")}]: wally.toml, not found in {file.Name}, is this a wally package?`
+								`[{os.date("%H:%M:%S")}]: failed to unpack archive {file.Name}`
 							)
-							if sourceFolder then
-								sourceFolder:Destroy()
-							end
 							continue
 						end
 
-						local realm = (wallyData.package and wallyData.package.realm)
+						if not wallyData then
+							logger:log(
+								`[{os.date("%H:%M:%S")}]: no wally.toml found in {file.Name}, importing as a plain package`
+							)
+						end
+
+						local realm = (wallyData and wallyData.package and wallyData.package.realm)
 							or "shared"
 
 						-- Remove stale instances with the same name so we don't accumulate duplicates
@@ -9029,14 +9295,15 @@ return function(ctx)
 							end
 						end
 
-						local importedModule = package_instancer.syncPackage(realm, {
+						local _, _, ok2 = package_instancer.syncPackage(realm, {
 							source = sourceFolder,
 							reference = initModule,
 							unpackSrc = settingsService:get("unpackSrc", true),
+							includeDirectors = settingsService:get("includeDirectors", true),
 							wally = wallyData,
 						})
 
-						if not importedModule then
+						if not ok2 then
 							table.insert(failedNames, file.Name)
 							if sourceFolder then
 								sourceFolder:Destroy()
@@ -9052,7 +9319,9 @@ return function(ctx)
 								dependencies,
 								{ unpackSrc = settingsService:get("unpackSrc", true) },
 								function(step, total, label)
-									StatusText:set(("Installing %d/%d: %s"):format(step, total, label))
+									StatusText:set(
+										("Installing %d/%d: %s"):format(step, total, label)
+									)
 								end
 							)
 
@@ -9066,8 +9335,16 @@ return function(ctx)
 						importedCount += 1
 					end
 
+					if settingsService:get("includeDirectors", true) then
+						package_instancer.linkAllLocalDependencies("shared")
+						package_instancer.linkAllLocalDependencies("server")
+						package_instancer.linkAllLocalDependencies("dev")
+					end
+
 					if #failedNames == 0 then
-						StatusText:set(("Imported %d archive(s) successfully."):format(importedCount))
+						StatusText:set(
+							("Imported %d archive(s) successfully."):format(importedCount)
+						)
 					elseif importedCount == 0 then
 						StatusText:set("Import failed for all selected archives.")
 					else
@@ -9112,6 +9389,308 @@ end
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002394</UniqueId>
 							</Properties>
 						</Item>
+						<Item class="ModuleScript" referent="RBX5C8D62607F35478CA98A3F23C5F57511">
+							<Properties>
+								<Content name="LinkedSource"><null></null></Content>
+								<ProtectedString name="Source"><![CDATA[--[[
+	PackagesPage.lua
+
+	Lists every Loom-managed package installation and shows the latest
+	available version plus dependency references from the installed graph.
+]]
+
+return function(ctx)
+	local Computed = ctx.fusion.Computed
+	local unwrap = ctx.fusion.unwrap
+	local Value = ctx.fusion.Value
+	local Children = ctx.fusion.Children
+
+	local Label = ctx.components.Label
+	local MainButton = ctx.components.MainButton
+	local VerticalCollapsibleSection = ctx.components.VerticalCollapsibleSection
+
+	local makeCard = ctx.ui.makeCard
+	local makeSectionHeader = ctx.ui.makeSectionHeader
+
+	local package_instancer = ctx.modules.package_instancer
+	local wally_search = ctx.modules.wally_search
+	local splitName = ctx.utils.splitName
+
+	local StatusText = ctx.state.StatusText
+	local IsVersionInstalling = ctx.state.IsVersionInstalling
+
+	local setPage = ctx.actions.setPage
+	local addQueuedPackage = ctx.actions.addQueuedPackage
+
+	local function buildQueueEntry(record, version)
+		local scope, package = splitName(record.id)
+		if not scope or not package then
+			return nil
+		end
+
+		return {
+			raw = scope .. "/" .. package,
+			scope = scope,
+			package = package,
+			version = version,
+			name = "",
+			includeDependencies = true,
+			realm = record.realm,
+		}
+	end
+
+	local function queueVersion(record, version)
+		if IsVersionInstalling:get() then
+			return
+		end
+
+		local entry = buildQueueEntry(record, version)
+		if not entry then
+			return
+		end
+
+		local realm, existingSource, existingReference =
+			package_instancer.findInstalled(entry.scope, entry.package, version)
+		entry.reference = existingReference
+		entry.existingSource = existingSource
+		entry.realm = realm or entry.realm
+		addQueuedPackage(entry)
+		setPage("Queue")
+	end
+
+	local function describeStatus(record, latestVersion)
+		if not record.version or record.version == "" then
+			return "missing", Color3.fromRGB(255, 99, 99)
+		end
+
+		if latestVersion and wally_search.compareVersions(latestVersion, record.version) > 0 then
+			return "update available", Color3.fromRGB(255, 166, 77)
+		end
+
+		return "up to date", Color3.fromRGB(110, 235, 160)
+	end
+
+	local function getReferenceCounts()
+		local counts = {}
+		for _, candidate in ipairs(package_instancer.getManagedPackageSummary() or {}) do
+			for _, dependency in ipairs(candidate.dependencies or {}) do
+				counts[dependency] = (counts[dependency] or 0) + 1
+			end
+		end
+		return counts
+	end
+
+	local function loadLatestVersion(record)
+		local scope, package = splitName(record.id)
+		if not scope or not package then
+			return nil, {}
+		end
+
+		local ok, _, indexed = wally_search.getPackageDetails(scope, package)
+		if not ok then
+			return nil, {}
+		end
+
+		local sorted = {}
+		for _, version in ipairs(indexed or {}) do
+			table.insert(sorted, version)
+		end
+		table.sort(sorted, function(a, b)
+			return wally_search.compareVersions(a, b) > 0
+		end)
+
+		return sorted[1], sorted
+	end
+
+	local function buildVersionRows(record, orderedVersions)
+		local rows = {}
+		for _, version in ipairs(orderedVersions or {}) do
+			table.insert(
+				rows,
+				MainButton({
+					Text = version,
+					Size = UDim2.new(1, 0, 0, 28),
+					Activated = function()
+						queueVersion(record, version)
+					end,
+				})
+			)
+		end
+
+		if #rows == 0 then
+			return {
+				Label({
+					Text = "No registry versions were fetched for this package.",
+					TextColor3 = Color3.fromRGB(180, 180, 180),
+				}),
+			}
+		end
+		return rows
+	end
+
+	local function buildDependencyItems(record)
+		local counts = getReferenceCounts()
+		local rows = {}
+		local dependencies = record.dependencies or {}
+		if #dependencies == 0 then
+			return {
+				Label({
+					Text = "No dependencies declared for this package.",
+					TextColor3 = Color3.fromRGB(180, 180, 180),
+				}),
+			}
+		end
+
+		for _, dependency in ipairs(dependencies) do
+			table.insert(
+				rows,
+				makeCard({
+					Label({
+						Text = dependency,
+						TextSize = 12,
+						TextColor3 = Color3.fromRGB(240, 240, 240),
+					}),
+					Label({
+						Text = ("Referenced by %d package(s)"):format(counts[dependency] or 0),
+						TextSize = 10,
+						TextColor3 = Color3.fromRGB(180, 180, 180),
+					}),
+				})
+			)
+		end
+		return rows
+	end
+
+	local function buildPackageCard(record)
+		local latestVersion, orderedVersions = loadLatestVersion(record)
+		local statusText, statusColor = describeStatus(record, latestVersion)
+
+		return VerticalCollapsibleSection({
+			Text = record.id,
+			Collapsed = Value(true),
+			[Children] = {
+				makeCard({
+					Label({
+						Text = record.id,
+						TextSize = 15,
+						TextColor3 = Color3.fromRGB(255, 255, 255),
+					}),
+					Label({
+						Text = ("Installed version: %s"):format(record.version or "missing"),
+						TextSize = 12,
+						TextColor3 = Color3.fromRGB(210, 210, 210),
+					}),
+					Label({
+						Text = ("Latest available version: %s"):format(
+							latestVersion or "unavailable"
+						),
+						TextSize = 12,
+						TextColor3 = Color3.fromRGB(210, 210, 210),
+					}),
+					Label({
+						Text = statusText,
+						TextColor3 = statusColor,
+						TextSize = 11,
+					}),
+					MainButton({
+						Text = "Update",
+						Size = UDim2.new(1, 0, 0, 30),
+						Enabled = Computed(function()
+							return not unwrap(IsVersionInstalling) and latestVersion ~= nil
+						end),
+						Activated = function()
+							if latestVersion then
+								queueVersion(record, latestVersion)
+							end
+						end,
+					}),
+					VerticalCollapsibleSection({
+						Text = "Change version",
+						Collapsed = Value(true),
+						[Children] = buildVersionRows(record, orderedVersions),
+					}),
+					MainButton({
+						Text = "Remove",
+						Size = UDim2.new(1, 0, 0, 30),
+						Activated = function()
+							local removed = package_instancer.removePackage(
+								record.realm,
+								record.id,
+								record.version
+							)
+							StatusText:set(
+								removed and "Package removed from Loom."
+									or "Package could not be removed."
+							)
+
+							if removed then
+								setPage("Start")
+								setPage("Packages")
+							end
+						end,
+					}),
+					VerticalCollapsibleSection({
+						Text = "Dependencies",
+						Collapsed = Value(true),
+						[Children] = buildDependencyItems(record),
+					}),
+				}),
+			},
+		})
+	end
+
+	local function buildPage()
+		local records = package_instancer.getManagedPackageSummary() or {}
+		if #records == 0 then
+			return {
+				Label({
+					Text = "No Loom-managed packages are installed yet.",
+					TextColor3 = Color3.fromRGB(180, 180, 180),
+				}),
+			}
+		end
+
+		local cards = {}
+		for _, record in ipairs(records) do
+			if record then
+				table.insert(cards, buildPackageCard(record))
+			end
+		end
+		return cards
+	end
+
+	return {
+		makeCard({
+			makeSectionHeader("Installed packages"),
+			Label({
+				Text = "Every Loom-managed install is listed here with version status and dependencies.",
+				TextSize = 12,
+				TextColor3 = Color3.fromRGB(180, 180, 180),
+			}),
+			Computed(function()
+				return buildPage()
+			end, function(instances)
+				for _, inst in ipairs(instances or {}) do
+					if inst and inst.Destroy then
+						inst:Destroy()
+					end
+				end
+			end),
+		}),
+	}
+end
+]]></ProtectedString>
+								<string name="ScriptGuid">{E201DFD0-DF6D-496B-910E-1CCEFA9AB5BE}</string>
+								<BinaryString name="AttributesSerialize"></BinaryString>
+								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+								<bool name="DefinesCapabilities">false</bool>
+								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+								<string name="Name">PackagesPage</string>
+								<int64 name="SourceAssetId">-1</int64>
+								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								<UniqueId name="UniqueId">1b9b23f3d27615230a728e3b00001e3b</UniqueId>
+							</Properties>
+						</Item>
 					</Item>
 				</Item>
 				<Item class="Folder" referent="57">
@@ -9150,7 +9729,8 @@ local zzlib = require("../../Packages/ZZLib")
 local zipBuild = require("../files/.zip-build")
 
 -- Variables
-local RegistryUrl = "https://raw.githubusercontent.com/J4KEWasNotHere/Loom/refs/heads/main/common/registry.toml"
+local RegistryUrl =
+	"https://raw.githubusercontent.com/J4KEWasNotHere/Loom/refs/heads/main/common/registry.toml"
 local GitHubArchiveUrls = {
 	"https://codeload.github.com/J4KEWasNotHere/Loom/zip/refs/heads/main",
 	"https://github.com/J4KEWasNotHere/Loom/archive/refs/heads/main.zip",
@@ -17070,7 +17650,7 @@ AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000006ea</UniqueId>
 		</Properties>
 	</Item>
-	<Item class="PluginToolbar" referent="RBXC3723C39B65D4624AD2E6D2129CC276E">
+	<Item class="PluginToolbar" referent="RBX16DA687B11584A87BF6BB659B66A2B79">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -17079,9 +17659,9 @@ AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
 			<string name="Name">Graph Editor</string>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">2f58106e905302ef0a6dff2c00000705</UniqueId>
+			<UniqueId name="UniqueId">1b9b23f3d27615230a728e3b000006ff</UniqueId>
 		</Properties>
-		<Item class="PluginToolbarButton" referent="RBX6F990E969C8345E5B78900D5F04638D7">
+		<Item class="PluginToolbarButton" referent="RBX1888BDA9321D4210B135225FF0D7D8FE">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -17090,7 +17670,7 @@ AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
 				<string name="Name">Button</string>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-				<UniqueId name="UniqueId">2f58106e905302ef0a6dff2c00000706</UniqueId>
+				<UniqueId name="UniqueId">1b9b23f3d27615230a728e3b00000700</UniqueId>
 			</Properties>
 		</Item>
 	</Item>
