@@ -140,6 +140,14 @@ Other features may be mentioned in the changelogs of [newer versions](https://gi
 
 </details>
 
+<details>
+<summary>  <h2>Pull-Requests Needed</h2> </summary>
+
+* Documentation - weak after several updates.
+* Package manager (v0.4.2) lags, as it immediatly processes info.
+ 
+</details>
+
 ____
 
 # Acknowledgements
