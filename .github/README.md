@@ -134,7 +134,7 @@ Other features may be mentioned in the changelogs of [newer versions](https://gi
 </details>
 
 <details>
-<summary>  <h2>Contributors</h2> </summary>
+<summary>  <h2>Special Thanks</h2> </summary>
  
 * [@BiassedXD](https://github.com/BiassedXD) / [@BIASXED](https://github.com/BIASXED); Assisted in the creation of the search bar. (https://github.com/J4KEWasNotHere/Loom/pull/3)
 
@@ -144,7 +144,6 @@ Other features may be mentioned in the changelogs of [newer versions](https://gi
 <summary>  <h2>Pull-Requests Needed</h2> </summary>
 
 * Documentation - weak after several updates.
-* Package manager (v0.4.2) lags, as it immediatly processes info.
  
 </details>
 
