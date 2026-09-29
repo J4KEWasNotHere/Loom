@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
@@ -42,6 +43,11 @@ local function getPackageIdentifier(name)
 	return scopePackage
 end
 
+local function getPackageDisplayName(name)
+	local packageName = tostring(name or "")
+	return packageName:match("([^/]+)$") or packageName
+end
+
 local function getFolderVersion(name)
 	return (tostring(name or ""):match("@(.+)$")) or nil
 end
@@ -63,7 +69,7 @@ local function getDependencyKeys(wallyData)
 		return keys
 	end
 
-	for _, section in ipairs({ "dependencies", "dev-dependencies" }) do
+	for _, section in ipairs({ "dependencies", "dev-dependencies", "server-dependencies" }) do
 		local deps = wallyData[section]
 		if type(deps) == "table" then
 			for alias in pairs(deps) do
@@ -74,6 +80,24 @@ local function getDependencyKeys(wallyData)
 
 	table.sort(keys)
 	return keys
+end
+
+local function getDependencyMap(wallyData)
+	local dependencies = {}
+	if type(wallyData) ~= "table" then
+		return dependencies
+	end
+
+	for _, section in ipairs({ "dependencies", "dev-dependencies", "server-dependencies" }) do
+		local sectionDependencies = wallyData[section]
+		if type(sectionDependencies) == "table" then
+			for alias, specifier in pairs(sectionDependencies) do
+				dependencies[tostring(alias)] = tostring(specifier)
+			end
+		end
+	end
+
+	return dependencies
 end
 
 local function toString(str)
@@ -171,6 +195,19 @@ local function getPackageEntryPoint(folder)
 	folder = toInstance(folder)
 	if not folder then
 		return nil
+	end
+
+	local entryPointPath = folder:GetAttribute("loomEntryPointPath")
+	if type(entryPointPath) == "string" then
+		local current = folder
+		for segment in entryPointPath:gmatch("[^/]+") do
+			if segment ~= "." then
+				current = current and current:FindFirstChild(segment)
+			end
+		end
+		if current and current:IsA("ModuleScript") then
+			return current
+		end
 	end
 
 	local explicit = folder:FindFirstChild("init", true) or folder:FindFirstChild("init.lua", true)
@@ -301,36 +338,34 @@ local function create_packages(name, realm)
 	return folder, index
 end
 
-local function createLocalDependencyDirectors(source, wallyData, realm)
-	if not wallyData then
-		return
-	end
-
+local function createLocalDependencyDirectors(source, dependencies, realm)
 	local packages = find_packages(realm)
 	if not packages then
 		return
 	end
 
-	local dependencies = {}
-	if wallyData.dependencies then
-		for alias, _ in pairs(wallyData.dependencies) do
-			dependencies[alias] = true
-		end
-	end
-	if wallyData["dev-dependencies"] then
-		for alias, _ in pairs(wallyData["dev-dependencies"]) do
-			dependencies[alias] = true
-		end
-	end
-
-	for alias, _ in pairs(dependencies) do
-		local existing = source:FindFirstChild(alias)
-		if existing then
-			existing:Destroy()
-		end
-
+	for _, alias in ipairs(getDependencyKeys({ dependencies = dependencies })) do
 		local targetDirector = packages:FindFirstChild(alias)
+		local specifier = dependencies[alias]
+		if not targetDirector and type(specifier) == "string" then
+			local packageIdentifier = getPackageIdentifier(specifier:match("^([^@]+)") or "")
+			for _, child in ipairs(packages:GetChildren()) do
+				if
+					child:IsA("ModuleScript")
+					and child:GetAttribute("loomPackageIdentifier") == packageIdentifier
+				then
+					targetDirector = child
+					break
+				end
+			end
+		end
+
 		if targetDirector and targetDirector:IsA("ModuleScript") then
+			local existing = source:FindFirstChild(alias)
+			if existing then
+				existing:Destroy()
+			end
+
 			local path = getPathTo(source, targetDirector)
 			local moduleRef = new("ModuleScript", {
 				Name = alias,
@@ -343,7 +378,30 @@ local function createLocalDependencyDirectors(source, wallyData, realm)
 				moduleRef:SetAttribute("loomDependencyAlias", alias)
 				moduleRef:SetAttribute("loomPackageRealm", tostring(realm))
 			end
+
+			local robloxPackages = source:FindFirstChild("roblox_packages")
+			local packageShim = robloxPackages and robloxPackages:FindFirstChild(alias)
+			if packageShim and packageShim:IsA("ModuleScript") then
+				local escapedAlias = alias:gsub("([^%w])", "%%%1")
+				local requirePattern = "script%.Parent%.Parent%.Parent(%[%s*['\"]"
+					.. escapedAlias
+					.. "['\"]%s*%])"
+				local rewrittenSource, replacements =
+					packageShim.Source:gsub(requirePattern, "script.Parent.Parent%1")
+				if replacements > 0 then
+					packageShim.Source = rewrittenSource
+				end
+			end
 		end
+	end
+end
+
+local function syncWallyModule(source, wallyData, includeWallyToml)
+	local existing = source:FindFirstChild("wally.toml")
+	if includeWallyToml ~= false and wallyData then
+		toml_formatter.create(wallyData, source)
+	elseif existing then
+		existing:Destroy()
 	end
 end
 
@@ -368,6 +426,7 @@ local function setPackageMetadata(source, realm, wallyData, packageIdentifier, v
 		(realm == "server") and "server" or (realm == "dev") and "dev" or "shared"
 	)
 	source:SetAttribute("loomDependencyList", serializeList(deps))
+	source:SetAttribute("loomDependencyMap", HttpService:JSONEncode(getDependencyMap(wallyData)))
 	source:SetAttribute("loomReferenceCount", 0)
 	source:SetAttribute("loomRootPackage", true)
 end
@@ -401,7 +460,13 @@ local function getPackageRecord(folder, realm)
 	local rootPackages = find_packages(realm)
 	if rootPackages then
 		for _, child in ipairs(rootPackages:GetChildren()) do
-			if child:IsA("ModuleScript") and child.Name == packageId then
+			if
+				child:IsA("ModuleScript")
+				and (
+					child:GetAttribute("loomPackageIdentifier") == packageId
+					or child.Name == packageId
+				)
+			then
 				rootModule = child
 				break
 			end
@@ -546,16 +611,41 @@ PackageModule.linkAllLocalDependencies = function(realm)
 	end
 
 	for _, sourceFolder in ipairs(index:GetChildren()) do
-		local wallyTomlModule = sourceFolder:FindFirstChild("wally.toml")
-			or sourceFolder:FindFirstChild(".wally")
-			or sourceFolder:FindFirstChild("wally")
+		if sourceFolder:IsA("Folder") then
+			local wallyTomlModule = sourceFolder:FindFirstChild("wally.toml")
+				or sourceFolder:FindFirstChild(".wally")
+				or sourceFolder:FindFirstChild("wally")
+			local dependencies = nil
 
-		-- Look for an existing parsed file asset or structure
-		if wallyTomlModule and wallyTomlModule:IsA("ModuleScript") then
-			local success, wallyData = pcall(require, wallyTomlModule)
-			if success and typeof(wallyData) == "table" then
-				createLocalDependencyDirectors(sourceFolder, wallyData, realm)
+			if wallyTomlModule and wallyTomlModule:IsA("ModuleScript") then
+				local success, wallyData = pcall(require, wallyTomlModule)
+				if success and typeof(wallyData) == "table" then
+					dependencies = getDependencyMap(wallyData)
+				end
 			end
+
+			if not dependencies then
+				local encodedMap = sourceFolder:GetAttribute("loomDependencyMap")
+				if type(encodedMap) == "string" then
+					local ok, decoded = pcall(function()
+						return HttpService:JSONDecode(encodedMap)
+					end)
+					if ok and type(decoded) == "table" then
+						dependencies = decoded
+					end
+				end
+			end
+
+			if not dependencies then
+				dependencies = {}
+				for alias in
+					tostring(sourceFolder:GetAttribute("loomDependencyList") or ""):gmatch("[^,]+")
+				do
+					dependencies[alias] = ""
+				end
+			end
+
+			createLocalDependencyDirectors(sourceFolder, dependencies, realm)
 		end
 	end
 end
@@ -587,12 +677,17 @@ PackageModule.addPackage = function(
 		display: string?,
 		reference: ModuleScript?,
 		includeDirectors: boolean?,
+		includeWallyToml: boolean?,
 	}
 )
 	local p, index = find_packages(realm)
 	local reference = data.reference or getPackageEntryPoint(data.source)
 
 	data.source.Parent = index
+	data.source:SetAttribute(
+		"loomEntryPointPath",
+		reference and getPathTo(data.source, reference) or nil
+	)
 	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
 		or ((data.creator and data.name) and (tostring(data.creator) .. "/" .. tostring(data.name)))
 		or (data.name or data.source.Name)
@@ -616,10 +711,10 @@ PackageModule.addPackage = function(
 		p, index = create_packages(nil, realm)
 	end
 
+	syncWallyModule(data.source, data.wally, data.includeWallyToml)
 	if data.wally then
-		toml_formatter.create(data.wally, data.source)
 		if data.includeDirectors ~= false then
-			createLocalDependencyDirectors(data.source, data.wally, realm)
+			createLocalDependencyDirectors(data.source, getDependencyMap(data.wally), realm)
 		end
 	end
 
@@ -634,7 +729,7 @@ PackageModule.addPackage = function(
 	local f = create_package_directory(data.creator, data.name, data.major, data.minor, data.patch)
 
 	local code = getPathTo(f, reference)
-	local name = toString(data.display) or data.name
+	local name = getPackageDisplayName(toString(data.display) or packageIdentifier)
 
 	local m = nil
 	if p:FindFirstChild(name) then
@@ -658,9 +753,11 @@ PackageModule.syncPackage = function(
 		source: Folder,
 		wally: { [string]: any },
 		name: string?,
+		displayName: string?,
 		reference: ModuleScript?,
 		unpackSrc: boolean?,
 		includeDirectors: boolean?,
+		includeWallyToml: boolean?,
 	}
 )
 	local p = find_packages(realm)
@@ -676,7 +773,11 @@ PackageModule.syncPackage = function(
 
 	local reference = data.reference or getPackageEntryPoint(data.source)
 
-	local displayName = (data.name and data.name ~= "") and data.name or data.source.Name
+	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
+		or (data.name or data.source.Name)
+	local displayName = (data.displayName and data.displayName ~= "")
+			and getPackageDisplayName(data.displayName)
+		or getPackageDisplayName(packageIdentifier)
 
 	for _, child in ipairs(index:GetChildren()) do
 		if child.Name == displayName then
@@ -698,8 +799,13 @@ PackageModule.syncPackage = function(
 	end
 
 	data.source.Parent = index
-	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
-		or (data.name or data.source.Name)
+	if data.unpackSrc == true and reference then
+		unpackModuleRoot(data.source, reference)
+	end
+	data.source:SetAttribute(
+		"loomEntryPointPath",
+		reference and getPathTo(data.source, reference) or nil
+	)
 	setPackageMetadata(
 		data.source,
 		realm,
@@ -708,10 +814,10 @@ PackageModule.syncPackage = function(
 		(data.source.Name:match("@(.+)$") or "")
 	)
 
+	syncWallyModule(data.source, data.wally, data.includeWallyToml)
 	if data.wally then
-		toml_formatter.create(data.wally, data.source)
 		if data.includeDirectors ~= false then
-			createLocalDependencyDirectors(data.source, data.wally, realm)
+			createLocalDependencyDirectors(data.source, getDependencyMap(data.wally), realm)
 		end
 	end
 
@@ -726,9 +832,24 @@ PackageModule.syncPackage = function(
 	local m
 
 	for _, child in ipairs(p:GetChildren()) do
-		if child:IsA("ModuleScript") and child.Name == displayName then
+		if
+			child:IsA("ModuleScript")
+			and (
+				child:GetAttribute("loomPackageIdentifier") == packageIdentifier
+				or child.Name == packageIdentifier
+			)
+		then
 			m = child
 			break
+		end
+	end
+
+	if not m then
+		for _, child in ipairs(p:GetChildren()) do
+			if child:IsA("ModuleScript") and child.Name == displayName then
+				m = child
+				break
+			end
 		end
 	end
 
@@ -738,19 +859,16 @@ PackageModule.syncPackage = function(
 		end
 	end
 
-	if data.unpackSrc == true then
-		unpackModuleRoot(data.source, reference)
-	end
-
 	if not m then
 		m = new("ModuleScript", {
 			Name = displayName,
 			Parent = p,
 		})
 	end
+	m.Name = displayName
+	m:SetAttribute("loomPackageIdentifier", packageIdentifier)
 
 	local attributes = data.source:GetAttributes()
-	local rawDetails = "--> " .. data.source.Name
 	local desc, license = nil, nil
 
 	for name, value in attributes do
@@ -761,20 +879,39 @@ PackageModule.syncPackage = function(
 		end
 	end
 
-	if desc or license then
-		local descFormat = not (desc and license) and [[--> %s
---%s]] or [[--> %s
---%s
---%s]]
+	local sourceLines = {}
+	if type(desc) == "string" and desc ~= "" then
+		table.insert(sourceLines, "--> " .. desc)
+	end
+	if type(license) == "string" and license ~= "" then
+		table.insert(sourceLines, "-- License: " .. license)
+	end
 
-		if desc and license then
-			rawDetails = descFormat:format(data.source.Name, desc, "License: " .. license)
-		else
-			rawDetails = descFormat:format(data.source.Name, desc or "License: " .. license)
+	local referencePath = getPathTo(m, reference)
+	table.insert(sourceLines, ([[local main = require(%q)]]):format(referencePath))
+	for line in reference.Source:gmatch("[^\r\n]+") do
+		local typeName, genericParams =
+			line:match("^%s*export%s+type%s+([%a_][%w_]*)(%s*<[^>]+>)%s*=")
+		if not typeName then
+			typeName = line:match("^%s*export%s+type%s+([%a_][%w_]*)%s*=")
+			genericParams = ""
+		end
+		if typeName then
+			local genericArguments = genericParams:gsub("%s", "")
+			table.insert(
+				sourceLines,
+				("export type %s%s = main.%s%s"):format(
+					typeName,
+					genericParams,
+					typeName,
+					genericArguments
+				)
+			)
 		end
 	end
-	m.Source = ([[%s
-return require("%s")]]):format(rawDetails, getPathTo(m, reference))
+
+	table.insert(sourceLines, "return main")
+	m.Source = table.concat(sourceLines, "\n")
 
 	return m, reference, true
 end

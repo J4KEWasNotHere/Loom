@@ -164,8 +164,10 @@ function InstallService:syncFromRaw(raw, pkgLabel, options, dependencyRealm)
 		source = sourceFolder,
 		reference = initModule,
 		name = pkgLabel,
+		displayName = options.displayName,
 		unpackSrc = options.unpackSrc == true,
 		includeDirectors = includeDirs,
+		includeWallyToml = self.settings:get("includeWallyToml", true),
 		wally = wallyData,
 	})
 
@@ -197,8 +199,10 @@ function InstallService:installPackage(entry, options)
 			source = entry.existingSource,
 			reference = entry.reference,
 			name = entry.label or (entry.scope .. "/" .. entry.package),
+			displayName = options.displayName or entry.overrideName,
 			unpackSrc = options.unpackSrc == true,
 			includeDirectors = includeDirs,
+			includeWallyToml = self.settings:get("includeWallyToml", true),
 			wally = wallyData,
 		})
 
@@ -229,12 +233,12 @@ function InstallService:installPackage(entry, options)
 		return false, "Failed to download package"
 	end
 
-	local installed, dependencies = self:syncFromRaw(
-		raw,
-		entry.label or (entry.scope .. "/" .. entry.package),
-		options,
-		entry.realm
-	)
+	local installed, dependencies =
+		self:syncFromRaw(raw, entry.label or (entry.scope .. "/" .. entry.package), {
+			unpackSrc = options.unpackSrc,
+			displayName = options.displayName or entry.overrideName,
+			parent = options.parent,
+		}, entry.realm)
 	if not installed then
 		self:debug(
 			`[{os.date("%H:%M:%S")}-install]: Failed to import package ({entry.label or entry.package}) ; {dependencies}`
@@ -294,6 +298,7 @@ function InstallService:installQueue(queue, onProgress, options)
 				package = package,
 				version = version,
 				label = customLabel,
+				overrideName = (entry.name and entry.name ~= "") and entry.name or nil,
 				includeDependencies = entry.includeDependencies ~= false,
 				reference = entry.reference,
 				existingSource = entry.existingSource,
@@ -313,6 +318,7 @@ function InstallService:installQueue(queue, onProgress, options)
 		local ok, result = self:installPackage(entry, {
 			includeDependencies = entry.includeDependencies ~= false,
 			unpackSrc = unpackSrc,
+			displayName = entry.overrideName,
 			parent = parent,
 		})
 

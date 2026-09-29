@@ -100,6 +100,7 @@ end
 	A directory-style pattern like "src" also matches "src/anything".
 ]]
 local function matchGlob(glob, path)
+	glob = glob:gsub("^/+", "")
 	local exact = globToLuaPattern(glob)
 	if path:match(exact) then
 		return true
@@ -366,6 +367,8 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 	local skipped = 0
 	local rootInit = nil
 	local wallyData = nil
+	local packageMain = nil
+	local packageJsonDirectory = ""
 
 	local entries = {}
 	for _, name, offset, size, packed, crc in zzlib.files(buf) do
@@ -393,6 +396,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 
 		local isLuau = isLuauFile(name)
 		local isWally = name:match("wally%.toml$") ~= nil
+		local isPackageJson = name:match("package%.json$") ~= nil
 		local isMeta = name:match("%.meta%.json$") ~= nil
 		local isModel = name:match("%.model%.json$") ~= nil
 		local isDir = name:match("/$") ~= nil
@@ -402,13 +406,18 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			continue
 		end
 
-		if not isWally and not isMeta and not passesFilter(name, includes, excludes) then -- CHANGED
+		if
+			not isWally
+			and not isPackageJson
+			and not isMeta
+			and not passesFilter(name, includes, excludes)
+		then
 			ZipBuild.__log(`[ZipImporter] Filtered out: "{name}"`)
 			skipped += 1
 			continue
 		end
 
-		if not isLuau and not isWally and not isMeta and not isModel then
+		if not isLuau and not isWally and not isPackageJson and not isMeta and not isModel then
 			skipped += 1
 			continue
 		end
@@ -433,6 +442,18 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 				ZipBuild.__log(`[ZipImporter] Parsed wally.toml`)
 			else
 				ZipBuild.__log(`[ZipImporter] Failed to parse wally.toml: {result}`)
+			end
+			continue
+		end
+
+		if isPackageJson then
+			local ok, result = pcall(function()
+				return HttpService:JSONDecode(content)
+			end)
+			if ok and type(result) == "table" and type(result.main) == "string" then
+				packageMain = result.main:gsub("\\", "/"):gsub("^%./", "")
+				packageJsonDirectory = name:match("^(.*)/[^/]+$") or ""
+				ZipBuild.__log(`[ZipImporter] package.json main: "{packageMain}"`)
 			end
 			continue
 		end
@@ -491,7 +512,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 
 		local metaKey = normalizeScriptPath(remappedName)
 
-		if scriptName == "init" and dir ~= "" and dir ~= "src" then
+		if scriptName == "init" and dir ~= "" then
 			local dirParts = {}
 			for part in dir:gmatch("[^/]+") do
 				table.insert(dirParts, part)
@@ -591,7 +612,20 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		)
 	end
 
-	return imported, skipped, rootInit, wallyData
+	local entryPoint = rootInit
+	if packageMain then
+		local mainPath = joinPath(packageJsonDirectory, packageMain)
+		mainPath = normalizeScriptPath(remapPhysicalPath(mainPath, pathMappings))
+		local mainModule = createdByKey[mainPath]
+		if mainModule and mainModule:IsA("ModuleScript") then
+			entryPoint = mainModule
+			ZipBuild.__log(`[ZipImporter] Using package.json main: "{mainPath}"`)
+		else
+			ZipBuild.__log(`[ZipImporter] package.json main not found: "{mainPath}"`)
+		end
+	end
+
+	return imported, skipped, entryPoint, wallyData
 end
 
 ---- Toml helpers -------------------------------------------------------------

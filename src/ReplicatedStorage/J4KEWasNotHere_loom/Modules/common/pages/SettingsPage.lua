@@ -60,6 +60,17 @@ return function(ctx)
 			}),
 
 			Checkbox({
+				Text = "Include wally.toml ModuleScript in packages",
+				Value = Value(settings.includeWallyToml),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				OnChange = function(value)
+					updateSettings("includeWallyToml", value)
+				end,
+			}),
+
+			Checkbox({
 				Text = "Include Developer-Dependencies",
 				Value = Value(settings.includeDev),
 				Enabled = Computed(function()

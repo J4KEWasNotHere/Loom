@@ -9,10 +9,10 @@
 			<token name="AuthorityMode">1</token>
 			<token name="AvatarUnificationMode">0</token>
 			<token name="ClientAnimatorThrottling">0</token>
-			<BinaryString name="CollisionGroupData">AQEABP////8HRGVmYXVsdA==</BinaryString>
 			<Ref name="CurrentCamera">RBX3E75499D6B2C4D69B27E7EBE8C3EA2DB</Ref>
 			<double name="DistributedGameTime">0</double>
 			<token name="EnableSLIMAvatars">0</token>
+			<token name="ExpandedTerrain">0</token>
 			<bool name="ExplicitAutoJoints">true</bool>
 			<bool name="FallHeightEnabled">true</bool>
 			<float name="FallenPartsDestroyHeight">-500</float>
@@ -28,6 +28,7 @@
 			<token name="ImprovedPhysicsReplication">0</token>
 			<token name="LayeredClothingCacheOptimizations">0</token>
 			<token name="LuauTypeCheckMode">0</token>
+			<token name="MapTVRemoteToGamepadKeycodes">0</token>
 			<token name="MeshPartHeadsAndAccessories">0</token>
 			<token name="MeshStreamingAndImprovedLods">0</token>
 			<token name="ModelStreamingBehavior">0</token>
@@ -45,6 +46,7 @@
 			<token name="SandboxedInstanceMode">0</token>
 			<token name="SignalBehavior2">0</token>
 			<token name="StreamOutBehavior">0</token>
+			<bool name="StreamingAdaptiveRadius">false</bool>
 			<bool name="StreamingEnabled">false</bool>
 			<token name="StreamingIntegrityMode">0</token>
 			<int name="StreamingMinRadius">64</int>
@@ -53,8 +55,23 @@
 			<token name="TouchEventsUseCollisionGroups">0</token>
 			<bool name="TouchesUseCollisionGroups">false</bool>
 			<token name="UseFixedSimulation">0</token>
+			<token name="UseInputSink">0</token>
 			<token name="UseNewLuauTypeSolver">1</token>
 			<token name="ValidateEnabledProximityPrompt">0</token>
+			<bool name="AutoSimulate">true</bool>
+			<BinaryString name="CollisionGroupData">AQEABP////8HRGVmYXVsdA==</BinaryString>
+			<Vector3 name="GravityDirection">
+				<X>0</X>
+				<Y>-1</Y>
+				<Z>0</Z>
+			</Vector3>
+			<float name="SimulationRate">1</float>
+			<float name="Wind">0</float>
+			<Vector3 name="WindDirection">
+				<X>0</X>
+				<Y>0</Y>
+				<Z>0</Z>
+			</Vector3>
 			<token name="LevelOfDetail">0</token>
 			<CoordinateFrame name="ModelMeshCFrame">
 				<X>0</X>
@@ -226,18 +243,18 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 		<Item class="Camera" referent="RBX3E75499D6B2C4D69B27E7EBE8C3EA2DB">
 			<Properties>
 				<CoordinateFrame name="CFrame">
-					<X>390.801025</X>
-					<Y>250.137909</Y>
-					<Z>257.316254</Z>
-					<R00>0.864100337</R00>
-					<R01>0.142268255</R01>
-					<R02>-0.482794315</R02>
-					<R10>-7.4505806e-09</R10>
-					<R11>0.959220171</R11>
-					<R12>0.282659888</R12>
-					<R20>0.503319561</R20>
-					<R21>-0.244246498</R21>
-					<R22>0.828862548</R22>
+					<X>390.894623</X>
+					<Y>250.517471</Y>
+					<Z>257.19046</Z>
+					<R00>0.869071782</R00>
+					<R01>0.23370035</R01>
+					<R02>-0.436002761</R02>
+					<R10>-1.4901163e-08</R10>
+					<R11>0.88137269</R11>
+					<R12>0.472421497</R12>
+					<R20>0.494686067</R20>
+					<R21>-0.410568178</R21>
+					<R22>0.765976131</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
@@ -393,7 +410,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="BanningEnabled">true</bool>
 			<bool name="CharacterAutoLoads">true</bool>
 			<int name="MaxPlayersInternal">12</int>
-			<int name="PreferredPlayersInternal">0</int>
+			<int name="PreferredPlayersInternal">1</int>
 			<float name="RespawnTime">5</float>
 			<bool name="UseStrafingAnimations">false</bool>
 			<BinaryString name="AttributesSerialize"></BinaryString>
@@ -490,9 +507,9 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<token name="ChatVersion">0</token>
 			<bool name="CreateDefaultCommands">true</bool>
 			<bool name="CreateDefaultTextChannels">true</bool>
-			<token name="EnableProtectedChat">0</token>
 			<bool name="HasSeenDeprecationDialog">false</bool>
 			<bool name="IsLegacyChatDisabled">false</bool>
+			<token name="PlatformIntegratedChat">0</token>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 			<bool name="DefinesCapabilities">false</bool>
@@ -519,6 +536,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				</Font>
 				<float name="HeightScale">1</float>
 				<token name="HorizontalAlignment">1</token>
+				<token name="TextChannelDisplayMode">0</token>
 				<Color3 name="TextColor3">
 					<R>1</R>
 					<G>1</G>
@@ -770,6 +788,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<token name="LoadCharacterLayeredClothing">0</token>
 			<token name="LuaCharacterController">0</token>
 			<float name="NameDisplayDistance">100</float>
+			<Ref name="PlaceAvatarRules">null</Ref>
 			<int name="PlayerModuleStatus">0</int>
 			<bool name="UserEmotesEnabled">true</bool>
 			<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1054,6 +1073,20 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000392</UniqueId>
 		</Properties>
 	</Item>
+	<Item class="ServiceVisibilityService" referent="RBX6E151A04947A4559A3052C33C0A9CE97">
+		<Properties>
+			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
+			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ServiceVisibilityService</string>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
+		</Properties>
+	</Item>
 	<Item class="LuaWebService" referent="RBXC1F226D9BF784DAB957B4FD6A2005AF5">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1091,6 +1124,11 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 		</Properties>
 		<Item class="Folder" referent="1">
 			<Properties>
+				<Color3 name="IconTint">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 				<bool name="DefinesCapabilities">false</bool>
@@ -1102,6 +1140,11 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			</Properties>
 			<Item class="Folder" referent="2">
 				<Properties>
+					<Color3 name="IconTint">
+						<R>0</R>
+						<G>0</G>
+						<B>0</B>
+					</Color3>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 					<bool name="DefinesCapabilities">false</bool>
@@ -1113,6 +1156,11 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				</Properties>
 				<Item class="Folder" referent="3">
 					<Properties>
+						<Color3 name="IconTint">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
@@ -1298,6 +1346,11 @@ end]]></ProtectedString>
 				</Item>
 				<Item class="Folder" referent="7">
 					<Properties>
+						<Color3 name="IconTint">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
@@ -3752,6 +3805,11 @@ end
 					</Item>
 					<Item class="Folder" referent="24">
 						<Properties>
+							<Color3 name="IconTint">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 							<bool name="DefinesCapabilities">false</bool>
@@ -5139,6 +5197,11 @@ end]]></ProtectedString>
 					</Item>
 					<Item class="Folder" referent="37">
 						<Properties>
+							<Color3 name="IconTint">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 							<bool name="DefinesCapabilities">false</bool>
@@ -6020,6 +6083,11 @@ end]]></ProtectedString>
 			</Item>
 			<Item class="Folder" referent="50">
 				<Properties>
+					<Color3 name="IconTint">
+						<R>0</R>
+						<G>0</G>
+						<B>0</B>
+					</Color3>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 					<bool name="DefinesCapabilities">false</bool>
@@ -6031,6 +6099,11 @@ end]]></ProtectedString>
 				</Properties>
 				<Item class="Folder" referent="51">
 					<Properties>
+						<Color3 name="IconTint">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
@@ -6209,8 +6282,10 @@ function InstallService:syncFromRaw(raw, pkgLabel, options, dependencyRealm)
 		source = sourceFolder,
 		reference = initModule,
 		name = pkgLabel,
+		displayName = options.displayName,
 		unpackSrc = options.unpackSrc == true,
 		includeDirectors = includeDirs,
+		includeWallyToml = self.settings:get("includeWallyToml", true),
 		wally = wallyData,
 	})
 
@@ -6242,8 +6317,10 @@ function InstallService:installPackage(entry, options)
 			source = entry.existingSource,
 			reference = entry.reference,
 			name = entry.label or (entry.scope .. "/" .. entry.package),
+			displayName = options.displayName or entry.overrideName,
 			unpackSrc = options.unpackSrc == true,
 			includeDirectors = includeDirs,
+			includeWallyToml = self.settings:get("includeWallyToml", true),
 			wally = wallyData,
 		})
 
@@ -6274,12 +6351,12 @@ function InstallService:installPackage(entry, options)
 		return false, "Failed to download package"
 	end
 
-	local installed, dependencies = self:syncFromRaw(
-		raw,
-		entry.label or (entry.scope .. "/" .. entry.package),
-		options,
-		entry.realm
-	)
+	local installed, dependencies =
+		self:syncFromRaw(raw, entry.label or (entry.scope .. "/" .. entry.package), {
+			unpackSrc = options.unpackSrc,
+			displayName = options.displayName or entry.overrideName,
+			parent = options.parent,
+		}, entry.realm)
 	if not installed then
 		self:debug(
 			`[{os.date("%H:%M:%S")}-install]: Failed to import package ({entry.label or entry.package}) ; {dependencies}`
@@ -6339,6 +6416,7 @@ function InstallService:installQueue(queue, onProgress, options)
 				package = package,
 				version = version,
 				label = customLabel,
+				overrideName = (entry.name and entry.name ~= "") and entry.name or nil,
 				includeDependencies = entry.includeDependencies ~= false,
 				reference = entry.reference,
 				existingSource = entry.existingSource,
@@ -6358,6 +6436,7 @@ function InstallService:installQueue(queue, onProgress, options)
 		local ok, result = self:installPackage(entry, {
 			includeDependencies = entry.includeDependencies ~= false,
 			unpackSrc = unpackSrc,
+			displayName = entry.overrideName,
 			parent = parent,
 		})
 
@@ -6549,6 +6628,7 @@ return module
 						<Properties>
 							<Content name="LinkedSource"><null></null></Content>
 							<ProtectedString name="Source"><![CDATA[local CollectionService = game:GetService("CollectionService")
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
@@ -6592,6 +6672,11 @@ local function getPackageIdentifier(name)
 	return scopePackage
 end
 
+local function getPackageDisplayName(name)
+	local packageName = tostring(name or "")
+	return packageName:match("([^/]+)$") or packageName
+end
+
 local function getFolderVersion(name)
 	return (tostring(name or ""):match("@(.+)$")) or nil
 end
@@ -6613,7 +6698,7 @@ local function getDependencyKeys(wallyData)
 		return keys
 	end
 
-	for _, section in ipairs({ "dependencies", "dev-dependencies" }) do
+	for _, section in ipairs({ "dependencies", "dev-dependencies", "server-dependencies" }) do
 		local deps = wallyData[section]
 		if type(deps) == "table" then
 			for alias in pairs(deps) do
@@ -6624,6 +6709,24 @@ local function getDependencyKeys(wallyData)
 
 	table.sort(keys)
 	return keys
+end
+
+local function getDependencyMap(wallyData)
+	local dependencies = {}
+	if type(wallyData) ~= "table" then
+		return dependencies
+	end
+
+	for _, section in ipairs({ "dependencies", "dev-dependencies", "server-dependencies" }) do
+		local sectionDependencies = wallyData[section]
+		if type(sectionDependencies) == "table" then
+			for alias, specifier in pairs(sectionDependencies) do
+				dependencies[tostring(alias)] = tostring(specifier)
+			end
+		end
+	end
+
+	return dependencies
 end
 
 local function toString(str)
@@ -6721,6 +6824,19 @@ local function getPackageEntryPoint(folder)
 	folder = toInstance(folder)
 	if not folder then
 		return nil
+	end
+
+	local entryPointPath = folder:GetAttribute("loomEntryPointPath")
+	if type(entryPointPath) == "string" then
+		local current = folder
+		for segment in entryPointPath:gmatch("[^/]+") do
+			if segment ~= "." then
+				current = current and current:FindFirstChild(segment)
+			end
+		end
+		if current and current:IsA("ModuleScript") then
+			return current
+		end
 	end
 
 	local explicit = folder:FindFirstChild("init", true) or folder:FindFirstChild("init.lua", true)
@@ -6851,36 +6967,34 @@ local function create_packages(name, realm)
 	return folder, index
 end
 
-local function createLocalDependencyDirectors(source, wallyData, realm)
-	if not wallyData then
-		return
-	end
-
+local function createLocalDependencyDirectors(source, dependencies, realm)
 	local packages = find_packages(realm)
 	if not packages then
 		return
 	end
 
-	local dependencies = {}
-	if wallyData.dependencies then
-		for alias, _ in pairs(wallyData.dependencies) do
-			dependencies[alias] = true
-		end
-	end
-	if wallyData["dev-dependencies"] then
-		for alias, _ in pairs(wallyData["dev-dependencies"]) do
-			dependencies[alias] = true
-		end
-	end
-
-	for alias, _ in pairs(dependencies) do
-		local existing = source:FindFirstChild(alias)
-		if existing then
-			existing:Destroy()
-		end
-
+	for _, alias in ipairs(getDependencyKeys({ dependencies = dependencies })) do
 		local targetDirector = packages:FindFirstChild(alias)
+		local specifier = dependencies[alias]
+		if not targetDirector and type(specifier) == "string" then
+			local packageIdentifier = getPackageIdentifier(specifier:match("^([^@]+)") or "")
+			for _, child in ipairs(packages:GetChildren()) do
+				if
+					child:IsA("ModuleScript")
+					and child:GetAttribute("loomPackageIdentifier") == packageIdentifier
+				then
+					targetDirector = child
+					break
+				end
+			end
+		end
+
 		if targetDirector and targetDirector:IsA("ModuleScript") then
+			local existing = source:FindFirstChild(alias)
+			if existing then
+				existing:Destroy()
+			end
+
 			local path = getPathTo(source, targetDirector)
 			local moduleRef = new("ModuleScript", {
 				Name = alias,
@@ -6893,7 +7007,30 @@ local function createLocalDependencyDirectors(source, wallyData, realm)
 				moduleRef:SetAttribute("loomDependencyAlias", alias)
 				moduleRef:SetAttribute("loomPackageRealm", tostring(realm))
 			end
+
+			local robloxPackages = source:FindFirstChild("roblox_packages")
+			local packageShim = robloxPackages and robloxPackages:FindFirstChild(alias)
+			if packageShim and packageShim:IsA("ModuleScript") then
+				local escapedAlias = alias:gsub("([^%w])", "%%%1")
+				local requirePattern = "script%.Parent%.Parent%.Parent(%[%s*['\"]"
+					.. escapedAlias
+					.. "['\"]%s*%])"
+				local rewrittenSource, replacements =
+					packageShim.Source:gsub(requirePattern, "script.Parent.Parent%1")
+				if replacements > 0 then
+					packageShim.Source = rewrittenSource
+				end
+			end
 		end
+	end
+end
+
+local function syncWallyModule(source, wallyData, includeWallyToml)
+	local existing = source:FindFirstChild("wally.toml")
+	if includeWallyToml ~= false and wallyData then
+		toml_formatter.create(wallyData, source)
+	elseif existing then
+		existing:Destroy()
 	end
 end
 
@@ -6918,6 +7055,7 @@ local function setPackageMetadata(source, realm, wallyData, packageIdentifier, v
 		(realm == "server") and "server" or (realm == "dev") and "dev" or "shared"
 	)
 	source:SetAttribute("loomDependencyList", serializeList(deps))
+	source:SetAttribute("loomDependencyMap", HttpService:JSONEncode(getDependencyMap(wallyData)))
 	source:SetAttribute("loomReferenceCount", 0)
 	source:SetAttribute("loomRootPackage", true)
 end
@@ -6951,7 +7089,13 @@ local function getPackageRecord(folder, realm)
 	local rootPackages = find_packages(realm)
 	if rootPackages then
 		for _, child in ipairs(rootPackages:GetChildren()) do
-			if child:IsA("ModuleScript") and child.Name == packageId then
+			if
+				child:IsA("ModuleScript")
+				and (
+					child:GetAttribute("loomPackageIdentifier") == packageId
+					or child.Name == packageId
+				)
+			then
 				rootModule = child
 				break
 			end
@@ -7096,16 +7240,41 @@ PackageModule.linkAllLocalDependencies = function(realm)
 	end
 
 	for _, sourceFolder in ipairs(index:GetChildren()) do
-		local wallyTomlModule = sourceFolder:FindFirstChild("wally.toml")
-			or sourceFolder:FindFirstChild(".wally")
-			or sourceFolder:FindFirstChild("wally")
+		if sourceFolder:IsA("Folder") then
+			local wallyTomlModule = sourceFolder:FindFirstChild("wally.toml")
+				or sourceFolder:FindFirstChild(".wally")
+				or sourceFolder:FindFirstChild("wally")
+			local dependencies = nil
 
-		-- Look for an existing parsed file asset or structure
-		if wallyTomlModule and wallyTomlModule:IsA("ModuleScript") then
-			local success, wallyData = pcall(require, wallyTomlModule)
-			if success and typeof(wallyData) == "table" then
-				createLocalDependencyDirectors(sourceFolder, wallyData, realm)
+			if wallyTomlModule and wallyTomlModule:IsA("ModuleScript") then
+				local success, wallyData = pcall(require, wallyTomlModule)
+				if success and typeof(wallyData) == "table" then
+					dependencies = getDependencyMap(wallyData)
+				end
 			end
+
+			if not dependencies then
+				local encodedMap = sourceFolder:GetAttribute("loomDependencyMap")
+				if type(encodedMap) == "string" then
+					local ok, decoded = pcall(function()
+						return HttpService:JSONDecode(encodedMap)
+					end)
+					if ok and type(decoded) == "table" then
+						dependencies = decoded
+					end
+				end
+			end
+
+			if not dependencies then
+				dependencies = {}
+				for alias in
+					tostring(sourceFolder:GetAttribute("loomDependencyList") or ""):gmatch("[^,]+")
+				do
+					dependencies[alias] = ""
+				end
+			end
+
+			createLocalDependencyDirectors(sourceFolder, dependencies, realm)
 		end
 	end
 end
@@ -7137,12 +7306,17 @@ PackageModule.addPackage = function(
 		display: string?,
 		reference: ModuleScript?,
 		includeDirectors: boolean?,
+		includeWallyToml: boolean?,
 	}
 )
 	local p, index = find_packages(realm)
 	local reference = data.reference or getPackageEntryPoint(data.source)
 
 	data.source.Parent = index
+	data.source:SetAttribute(
+		"loomEntryPointPath",
+		reference and getPathTo(data.source, reference) or nil
+	)
 	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
 		or ((data.creator and data.name) and (tostring(data.creator) .. "/" .. tostring(data.name)))
 		or (data.name or data.source.Name)
@@ -7166,10 +7340,10 @@ PackageModule.addPackage = function(
 		p, index = create_packages(nil, realm)
 	end
 
+	syncWallyModule(data.source, data.wally, data.includeWallyToml)
 	if data.wally then
-		toml_formatter.create(data.wally, data.source)
 		if data.includeDirectors ~= false then
-			createLocalDependencyDirectors(data.source, data.wally, realm)
+			createLocalDependencyDirectors(data.source, getDependencyMap(data.wally), realm)
 		end
 	end
 
@@ -7184,7 +7358,7 @@ PackageModule.addPackage = function(
 	local f = create_package_directory(data.creator, data.name, data.major, data.minor, data.patch)
 
 	local code = getPathTo(f, reference)
-	local name = toString(data.display) or data.name
+	local name = getPackageDisplayName(toString(data.display) or packageIdentifier)
 
 	local m = nil
 	if p:FindFirstChild(name) then
@@ -7208,9 +7382,11 @@ PackageModule.syncPackage = function(
 		source: Folder,
 		wally: { [string]: any },
 		name: string?,
+		displayName: string?,
 		reference: ModuleScript?,
 		unpackSrc: boolean?,
 		includeDirectors: boolean?,
+		includeWallyToml: boolean?,
 	}
 )
 	local p = find_packages(realm)
@@ -7226,7 +7402,11 @@ PackageModule.syncPackage = function(
 
 	local reference = data.reference or getPackageEntryPoint(data.source)
 
-	local displayName = (data.name and data.name ~= "") and data.name or data.source.Name
+	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
+		or (data.name or data.source.Name)
+	local displayName = (data.displayName and data.displayName ~= "")
+			and getPackageDisplayName(data.displayName)
+		or getPackageDisplayName(packageIdentifier)
 
 	for _, child in ipairs(index:GetChildren()) do
 		if child.Name == displayName then
@@ -7248,8 +7428,13 @@ PackageModule.syncPackage = function(
 	end
 
 	data.source.Parent = index
-	local packageIdentifier = (data.wally and data.wally.package and data.wally.package.name)
-		or (data.name or data.source.Name)
+	if data.unpackSrc == true and reference then
+		unpackModuleRoot(data.source, reference)
+	end
+	data.source:SetAttribute(
+		"loomEntryPointPath",
+		reference and getPathTo(data.source, reference) or nil
+	)
 	setPackageMetadata(
 		data.source,
 		realm,
@@ -7258,10 +7443,10 @@ PackageModule.syncPackage = function(
 		(data.source.Name:match("@(.+)$") or "")
 	)
 
+	syncWallyModule(data.source, data.wally, data.includeWallyToml)
 	if data.wally then
-		toml_formatter.create(data.wally, data.source)
 		if data.includeDirectors ~= false then
-			createLocalDependencyDirectors(data.source, data.wally, realm)
+			createLocalDependencyDirectors(data.source, getDependencyMap(data.wally), realm)
 		end
 	end
 
@@ -7276,9 +7461,24 @@ PackageModule.syncPackage = function(
 	local m
 
 	for _, child in ipairs(p:GetChildren()) do
-		if child:IsA("ModuleScript") and child.Name == displayName then
+		if
+			child:IsA("ModuleScript")
+			and (
+				child:GetAttribute("loomPackageIdentifier") == packageIdentifier
+				or child.Name == packageIdentifier
+			)
+		then
 			m = child
 			break
+		end
+	end
+
+	if not m then
+		for _, child in ipairs(p:GetChildren()) do
+			if child:IsA("ModuleScript") and child.Name == displayName then
+				m = child
+				break
+			end
 		end
 	end
 
@@ -7288,19 +7488,16 @@ PackageModule.syncPackage = function(
 		end
 	end
 
-	if data.unpackSrc == true then
-		unpackModuleRoot(data.source, reference)
-	end
-
 	if not m then
 		m = new("ModuleScript", {
 			Name = displayName,
 			Parent = p,
 		})
 	end
+	m.Name = displayName
+	m:SetAttribute("loomPackageIdentifier", packageIdentifier)
 
 	local attributes = data.source:GetAttributes()
-	local rawDetails = "--> " .. data.source.Name
 	local desc, license = nil, nil
 
 	for name, value in attributes do
@@ -7311,20 +7508,39 @@ PackageModule.syncPackage = function(
 		end
 	end
 
-	if desc or license then
-		local descFormat = not (desc and license) and [[--> %s
---%s]] or [[--> %s
---%s
---%s]]
+	local sourceLines = {}
+	if type(desc) == "string" and desc ~= "" then
+		table.insert(sourceLines, "--> " .. desc)
+	end
+	if type(license) == "string" and license ~= "" then
+		table.insert(sourceLines, "-- License: " .. license)
+	end
 
-		if desc and license then
-			rawDetails = descFormat:format(data.source.Name, desc, "License: " .. license)
-		else
-			rawDetails = descFormat:format(data.source.Name, desc or "License: " .. license)
+	local referencePath = getPathTo(m, reference)
+	table.insert(sourceLines, ([[local main = require(%q)]]):format(referencePath))
+	for line in reference.Source:gmatch("[^\r\n]+") do
+		local typeName, genericParams =
+			line:match("^%s*export%s+type%s+([%a_][%w_]*)(%s*<[^>]+>)%s*=")
+		if not typeName then
+			typeName = line:match("^%s*export%s+type%s+([%a_][%w_]*)%s*=")
+			genericParams = ""
+		end
+		if typeName then
+			local genericArguments = genericParams:gsub("%s", "")
+			table.insert(
+				sourceLines,
+				("export type %s%s = main.%s%s"):format(
+					typeName,
+					genericParams,
+					typeName,
+					genericArguments
+				)
+			)
 		end
 	end
-	m.Source = ([[%s
-return require("%s")]]):format(rawDetails, getPathTo(m, reference))
+
+	table.insert(sourceLines, "return main")
+	m.Source = table.concat(sourceLines, "\n")
 
 	return m, reference, true
 end
@@ -7874,7 +8090,8 @@ local DEFAULT_SETTINGS = {
 	devMode = false,
 	experimentalMode = false,
 	includeDev = false,
-	includeDirectors = true
+	includeDirectors = true,
+	includeWallyToml = true,
 }
 
 function PluginSettingsService.new(pluginInstance)
@@ -7885,13 +8102,18 @@ function PluginSettingsService.new(pluginInstance)
 	}, PluginSettingsService)
 
 	if not pluginInstance then
-		warn("[Loom-Settings]: No plugin instance provided — settings will NOT persist across sessions.")
+		warn(
+			"[Loom-Settings]: No plugin instance provided — settings will NOT persist across sessions."
+		)
 	end
 
 	if pluginInstance then
 		for key in pairs(DEFAULT_SETTINGS) do
 			local full = ("%s.%s"):format(self._prefix, key)
-			local ok, v = pcall(pluginInstance.GetSetting, pluginInstance, full)
+			local ok, v = pcall(function()
+				return pluginInstance:GetSetting(full)
+			end)
+
 			if not ok then
 				warn(`[Loom-Settings]: GetSetting failed for "{key}": {v}`)
 			elseif v ~= nil then
@@ -7906,7 +8128,10 @@ function PluginSettingsService:set(key, value)
 	self._store[key] = value
 	if self._plugin then
 		local full = ("%s.%s"):format(self._prefix, key)
-		local ok, err = pcall(self._plugin.SetSetting, self._plugin, full, value)
+		local ok, err = pcall(function()
+			self._plugin:SetSetting(full, value)
+		end)
+
 		if not ok then
 			warn(`[Loom-Settings]: SetSetting failed for "{key}": {err}`)
 		end
@@ -7945,7 +8170,8 @@ function PluginSettingsService:getDefaultSettings()
 	return table.clone(DEFAULT_SETTINGS)
 end
 
-return PluginSettingsService]]></ProtectedString>
+return PluginSettingsService
+]]></ProtectedString>
 							<string name="ScriptGuid">{42B7C2CF-358A-44DE-9CDA-F7448EDE5A2D}</string>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -7959,6 +8185,11 @@ return PluginSettingsService]]></ProtectedString>
 					</Item>
 					<Item class="Folder" referent="RBXB45110D426BB4EF996DC6D9B32EE01E9">
 						<Properties>
+							<Color3 name="IconTint">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 							<bool name="DefinesCapabilities">false</bool>
@@ -8128,6 +8359,11 @@ end
 					</Item>
 					<Item class="Folder" referent="RBX548F8EA788F64429827114BD42B2CC97">
 						<Properties>
+							<Color3 name="IconTint">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 							<bool name="DefinesCapabilities">false</bool>
@@ -8846,6 +9082,17 @@ return function(ctx)
 			}),
 
 			Checkbox({
+				Text = "Include wally.toml ModuleScript in packages",
+				Value = Value(settings.includeWallyToml),
+				Enabled = Computed(function()
+					return not unwrap(IsVersionInstalling)
+				end),
+				OnChange = function(value)
+					updateSettings("includeWallyToml", value)
+				end,
+			}),
+
+			Checkbox({
 				Text = "Include Developer-Dependencies",
 				Value = Value(settings.includeDev),
 				Enabled = Computed(function()
@@ -9300,6 +9547,7 @@ return function(ctx)
 							reference = initModule,
 							unpackSrc = settingsService:get("unpackSrc", true),
 							includeDirectors = settingsService:get("includeDirectors", true),
+							includeWallyToml = settingsService:get("includeWallyToml", true),
 							wally = wallyData,
 						})
 
@@ -9404,6 +9652,7 @@ return function(ctx)
 	local unwrap = ctx.fusion.unwrap
 	local Value = ctx.fusion.Value
 	local Children = ctx.fusion.Children
+	local Observer = ctx.fusion.Observer
 
 	local Label = ctx.components.Label
 	local MainButton = ctx.components.MainButton
@@ -9463,16 +9712,20 @@ return function(ctx)
 			return "missing", Color3.fromRGB(255, 99, 99)
 		end
 
-		if latestVersion and wally_search.compareVersions(latestVersion, record.version) > 0 then
+		if not latestVersion then
+			return "unavailable", Color3.fromRGB(160, 160, 160)
+		end
+
+		if wally_search.compareVersions(latestVersion, record.version) > 0 then
 			return "update available", Color3.fromRGB(255, 166, 77)
 		end
 
 		return "up to date", Color3.fromRGB(110, 235, 160)
 	end
 
-	local function getReferenceCounts()
+	local function getReferenceCounts(records)
 		local counts = {}
-		for _, candidate in ipairs(package_instancer.getManagedPackageSummary() or {}) do
+		for _, candidate in ipairs(records) do
 			for _, dependency in ipairs(candidate.dependencies or {}) do
 				counts[dependency] = (counts[dependency] or 0) + 1
 			end
@@ -9528,8 +9781,7 @@ return function(ctx)
 		return rows
 	end
 
-	local function buildDependencyItems(record)
-		local counts = getReferenceCounts()
+	local function buildDependencyItems(record, counts)
 		local rows = {}
 		local dependencies = record.dependencies or {}
 		if #dependencies == 0 then
@@ -9547,12 +9799,12 @@ return function(ctx)
 				makeCard({
 					Label({
 						Text = dependency,
-						TextSize = 12,
+						TextSize = 16,
 						TextColor3 = Color3.fromRGB(240, 240, 240),
 					}),
 					Label({
 						Text = ("Referenced by %d package(s)"):format(counts[dependency] or 0),
-						TextSize = 10,
+						TextSize = 12,
 						TextColor3 = Color3.fromRGB(180, 180, 180),
 					}),
 				})
@@ -9561,13 +9813,28 @@ return function(ctx)
 		return rows
 	end
 
-	local function buildPackageCard(record)
-		local latestVersion, orderedVersions = loadLatestVersion(record)
-		local statusText, statusColor = describeStatus(record, latestVersion)
+	local function buildPackageCard(record, counts)
+		local Collapsed = Value(true)
+		local LatestVersion = Value(nil)
+		local OrderedVersions = Value(nil)
+		local requestedVersions = false
+
+		Observer(Collapsed):onChange(function()
+			if unwrap(Collapsed) or requestedVersions then
+				return
+			end
+
+			requestedVersions = true
+			task.spawn(function()
+				local latestVersion, orderedVersions = loadLatestVersion(record)
+				LatestVersion:set(latestVersion)
+				OrderedVersions:set(orderedVersions)
+			end)
+		end)
 
 		return VerticalCollapsibleSection({
 			Text = record.id,
-			Collapsed = Value(true),
+			Collapsed = Collapsed,
 			[Children] = {
 				makeCard({
 					Label({
@@ -9581,25 +9848,63 @@ return function(ctx)
 						TextColor3 = Color3.fromRGB(210, 210, 210),
 					}),
 					Label({
-						Text = ("Latest available version: %s"):format(
-							latestVersion or "unavailable"
-						),
+						Text = Computed(function()
+							if unwrap(OrderedVersions) == nil then
+								return "Latest available version: not checked"
+							end
+							return ("Latest available version: %s"):format(
+								unwrap(LatestVersion) or "unavailable"
+							)
+						end),
 						TextSize = 12,
 						TextColor3 = Color3.fromRGB(210, 210, 210),
 					}),
 					Label({
-						Text = statusText,
-						TextColor3 = statusColor,
+						Text = Computed(function()
+							if unwrap(OrderedVersions) == nil then
+								return "version not checked"
+							end
+							local status = describeStatus(record, unwrap(LatestVersion))
+							return status
+						end),
+						TextColor3 = Computed(function()
+							if unwrap(OrderedVersions) == nil then
+								return Color3.fromRGB(160, 160, 160)
+							end
+							local _, color = describeStatus(record, unwrap(LatestVersion))
+							return color
+						end),
 						TextSize = 11,
 					}),
 					MainButton({
 						Text = "Update",
 						Size = UDim2.new(1, 0, 0, 30),
 						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling) and latestVersion ~= nil
+							local latestVersion = unwrap(LatestVersion)
+							return not unwrap(IsVersionInstalling)
+								and latestVersion ~= nil
+								and (
+									not record.version
+									or wally_search.compareVersions(
+											latestVersion,
+											record.version
+										)
+										> 0
+								)
 						end),
 						Activated = function()
-							if latestVersion then
+							local latestVersion = LatestVersion:get()
+							if
+								latestVersion
+								and (
+									not record.version
+									or wally_search.compareVersions(
+											latestVersion,
+											record.version
+										)
+										> 0
+								)
+							then
 								queueVersion(record, latestVersion)
 							end
 						end,
@@ -9607,7 +9912,24 @@ return function(ctx)
 					VerticalCollapsibleSection({
 						Text = "Change version",
 						Collapsed = Value(true),
-						[Children] = buildVersionRows(record, orderedVersions),
+						[Children] = Computed(function()
+							local orderedVersions = unwrap(OrderedVersions)
+							if orderedVersions == nil then
+								return {
+									Label({
+										Text = "Expand this package to check versions.",
+										TextColor3 = Color3.fromRGB(180, 180, 180),
+									}),
+								}
+							end
+							return buildVersionRows(record, orderedVersions)
+						end, function(instances)
+							for _, inst in ipairs(instances or {}) do
+								if inst and inst.Destroy then
+									inst:Destroy()
+								end
+							end
+						end),
 					}),
 					MainButton({
 						Text = "Remove",
@@ -9632,7 +9954,7 @@ return function(ctx)
 					VerticalCollapsibleSection({
 						Text = "Dependencies",
 						Collapsed = Value(true),
-						[Children] = buildDependencyItems(record),
+						[Children] = buildDependencyItems(record, counts),
 					}),
 				}),
 			},
@@ -9651,9 +9973,10 @@ return function(ctx)
 		end
 
 		local cards = {}
+		local referenceCounts = getReferenceCounts(records)
 		for _, record in ipairs(records) do
 			if record then
-				table.insert(cards, buildPackageCard(record))
+				table.insert(cards, buildPackageCard(record, referenceCounts))
 			end
 		end
 		return cards
@@ -9695,6 +10018,11 @@ end
 				</Item>
 				<Item class="Folder" referent="57">
 					<Properties>
+						<Color3 name="IconTint">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
@@ -10981,6 +11309,11 @@ return WallySearch
 				</Item>
 				<Item class="Folder" referent="63">
 					<Properties>
+						<Color3 name="IconTint">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
@@ -10994,6 +11327,7 @@ return WallySearch
 						<Properties>
 							<Content name="LinkedSource"><null></null></Content>
 							<ProtectedString name="Source"><![CDATA[local TomlFormatter = {}
+local simpleLinter = require(script.Parent:FindFirstAncestor("Modules").files["simple-linter"])
 
 local function navigateTo(result, path: { string })
 	local node = result
@@ -11134,9 +11468,15 @@ local function parseInlineTable(content: string): { [string]: any }
 end
 
 local function create_toml(tomlData: { [string]: any }, parent: Instance?): ModuleScript
-	local m = Instance.new("ModuleScript")
+	local m = parent and parent:FindFirstChild("wally.toml")
+	if not m or not m:IsA("ModuleScript") then
+		if m then
+			m:Destroy()
+		end
+		m = Instance.new("ModuleScript")
+	end
 	m.Name = "wally.toml"
-	m.Source = ("return %s"):format(tableToString(tomlData))
+	m.Source = simpleLinter(("return %s"):format(tableToString(tomlData)))
 
 	m.Parent = (typeof(parent) == "Instance" and parent) or nil
 	m:AddTag("_wallytoml")
@@ -11317,6 +11657,7 @@ end
 	A directory-style pattern like "src" also matches "src/anything".
 ]]
 local function matchGlob(glob, path)
+	glob = glob:gsub("^/+", "")
 	local exact = globToLuaPattern(glob)
 	if path:match(exact) then
 		return true
@@ -11583,6 +11924,8 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 	local skipped = 0
 	local rootInit = nil
 	local wallyData = nil
+	local packageMain = nil
+	local packageJsonDirectory = ""
 
 	local entries = {}
 	for _, name, offset, size, packed, crc in zzlib.files(buf) do
@@ -11610,6 +11953,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 
 		local isLuau = isLuauFile(name)
 		local isWally = name:match("wally%.toml$") ~= nil
+		local isPackageJson = name:match("package%.json$") ~= nil
 		local isMeta = name:match("%.meta%.json$") ~= nil
 		local isModel = name:match("%.model%.json$") ~= nil
 		local isDir = name:match("/$") ~= nil
@@ -11619,13 +11963,18 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			continue
 		end
 
-		if not isWally and not isMeta and not passesFilter(name, includes, excludes) then -- CHANGED
+		if
+			not isWally
+			and not isPackageJson
+			and not isMeta
+			and not passesFilter(name, includes, excludes)
+		then
 			ZipBuild.__log(`[ZipImporter] Filtered out: "{name}"`)
 			skipped += 1
 			continue
 		end
 
-		if not isLuau and not isWally and not isMeta and not isModel then
+		if not isLuau and not isWally and not isPackageJson and not isMeta and not isModel then
 			skipped += 1
 			continue
 		end
@@ -11650,6 +11999,18 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 				ZipBuild.__log(`[ZipImporter] Parsed wally.toml`)
 			else
 				ZipBuild.__log(`[ZipImporter] Failed to parse wally.toml: {result}`)
+			end
+			continue
+		end
+
+		if isPackageJson then
+			local ok, result = pcall(function()
+				return HttpService:JSONDecode(content)
+			end)
+			if ok and type(result) == "table" and type(result.main) == "string" then
+				packageMain = result.main:gsub("\\", "/"):gsub("^%./", "")
+				packageJsonDirectory = name:match("^(.*)/[^/]+$") or ""
+				ZipBuild.__log(`[ZipImporter] package.json main: "{packageMain}"`)
 			end
 			continue
 		end
@@ -11708,7 +12069,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 
 		local metaKey = normalizeScriptPath(remappedName)
 
-		if scriptName == "init" and dir ~= "" and dir ~= "src" then
+		if scriptName == "init" and dir ~= "" then
 			local dirParts = {}
 			for part in dir:gmatch("[^/]+") do
 				table.insert(dirParts, part)
@@ -11808,7 +12169,20 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		)
 	end
 
-	return imported, skipped, rootInit, wallyData
+	local entryPoint = rootInit
+	if packageMain then
+		local mainPath = joinPath(packageJsonDirectory, packageMain)
+		mainPath = normalizeScriptPath(remapPhysicalPath(mainPath, pathMappings))
+		local mainModule = createdByKey[mainPath]
+		if mainModule and mainModule:IsA("ModuleScript") then
+			entryPoint = mainModule
+			ZipBuild.__log(`[ZipImporter] Using package.json main: "{mainPath}"`)
+		else
+			ZipBuild.__log(`[ZipImporter] package.json main not found: "{mainPath}"`)
+		end
+	end
+
+	return imported, skipped, entryPoint, wallyData
 end
 
 ---- Toml helpers -------------------------------------------------------------
@@ -12405,10 +12779,293 @@ return reader
 							</Properties>
 						</Item>
 					</Item>
+					<Item class="ModuleScript" referent="RBX5699938400384F68984A9530ECE86863">
+						<Properties>
+							<Content name="LinkedSource"><null></null></Content>
+							<ProtectedString name="Source"><![CDATA[--!strict
+
+--[[
+	Minimal Luau re-indenter for generated source. Discards each line's
+	existing leading whitespace and recomputes it from bracket/keyword
+	nesting depth. Not a full parser — good enough for generated code
+	(tables, function wrappers, simple calls).
+]]
+
+local INDENT = "\t"
+
+local WORD_KEYWORDS = {
+	"function",
+	"if",
+	"elseif",
+	"else",
+	"for",
+	"while",
+	"do",
+	"repeat",
+	"until",
+	"end",
+	"then",
+}
+
+local function maskStringsAndComments(source: string): string
+	local out = table.create(#source)
+	local n = #source
+	local i = 1
+
+	local function fill(from: number, to: number)
+		for k = from, to do
+			out[k] = source:sub(k, k) == "\n" and "\n" or " "
+		end
+	end
+
+	while i <= n do
+		local c, c2 = source:sub(i, i), source:sub(i + 1, i + 1)
+
+		if c == "-" and c2 == "-" then
+			local j = i + 2
+			local eq = 0
+			if source:sub(j, j) == "[" then
+				local k = j + 1
+				while source:sub(k, k) == "=" do
+					eq += 1
+					k += 1
+				end
+				if source:sub(k, k) == "[" then
+					local _, closeEnd = source:find("%]" .. string.rep("=", eq) .. "%]", k + 1)
+					local finish = closeEnd or n
+					fill(i, finish)
+					i = finish + 1
+					continue
+				end
+			end
+			local lineEnd = source:find("\n", i, true)
+			local finish = (lineEnd and lineEnd - 1) or n
+			fill(i, finish)
+			i = finish + 1
+			continue
+		end
+
+		if c == "[" and (c2 == "[" or c2 == "=") then
+			local k = i + 1
+			local eq = 0
+			while source:sub(k, k) == "=" do
+				eq += 1
+				k += 1
+			end
+			if source:sub(k, k) == "[" then
+				local _, closeEnd = source:find("%]" .. string.rep("=", eq) .. "%]", k + 1)
+				local finish = closeEnd or n
+				fill(i, finish)
+				i = finish + 1
+				continue
+			end
+		end
+
+		if c == '"' or c == "'" then
+			local quote = c
+			local j = i + 1
+			while j <= n do
+				local cj = source:sub(j, j)
+				if cj == "\\" then
+					j += 2
+				elseif cj == quote then
+					j += 1
+					break
+				elseif cj == "\n" then
+					break
+				else
+					j += 1
+				end
+			end
+			fill(i, j - 1)
+			i = j
+			continue
+		end
+
+		out[i] = c
+		i += 1
+	end
+
+	return table.concat(out)
+end
+
+type Token = { value: string, pos: number, hug: boolean? }
+
+local function scanTokens(maskedLine: string): { Token }
+	local tokens: { Token } = {}
+	local i, n = 1, #maskedLine
+	while i <= n do
+		local c = maskedLine:sub(i, i)
+		if c == "{" or c == "}" or c == "(" or c == ")" or c == "[" or c == "]" then
+			table.insert(tokens, { value = c :: string, pos = i })
+			i += 1
+		elseif c:match("[%a_]") then
+			local j = i
+			while j <= n and maskedLine:sub(j, j):match("[%w_]") do
+				j += 1
+			end
+			local word = maskedLine:sub(i, j - 1)
+			for _, kw in WORD_KEYWORDS do
+				if word == kw then
+					table.insert(tokens, { value = word, pos = i })
+					break
+				end
+			end
+			i = j
+		else
+			i += 1
+		end
+	end
+	return tokens
+end
+
+local function isOpenBracket(v: string): boolean
+	return v == "{" or v == "(" or v == "["
+end
+
+local function isCloseBracket(v: string): boolean
+	return v == "}" or v == ")" or v == "]"
+end
+
+local function isCloser(v: string): boolean
+	return isCloseBracket(v) or v == "end" or v == "until"
+end
+
+local function markHugs(tokens: { Token }, maskedLine: string)
+	for idx = 1, #tokens - 1 do
+		local a, b = tokens[idx], tokens[idx + 1]
+		if a.value == "(" and b.value == "{" then
+			local between = maskedLine:sub(a.pos + 1, b.pos - 1)
+			if between:match("^%s*$") then
+				a.hug = true
+			end
+		end
+	end
+end
+
+local function splitLines(s: string): { string }
+	local lines = {}
+	for line in (s .. "\n"):gmatch("(.-)\n") do
+		table.insert(lines, line)
+	end
+	return lines
+end
+
+local function indent(code: string): string
+	local rawLines = splitLines(code)
+	local maskedLines = splitLines(maskStringsAndComments(code))
+
+	local out = table.create(#rawLines)
+	local depth = 0
+	local blockStack: { string } = {}
+
+	local bracketStack: { boolean } = {}
+
+	local function popBracket(stack: { boolean }): boolean
+		if #stack == 0 then
+			return true
+		end
+		local contributing = stack[#stack]
+		table.remove(stack)
+		return contributing
+	end
+
+	for idx = 1, #rawLines do
+		local trimmed = rawLines[idx]:match("^%s*(.-)%s*$") or ""
+		local maskedTrimmed = maskedLines[idx]:match("^%s*(.-)%s*$") or ""
+
+		if trimmed == "" then
+			table.insert(out, "")
+			continue
+		end
+
+		local tokens = scanTokens(maskedTrimmed)
+		markHugs(tokens, maskedTrimmed)
+
+		local depthAtLineStart = depth
+
+		local shadowStack = table.clone(bracketStack)
+		local shadowDepth = depth
+		for _, tok in tokens do
+			if not isCloser(tok.value) then
+				break
+			end
+			if isCloseBracket(tok.value) then
+				if popBracket(shadowStack) then
+					shadowDepth = math.max(shadowDepth - 1, 0)
+				end
+			else -- "end" or "until"
+				shadowDepth = math.max(shadowDepth - 1, 0)
+			end
+		end
+
+		local displayDepth = shadowDepth
+		if maskedTrimmed:match("^else%f[%A]") or maskedTrimmed:match("^elseif%f[%A]") then
+			displayDepth = math.max(depthAtLineStart - 1, 0)
+		end
+
+		table.insert(out, string.rep(INDENT, displayDepth) .. trimmed)
+
+		-- Real pass: mutate depth/bracketStack/blockStack for every token.
+		for _, tok in tokens do
+			local v = tok.value
+			if isOpenBracket(v) then
+				local contributing = not tok.hug
+				table.insert(bracketStack, contributing)
+				if contributing then
+					depth += 1
+				end
+			elseif isCloseBracket(v) then
+				if popBracket(bracketStack) then
+					depth = math.max(depth - 1, 0)
+				end
+			elseif v == "do" then
+				if blockStack[#blockStack] == "for-while-pending" then
+					blockStack[#blockStack] = "do"
+				else
+					depth += 1
+					table.insert(blockStack, "do")
+				end
+			elseif v == "for" or v == "while" then
+				table.insert(blockStack, "for-while-pending")
+				depth += 1
+			elseif v == "function" or v == "if" or v == "repeat" then
+				table.insert(blockStack, v)
+				depth += 1
+			elseif v == "end" or v == "until" then
+				depth = math.max(depth - 1, 0)
+				table.remove(blockStack)
+			end
+		end
+	end
+
+	return table.concat(out, "\n")
+end
+
+return function(code: string): string
+	return indent(code)
+end
+]]></ProtectedString>
+							<string name="ScriptGuid">{D4A1E0B9-3B11-49C4-9485-473516B83D34}</string>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+							<string name="Name">simple-linter</string>
+							<int64 name="SourceAssetId">-1</int64>
+							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+							<UniqueId name="UniqueId">7830aa0826c339ff0acce6b600002f7a</UniqueId>
+						</Properties>
+					</Item>
 				</Item>
 			</Item>
 			<Item class="Folder" referent="RBX51671313F63344CE8799459B58578F34">
 				<Properties>
+					<Color3 name="IconTint">
+						<R>0</R>
+						<G>0</G>
+						<B>0</B>
+					</Color3>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 					<bool name="DefinesCapabilities">false</bool>
@@ -12420,6 +13077,11 @@ return reader
 				</Properties>
 				<Item class="Folder" referent="RBX551EDEDF3FBD4312B30B2710E1294ADD">
 					<Properties>
+						<Color3 name="IconTint">
+							<R>0</R>
+							<G>0</G>
+							<B>0</B>
+						</Color3>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 						<bool name="DefinesCapabilities">false</bool>
@@ -12431,6 +13093,11 @@ return reader
 					</Properties>
 					<Item class="Folder" referent="RBXA958E86E83D547728364E61890C0935B">
 						<Properties>
+							<Color3 name="IconTint">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 							<bool name="DefinesCapabilities">false</bool>
@@ -12528,6 +13195,11 @@ return restrictRead("Fusion", {
 							</Properties>
 							<Item class="Folder" referent="RBX85365513BE34470089A2544DD1F882DE">
 								<Properties>
+									<Color3 name="IconTint">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 									<bool name="DefinesCapabilities">false</bool>
@@ -13658,6 +14330,11 @@ return unpackType]]></ProtectedString>
 							</Item>
 							<Item class="Folder" referent="RBXF0CC4E46A61741068A045116977B36F4">
 								<Properties>
+									<Color3 name="IconTint">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 									<bool name="DefinesCapabilities">false</bool>
@@ -13738,6 +14415,11 @@ return Oklab
 							</Item>
 							<Item class="Folder" referent="RBX43F55AB1B55A419CA03F3961684C80B8">
 								<Properties>
+									<Color3 name="IconTint">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 									<bool name="DefinesCapabilities">false</bool>
@@ -14015,6 +14697,11 @@ return useDependency]]></ProtectedString>
 							</Item>
 							<Item class="Folder" referent="RBX63A8B33BF3D64FDEBA558CED025729D9">
 								<Properties>
+									<Color3 name="IconTint">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 									<bool name="DefinesCapabilities">false</bool>
@@ -14767,6 +15454,11 @@ return {
 							</Item>
 							<Item class="Folder" referent="RBX2E464BF296624E488722C9B9F7A20D97">
 								<Properties>
+									<Color3 name="IconTint">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 									<bool name="DefinesCapabilities">false</bool>
@@ -15005,6 +15697,11 @@ return parseError]]></ProtectedString>
 							</Item>
 							<Item class="Folder" referent="RBXDF65068131C441E4940CB25B5FB68097">
 								<Properties>
+									<Color3 name="IconTint">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 									<bool name="DefinesCapabilities">false</bool>
@@ -16191,6 +16888,11 @@ return unwrap]]></ProtectedString>
 							</Item>
 							<Item class="Folder" referent="RBX456FC62C433149F39BD884348341FC9C">
 								<Properties>
+									<Color3 name="IconTint">
+										<R>0</R>
+										<G>0</G>
+										<B>0</B>
+									</Color3>
 									<BinaryString name="AttributesSerialize"></BinaryString>
 									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 									<bool name="DefinesCapabilities">false</bool>
@@ -16775,6 +17477,11 @@ return nil]]></ProtectedString>
 					</Item>
 					<Item class="Folder" referent="RBXB376BB3DE19D44AD853F68DBFAD07BA3">
 						<Properties>
+							<Color3 name="IconTint">
+								<R>0</R>
+								<G>0</G>
+								<B>0</B>
+							</Color3>
 							<BinaryString name="AttributesSerialize"></BinaryString>
 							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 							<bool name="DefinesCapabilities">false</bool>
@@ -16792,7 +17499,7 @@ return nil]]></ProtectedString>
 -- Copyright (c) 2016-2022 Francois Galea <fgalea at free.fr>
 -- This program is free software. It comes without any warranty, to
 -- the extent permitted by applicable law. You can redistribute it
--- and/or modify it under the terms of the Do What The Fuck You Want
+-- and/or modify it under the terms of the Do What The <REDACTED> You Want
 -- To Public License, Version 2, as published by Sam Hocevar. See
 -- the COPYING file or http://www.wtfpl.net/ for more details.
 
@@ -16961,7 +17668,7 @@ function zzlib.files(buf: string)
 	return nextfile, buf, cdoffset
 end
 
-function zzlib.unzip(buf: string, arg1: (string | number), arg2: number?)
+function zzlib.unzip(buf: string, arg1: string | number, arg2: number?)
 	if type(arg1) == "number" then
 		-- mode 1: unpack data from specified position in zip file
 		return inflate_raw(buf, arg1, arg2)
@@ -17005,7 +17712,7 @@ return zzlib
 -- Copyright (c) 2016-2022 Francois Galea <fgalea at free.fr>
 -- This program is free software. It comes without any warranty, to
 -- the extent permitted by applicable law. You can redistribute it
--- and/or modify it under the terms of the Do What The Fuck You Want
+-- and/or modify it under the terms of the Do What The <REDACTED> You Want
 -- To Public License, Version 2, as published by Sam Hocevar. See
 -- the COPYING file or http://www.wtfpl.net/ for more details.
 
@@ -17018,9 +17725,9 @@ export type BitStream = {
 	b: number,
 	n: number,
 	flushb: (self: BitStream, number) -> (),
-	peekb: (self: BitStream, number) -> (number),
-	getb: (self: BitStream, number) -> (number),
-	getv: (self: BitStream, { number }, number) -> (number),
+	peekb: (self: BitStream, number) -> number,
+	getb: (self: BitStream, number) -> number,
+	getv: (self: BitStream, { number }, number) -> number,
 }
 
 function inflate.bitstream_init(input)
@@ -17443,20 +18150,6 @@ end
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039d</UniqueId>
 		</Properties>
 	</Item>
-	<Item class="ServiceVisibilityService" referent="RBX6E151A04947A4559A3052C33C0A9CE97">
-		<Properties>
-			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
-			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
-			<BinaryString name="AttributesSerialize"></BinaryString>
-			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-			<bool name="DefinesCapabilities">false</bool>
-			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-			<string name="Name">ServiceVisibilityService</string>
-			<int64 name="SourceAssetId">-1</int64>
-			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
-		</Properties>
-	</Item>
 	<Item class="HttpService" referent="RBXACD227B7F6104B92819B899ABD9F68DB">
 		<Properties>
 			<bool name="HttpEnabled">true</bool>
@@ -17625,6 +18318,11 @@ return {
 		</Item>
 		<Item class="Folder" referent="RBXAAD3432AE1C04D7AAB8DF345B020EC5B">
 			<Properties>
+				<Color3 name="IconTint">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
 				<BinaryString name="AttributesSerialize"><![CDATA[AwAAAAsAAABkZXNjcmlwdGlvbgJHAAAAVW5pZmllZCB0aW1lIHNjaGVkdWxlciBmb3IgTHVh
 dSDigJQgdGFza3MsIGludGVydmFscywgc2NvcGVzLCBwcm9maWxpbmcIAAAAaXNTaGFyZWQD
 AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
@@ -17649,30 +18347,6 @@ AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000006ea</UniqueId>
 		</Properties>
-	</Item>
-	<Item class="PluginToolbar" referent="RBX16DA687B11584A87BF6BB659B66A2B79">
-		<Properties>
-			<BinaryString name="AttributesSerialize"></BinaryString>
-			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-			<bool name="DefinesCapabilities">false</bool>
-			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-			<string name="Name">Graph Editor</string>
-			<int64 name="SourceAssetId">-1</int64>
-			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">1b9b23f3d27615230a728e3b000006ff</UniqueId>
-		</Properties>
-		<Item class="PluginToolbarButton" referent="RBX1888BDA9321D4210B135225FF0D7D8FE">
-			<Properties>
-				<BinaryString name="AttributesSerialize"></BinaryString>
-				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-				<bool name="DefinesCapabilities">false</bool>
-				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-				<string name="Name">Button</string>
-				<int64 name="SourceAssetId">-1</int64>
-				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-				<UniqueId name="UniqueId">1b9b23f3d27615230a728e3b00000700</UniqueId>
-			</Properties>
-		</Item>
 	</Item>
 	<SharedStrings>
 		<SharedString md5="yuZpQdnvvUBOTYh1jqZ2cA=="></SharedString>

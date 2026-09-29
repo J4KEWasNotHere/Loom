@@ -10,6 +10,7 @@ return function(ctx)
 	local unwrap = ctx.fusion.unwrap
 	local Value = ctx.fusion.Value
 	local Children = ctx.fusion.Children
+	local Observer = ctx.fusion.Observer
 
 	local Label = ctx.components.Label
 	local MainButton = ctx.components.MainButton
@@ -69,16 +70,20 @@ return function(ctx)
 			return "missing", Color3.fromRGB(255, 99, 99)
 		end
 
-		if latestVersion and wally_search.compareVersions(latestVersion, record.version) > 0 then
+		if not latestVersion then
+			return "unavailable", Color3.fromRGB(160, 160, 160)
+		end
+
+		if wally_search.compareVersions(latestVersion, record.version) > 0 then
 			return "update available", Color3.fromRGB(255, 166, 77)
 		end
 
 		return "up to date", Color3.fromRGB(110, 235, 160)
 	end
 
-	local function getReferenceCounts()
+	local function getReferenceCounts(records)
 		local counts = {}
-		for _, candidate in ipairs(package_instancer.getManagedPackageSummary() or {}) do
+		for _, candidate in ipairs(records) do
 			for _, dependency in ipairs(candidate.dependencies or {}) do
 				counts[dependency] = (counts[dependency] or 0) + 1
 			end
@@ -134,8 +139,7 @@ return function(ctx)
 		return rows
 	end
 
-	local function buildDependencyItems(record)
-		local counts = getReferenceCounts()
+	local function buildDependencyItems(record, counts)
 		local rows = {}
 		local dependencies = record.dependencies or {}
 		if #dependencies == 0 then
@@ -153,12 +157,12 @@ return function(ctx)
 				makeCard({
 					Label({
 						Text = dependency,
-						TextSize = 12,
+						TextSize = 16,
 						TextColor3 = Color3.fromRGB(240, 240, 240),
 					}),
 					Label({
 						Text = ("Referenced by %d package(s)"):format(counts[dependency] or 0),
-						TextSize = 10,
+						TextSize = 12,
 						TextColor3 = Color3.fromRGB(180, 180, 180),
 					}),
 				})
@@ -167,13 +171,28 @@ return function(ctx)
 		return rows
 	end
 
-	local function buildPackageCard(record)
-		local latestVersion, orderedVersions = loadLatestVersion(record)
-		local statusText, statusColor = describeStatus(record, latestVersion)
+	local function buildPackageCard(record, counts)
+		local Collapsed = Value(true)
+		local LatestVersion = Value(nil)
+		local OrderedVersions = Value(nil)
+		local requestedVersions = false
+
+		Observer(Collapsed):onChange(function()
+			if unwrap(Collapsed) or requestedVersions then
+				return
+			end
+
+			requestedVersions = true
+			task.spawn(function()
+				local latestVersion, orderedVersions = loadLatestVersion(record)
+				LatestVersion:set(latestVersion)
+				OrderedVersions:set(orderedVersions)
+			end)
+		end)
 
 		return VerticalCollapsibleSection({
 			Text = record.id,
-			Collapsed = Value(true),
+			Collapsed = Collapsed,
 			[Children] = {
 				makeCard({
 					Label({
@@ -187,25 +206,63 @@ return function(ctx)
 						TextColor3 = Color3.fromRGB(210, 210, 210),
 					}),
 					Label({
-						Text = ("Latest available version: %s"):format(
-							latestVersion or "unavailable"
-						),
+						Text = Computed(function()
+							if unwrap(OrderedVersions) == nil then
+								return "Latest available version: not checked"
+							end
+							return ("Latest available version: %s"):format(
+								unwrap(LatestVersion) or "unavailable"
+							)
+						end),
 						TextSize = 12,
 						TextColor3 = Color3.fromRGB(210, 210, 210),
 					}),
 					Label({
-						Text = statusText,
-						TextColor3 = statusColor,
+						Text = Computed(function()
+							if unwrap(OrderedVersions) == nil then
+								return "version not checked"
+							end
+							local status = describeStatus(record, unwrap(LatestVersion))
+							return status
+						end),
+						TextColor3 = Computed(function()
+							if unwrap(OrderedVersions) == nil then
+								return Color3.fromRGB(160, 160, 160)
+							end
+							local _, color = describeStatus(record, unwrap(LatestVersion))
+							return color
+						end),
 						TextSize = 11,
 					}),
 					MainButton({
 						Text = "Update",
 						Size = UDim2.new(1, 0, 0, 30),
 						Enabled = Computed(function()
-							return not unwrap(IsVersionInstalling) and latestVersion ~= nil
+							local latestVersion = unwrap(LatestVersion)
+							return not unwrap(IsVersionInstalling)
+								and latestVersion ~= nil
+								and (
+									not record.version
+									or wally_search.compareVersions(
+											latestVersion,
+											record.version
+										)
+										> 0
+								)
 						end),
 						Activated = function()
-							if latestVersion then
+							local latestVersion = LatestVersion:get()
+							if
+								latestVersion
+								and (
+									not record.version
+									or wally_search.compareVersions(
+											latestVersion,
+											record.version
+										)
+										> 0
+								)
+							then
 								queueVersion(record, latestVersion)
 							end
 						end,
@@ -213,7 +270,24 @@ return function(ctx)
 					VerticalCollapsibleSection({
 						Text = "Change version",
 						Collapsed = Value(true),
-						[Children] = buildVersionRows(record, orderedVersions),
+						[Children] = Computed(function()
+							local orderedVersions = unwrap(OrderedVersions)
+							if orderedVersions == nil then
+								return {
+									Label({
+										Text = "Expand this package to check versions.",
+										TextColor3 = Color3.fromRGB(180, 180, 180),
+									}),
+								}
+							end
+							return buildVersionRows(record, orderedVersions)
+						end, function(instances)
+							for _, inst in ipairs(instances or {}) do
+								if inst and inst.Destroy then
+									inst:Destroy()
+								end
+							end
+						end),
 					}),
 					MainButton({
 						Text = "Remove",
@@ -238,7 +312,7 @@ return function(ctx)
 					VerticalCollapsibleSection({
 						Text = "Dependencies",
 						Collapsed = Value(true),
-						[Children] = buildDependencyItems(record),
+						[Children] = buildDependencyItems(record, counts),
 					}),
 				}),
 			},
@@ -257,9 +331,10 @@ return function(ctx)
 		end
 
 		local cards = {}
+		local referenceCounts = getReferenceCounts(records)
 		for _, record in ipairs(records) do
 			if record then
-				table.insert(cards, buildPackageCard(record))
+				table.insert(cards, buildPackageCard(record, referenceCounts))
 			end
 		end
 		return cards

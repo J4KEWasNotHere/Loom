@@ -1,4 +1,5 @@
 local TomlFormatter = {}
+local simpleLinter = require(script.Parent:FindFirstAncestor("Modules").files["simple-linter"])
 
 local function navigateTo(result, path: { string })
 	local node = result
@@ -139,9 +140,15 @@ local function parseInlineTable(content: string): { [string]: any }
 end
 
 local function create_toml(tomlData: { [string]: any }, parent: Instance?): ModuleScript
-	local m = Instance.new("ModuleScript")
+	local m = parent and parent:FindFirstChild("wally.toml")
+	if not m or not m:IsA("ModuleScript") then
+		if m then
+			m:Destroy()
+		end
+		m = Instance.new("ModuleScript")
+	end
 	m.Name = "wally.toml"
-	m.Source = ("return %s"):format(tableToString(tomlData))
+	m.Source = simpleLinter(("return %s"):format(tableToString(tomlData)))
 
 	m.Parent = (typeof(parent) == "Instance" and parent) or nil
 	m:AddTag("_wallytoml")

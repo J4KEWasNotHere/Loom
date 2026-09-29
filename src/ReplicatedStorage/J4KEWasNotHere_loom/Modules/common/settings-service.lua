@@ -6,7 +6,8 @@ local DEFAULT_SETTINGS = {
 	devMode = false,
 	experimentalMode = false,
 	includeDev = false,
-	includeDirectors = true
+	includeDirectors = true,
+	includeWallyToml = true,
 }
 
 function PluginSettingsService.new(pluginInstance)
@@ -17,13 +18,18 @@ function PluginSettingsService.new(pluginInstance)
 	}, PluginSettingsService)
 
 	if not pluginInstance then
-		warn("[Loom-Settings]: No plugin instance provided — settings will NOT persist across sessions.")
+		warn(
+			"[Loom-Settings]: No plugin instance provided — settings will NOT persist across sessions."
+		)
 	end
 
 	if pluginInstance then
 		for key in pairs(DEFAULT_SETTINGS) do
 			local full = ("%s.%s"):format(self._prefix, key)
-			local ok, v = pcall(pluginInstance.GetSetting, pluginInstance, full)
+			local ok, v = pcall(function()
+				return pluginInstance:GetSetting(full)
+			end)
+
 			if not ok then
 				warn(`[Loom-Settings]: GetSetting failed for "{key}": {v}`)
 			elseif v ~= nil then
@@ -38,7 +44,10 @@ function PluginSettingsService:set(key, value)
 	self._store[key] = value
 	if self._plugin then
 		local full = ("%s.%s"):format(self._prefix, key)
-		local ok, err = pcall(self._plugin.SetSetting, self._plugin, full, value)
+		local ok, err = pcall(function()
+			self._plugin:SetSetting(full, value)
+		end)
+
 		if not ok then
 			warn(`[Loom-Settings]: SetSetting failed for "{key}": {err}`)
 		end

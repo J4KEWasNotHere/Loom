@@ -166,6 +166,7 @@ return function(ctx)
 							reference = initModule,
 							unpackSrc = settingsService:get("unpackSrc", true),
 							includeDirectors = settingsService:get("includeDirectors", true),
+							includeWallyToml = settingsService:get("includeWallyToml", true),
 							wally = wallyData,
 						})
 
