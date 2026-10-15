@@ -568,26 +568,27 @@ function module.recreateFromGitHub(
 	-- below builds it directly with the correct layout regardless.
 	resolveNested(sourcePlugin, { Packages = true })
 
-	if installService then
-		-- Default to sourcePlugin itself: embed() below stashes and destroys
-		-- everything currently in pluginRoot, so installing packages there
-		-- (or leaving them in ReplicatedStorage) would just lose them. They
-		-- need to already be inside the tree that's about to become the
-		-- live plugin.
-		local packagesOk, installedOrErr, failed =
-			module.installPackagesFromGitHub(installService, nil, packagesParent or sourcePlugin)
-		if not packagesOk then
-			warn(`[VersionControl]: Failed to install packages from wally.toml: {installedOrErr}`)
-		elseif failed and #failed > 0 then
-			warn(
-				`[VersionControl]: {#failed} package(s) failed to install: {table.concat(
-					failed,
-					", "
-				)}`
-			)
-		end
-	else
-		warn(`[VersionControl]: No installService provided - skipping package install`)
+	if not installService then
+		sourcePlugin:Destroy()
+		return false, "No installService provided - cannot install required packages"
+	end
+
+	-- Dependencies must be installed into the tree being embedded, since embed
+	-- replaces pluginRoot and discards any packages installed elsewhere.
+	local packageTarget = packagesParent or sourcePlugin
+	if packageTarget ~= sourcePlugin and not packageTarget:IsDescendantOf(sourcePlugin) then
+		sourcePlugin:Destroy()
+		return false, "packagesParent must be inside the rebuilt plugin tree"
+	end
+
+	local packagesOk, installedOrErr, failed =
+		module.installPackagesFromGitHub(installService, nil, packageTarget)
+	if not packagesOk then
+		sourcePlugin:Destroy()
+		return false, `Failed to install packages from wally.toml: {tostring(installedOrErr)}`
+	elseif failed and #failed > 0 then
+		sourcePlugin:Destroy()
+		return false, `Failed to install packages from wally.toml: {table.concat(failed, ", ")}`
 	end
 
 	return module.embed(sourcePlugin, pluginRoot, cleanup)

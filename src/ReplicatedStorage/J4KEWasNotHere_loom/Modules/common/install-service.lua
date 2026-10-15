@@ -44,6 +44,7 @@ local function normalizeDependencyEntries(dependencies, includeDev, debugFn)
 						package = pkg,
 						version = version,
 						label = dep.name,
+						overrideName = dep.name,
 						realm = dep.realm or "shared",
 					})
 				end
