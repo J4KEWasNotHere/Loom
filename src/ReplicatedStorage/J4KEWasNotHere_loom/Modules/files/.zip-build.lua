@@ -3,6 +3,7 @@
 local HttpService = game:GetService("HttpService")
 
 -- Modules
+local json_formatter = require("../files/.json-formatter")
 local toml_formatter = require("../files/.toml-formatter")
 local model_json = require("../files/.model.json")
 
@@ -36,6 +37,7 @@ local function getScriptName(filename)
 	return filename:match("^(.-)%.server%.luau?$")
 		or filename:match("^(.-)%.client%.luau?$")
 		or filename:match("^(.-)%.luau?$")
+		or filename:match("^(.-)%.json$")
 		or filename
 end
 
@@ -44,7 +46,12 @@ local function isLuauFile(name)
 end
 
 local function normalizeScriptPath(path)
-	return (path:gsub("%.server%.luau?$", ""):gsub("%.client%.luau?$", ""):gsub("%.luau?$", ""))
+	return (
+		path:gsub("%.server%.luau?$", "")
+			:gsub("%.client%.luau?$", "")
+			:gsub("%.luau?$", "")
+			:gsub("%.json$", "")
+	)
 end
 
 local function applyMetaProperties(object, meta)
@@ -218,7 +225,7 @@ function ZipBuild.__log(...)
 	end)
 end
 
-local initNames = { "init", "init.lua", "init.luau" }
+local initNames = { "init", "init.lua", "init.luau", "init.json" }
 
 local function isInitFile(filename)
 	return table.find(initNames, filename) ~= nil
@@ -399,6 +406,12 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		local isPackageJson = name:match("package%.json$") ~= nil
 		local isMeta = name:match("%.meta%.json$") ~= nil
 		local isModel = name:match("%.model%.json$") ~= nil
+		local isProject = name:match("%.project%.json$") ~= nil
+		local isJson = name:match("%.json$") ~= nil
+			and not isPackageJson
+			and not isMeta
+			and not isModel
+			and not isProject
 		local isDir = name:match("/$") ~= nil
 
 		if isDir then
@@ -417,7 +430,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			continue
 		end
 
-		if not isLuau and not isWally and not isPackageJson and not isMeta and not isModel then
+		if not isLuau and not isJson and not isWally and not isPackageJson and not isMeta and not isModel then
 			skipped += 1
 			continue
 		end
@@ -536,9 +549,20 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			parentInstance = resolveParent(root, dir, folderCache)
 		end
 
+		local source = content or 'return {err = "NoSource"}'
+		if isJson then
+			local ok, result = pcall(json_formatter.toLuau, content)
+			if not ok then
+				ZipBuild.__log(`[ZipImporter] Failed to parse JSON file "{name}": {tostring(result)}`)
+				skipped += 1
+				continue
+			end
+			source = result
+		end
+
 		local object = inst(scriptType, {
 			Name = scriptName or name or "ErrNoName",
-			Source = content or 'return {err = "NoSource"}',
+			Source = source,
 			Parent = parentInstance or game:GetService("ServerStorage"),
 		})
 
