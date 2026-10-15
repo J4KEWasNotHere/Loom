@@ -42,6 +42,8 @@
 			<token name="RejectCharacterDeletions">0</token>
 			<token name="RenderingCacheOptimizations">0</token>
 			<token name="ReplicateInstanceDestroySetting">0</token>
+			<token name="ReplicationFrequency">0</token>
+			<token name="ReplicationThroughput">0</token>
 			<token name="Retargeting">0</token>
 			<token name="SandboxedInstanceMode">0</token>
 			<token name="SignalBehavior2">0</token>
@@ -119,6 +121,7 @@
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">Workspace</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000002</UniqueId>
@@ -130,10 +133,11 @@
 				<float name="GrassLength">0.699999988</float>
 				<BinaryString name="MaterialColors"><![CDATA[AAAAAAAAan8/P39rf2Y/ilY+j35fi21PZmxvZbDqw8faiVpHOi4kHh4lZlw76JxKc3trhHta
 gcLgc4RKxr21zq2UlJSM]]></BinaryString>
-				<SharedString name="Materials">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<SharedString name="Materials">leDEa27wHRPaBssaK0OoqQ==</SharedString>
 				<BinaryString name="PhysicsGrid">AgMAAAAAAAAAAAAAAAA=</BinaryString>
 				<BinaryString name="SmoothGrid">AQU=</BinaryString>
 				<bool name="SmoothVoxelsUpgraded">false</bool>
+				<AssetContentMap name="VoxelGridAssetContentMap">[]</AssetContentMap>
 				<Color3 name="WaterColor">
 					<R>0.0500000007</R>
 					<G>0.330000013</G>
@@ -235,6 +239,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">Terrain</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000434</UniqueId>
@@ -276,12 +281,17 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				</CoordinateFrame>
 				<bool name="HeadLocked">true</bool>
 				<float name="HeadScale">1</float>
+				<token name="OrthographicMode">0</token>
+				<float name="OrthographicSize">300</float>
+				<token name="ProjectionType">0</token>
 				<bool name="VRTiltAndRollEnabled">false</bool>
+				<float name="ViewStretch">1</float>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">Camera</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">43081bf106ede6b70a69856100002332</UniqueId>
@@ -295,6 +305,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">TimerService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000346</UniqueId>
@@ -307,6 +318,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">CollectionService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000347</UniqueId>
@@ -349,6 +361,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">SoundService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000348</UniqueId>
@@ -361,6 +374,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">VideoCaptureService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000354</UniqueId>
@@ -373,6 +387,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">NonReplicatedCSGDictionaryService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000355</UniqueId>
@@ -385,6 +400,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">CSGDictionaryService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000356</UniqueId>
@@ -400,6 +416,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">Chat</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000035c</UniqueId>
@@ -418,6 +435,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">Players</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000035e</UniqueId>
@@ -430,6 +448,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">ReplicatedFirst</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000361</UniqueId>
@@ -442,6 +461,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">TweenService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000363</UniqueId>
@@ -495,6 +515,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">MaterialService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000364</UniqueId>
@@ -515,6 +536,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">TextChatService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000365</UniqueId>
@@ -556,6 +578,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">ChatWindowConfiguration</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000437</UniqueId>
@@ -601,6 +624,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">ChatInputBarConfiguration</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000438</UniqueId>
@@ -646,6 +670,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">BubbleChatConfiguration</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000439</UniqueId>
@@ -693,6 +718,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">ChannelTabsConfiguration</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000043a</UniqueId>
@@ -706,6 +732,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">PermissionsService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000367</UniqueId>
@@ -725,6 +752,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">PlayerEmulatorService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000368</UniqueId>
@@ -738,6 +766,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">StudioData</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000036b</UniqueId>
@@ -766,23 +795,8 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<token name="DevTouchMovementMode">0</token>
 			<token name="EnableDynamicHeads">0</token>
 			<bool name="EnableMouseLockOption">true</bool>
-			<int64 name="GameSettingsAssetIDFace">0</int64>
-			<int64 name="GameSettingsAssetIDHead">0</int64>
-			<int64 name="GameSettingsAssetIDLeftArm">0</int64>
-			<int64 name="GameSettingsAssetIDLeftLeg">0</int64>
-			<int64 name="GameSettingsAssetIDPants">0</int64>
-			<int64 name="GameSettingsAssetIDRightArm">0</int64>
-			<int64 name="GameSettingsAssetIDRightLeg">0</int64>
-			<int64 name="GameSettingsAssetIDShirt">0</int64>
-			<int64 name="GameSettingsAssetIDTeeShirt">0</int64>
-			<int64 name="GameSettingsAssetIDTorso">0</int64>
 			<token name="GameSettingsAvatar">1</token>
 			<token name="GameSettingsR15Collision">0</token>
-			<NumberRange name="GameSettingsScaleRangeBodyType">0 1 </NumberRange>
-			<NumberRange name="GameSettingsScaleRangeHead">0.95 1 </NumberRange>
-			<NumberRange name="GameSettingsScaleRangeHeight">0.9 1.05 </NumberRange>
-			<NumberRange name="GameSettingsScaleRangeProportion">0 1 </NumberRange>
-			<NumberRange name="GameSettingsScaleRangeWidth">0.7 1 </NumberRange>
 			<float name="HealthDisplayDistance">100</float>
 			<bool name="LoadCharacterAppearance">true</bool>
 			<token name="LoadCharacterLayeredClothing">0</token>
@@ -790,12 +804,14 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<float name="NameDisplayDistance">100</float>
 			<Ref name="PlaceAvatarRules">null</Ref>
 			<int name="PlayerModuleStatus">0</int>
+			<token name="UseImprovedCharacterEvents">0</token>
 			<bool name="UserEmotesEnabled">true</bool>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">StarterPlayer</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000036d</UniqueId>
@@ -807,6 +823,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">StarterPlayerScripts</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000435</UniqueId>
@@ -819,6 +836,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">StarterCharacterScripts</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000436</UniqueId>
@@ -832,6 +850,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">StarterPack</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000036e</UniqueId>
@@ -852,6 +871,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">StarterGui</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000036f</UniqueId>
@@ -864,6 +884,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">LocalizationService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000371</UniqueId>
@@ -876,6 +897,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">Teleport Service</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000375</UniqueId>
@@ -888,6 +910,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">PhysicsService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000377</UniqueId>
@@ -901,6 +924,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">InsertService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000037a</UniqueId>
@@ -913,6 +937,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">InsertionHash</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000002203</UniqueId>
@@ -926,6 +951,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">GamePassService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000037b</UniqueId>
@@ -939,6 +965,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">Debris</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000037c</UniqueId>
@@ -951,6 +978,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">CookiesService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000037d</UniqueId>
@@ -963,6 +991,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">Selection</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000037e</UniqueId>
@@ -980,6 +1009,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">VRService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000382</UniqueId>
@@ -992,6 +1022,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">ContextActionService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000383</UniqueId>
@@ -1004,6 +1035,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">ScriptService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000384</UniqueId>
@@ -1017,6 +1049,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">AssetService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000385</UniqueId>
@@ -1029,6 +1062,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">TouchInputService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000387</UniqueId>
@@ -1036,11 +1070,13 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 	</Item>
 	<Item class="AvatarSettings" referent="RBXB9D20F0B1CD04813A0AF51FB98703A8A">
 		<Properties>
+			<int name="RulesSchemaVersion">0</int>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">AvatarSettings</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000038d</UniqueId>
@@ -1049,6 +1085,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 	<Item class="Packages" referent="RBXBE0DFFFA22E24B9D828ADFDFBF32EFE5">
 		<Properties>
 			<bool name="IsDehydrated">false</bool>
+			<bool name="OverridesRecalculated">false</bool>
 			<int name="ShellPackagesCount">0</int>
 			<int name="SkippedInstancesCount">0</int>
 			<BinaryString name="AttributesSerialize"></BinaryString>
@@ -1056,6 +1093,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">Packages</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000391</UniqueId>
@@ -1068,6 +1106,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">GuidRegistryService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000392</UniqueId>
@@ -1082,6 +1121,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">ServiceVisibilityService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
@@ -1094,6 +1134,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">LuaWebService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000399</UniqueId>
@@ -1106,6 +1147,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">ProcessInstancePhysicsService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039a</UniqueId>
@@ -1118,6 +1160,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">ReplicatedStorage</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039b</UniqueId>
@@ -1134,6 +1177,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">J4KEWasNotHere_loom</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003b3</UniqueId>
@@ -1150,6 +1194,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 					<bool name="DefinesCapabilities">false</bool>
 					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 					<string name="Name">Components</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003b4</UniqueId>
@@ -1166,6 +1211,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 						<string name="Name">PluginComponents</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003b5</UniqueId>
@@ -1204,6 +1250,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Toolbar</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d78</UniqueId>
@@ -1274,6 +1321,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">ToolbarButton</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d7e</UniqueId>
@@ -1338,6 +1386,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Widget</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d8a</UniqueId>
@@ -1356,6 +1405,7 @@ end]]></ProtectedString>
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 						<string name="Name">StudioComponents</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003b9</UniqueId>
@@ -1552,6 +1602,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">VerticalCollapsibleSection</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003db6</UniqueId>
@@ -1604,6 +1655,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Background</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d74</UniqueId>
@@ -1776,6 +1828,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">BaseScrollFrame</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003bc</UniqueId>
@@ -1964,6 +2017,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">ScrollArrow</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dc0</UniqueId>
@@ -2208,6 +2262,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">ScrollBar</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dc4</UniqueId>
@@ -2331,6 +2386,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">BaseButton</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d84</UniqueId>
@@ -2412,6 +2468,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">BoxBorder</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d8c</UniqueId>
@@ -2452,6 +2509,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Button</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d90</UniqueId>
@@ -2667,6 +2725,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Checkbox</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d94</UniqueId>
@@ -2731,6 +2790,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">ClassIcon</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d96</UniqueId>
@@ -3180,6 +3240,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Dropdown</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003c4</UniqueId>
@@ -3199,6 +3260,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">Constants</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dba</UniqueId>
@@ -3308,6 +3370,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">DropdownItem</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dca</UniqueId>
@@ -3586,6 +3649,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">ColorPicker</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d98</UniqueId>
@@ -3717,6 +3781,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">IconButton</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d9a</UniqueId>
@@ -3798,6 +3863,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Label</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d9c</UniqueId>
@@ -3815,6 +3881,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Licenses</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ca</UniqueId>
@@ -3851,6 +3918,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">StudioComponents</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dbe</UniqueId>
@@ -3986,6 +4054,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">LabelImage</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d9e</UniqueId>
@@ -4086,6 +4155,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">LimitedTextInput</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003da0</UniqueId>
@@ -4244,6 +4314,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Loading</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003da2</UniqueId>
@@ -4288,6 +4359,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">MainButton</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003da4</UniqueId>
@@ -4503,6 +4575,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Paragraph</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003da6</UniqueId>
@@ -4575,6 +4648,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">ProgressBar</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003da8</UniqueId>
@@ -4681,6 +4755,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">ScrollFrame</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003daa</UniqueId>
@@ -4744,6 +4819,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Seperator</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dac</UniqueId>
@@ -4841,6 +4917,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Shadow</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dae</UniqueId>
@@ -5057,6 +5134,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Slider</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003db0</UniqueId>
@@ -5190,6 +5268,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">TextInput</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003db2</UniqueId>
@@ -5207,6 +5286,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Util</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003d7</UniqueId>
@@ -5225,6 +5305,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">constants</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dc2</UniqueId>
@@ -5411,6 +5492,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">getDragInput</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dc8</UniqueId>
@@ -5464,6 +5546,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">getModifier</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dcc</UniqueId>
@@ -5512,6 +5595,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">getMotionState</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dce</UniqueId>
@@ -5551,6 +5635,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">getSelectedState</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dd0</UniqueId>
@@ -5586,6 +5671,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">getState</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dd2</UniqueId>
@@ -5608,6 +5694,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">stripProps</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dd4</UniqueId>
@@ -5726,6 +5813,7 @@ return themeProvider
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">themeProvider</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dd6</UniqueId>
@@ -5892,6 +5980,7 @@ return nil]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">types</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dd8</UniqueId>
@@ -5912,6 +6001,7 @@ end]]></ProtectedString>
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">unwrap</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dda</UniqueId>
@@ -5989,6 +6079,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">Title</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003db4</UniqueId>
@@ -6074,6 +6165,7 @@ end]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">VerticalExpandingList</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003db8</UniqueId>
@@ -6093,6 +6185,7 @@ end]]></ProtectedString>
 					<bool name="DefinesCapabilities">false</bool>
 					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 					<string name="Name">Modules</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003e4</UniqueId>
@@ -6109,6 +6202,7 @@ end]]></ProtectedString>
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 						<string name="Name">common</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003e5</UniqueId>
@@ -6476,6 +6570,7 @@ return InstallService
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">install-service</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d7a</UniqueId>
@@ -6619,6 +6714,7 @@ return module
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">logger</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d82</UniqueId>
@@ -7553,6 +7649,7 @@ return PackageModule
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">package-instancer</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d88</UniqueId>
@@ -8074,6 +8171,7 @@ return {
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">plugin-basis</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d8e</UniqueId>
@@ -8178,6 +8276,7 @@ return PluginSettingsService
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">settings-service</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d92</UniqueId>
@@ -8195,6 +8294,7 @@ return PluginSettingsService
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">utils</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000238b</UniqueId>
@@ -8259,6 +8359,7 @@ return PackageUtils
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">package-utils</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000238c</UniqueId>
@@ -8351,6 +8452,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">ui-utils</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000238d</UniqueId>
@@ -8369,6 +8471,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">pages</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002390</UniqueId>
@@ -8707,6 +8810,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">QueuePage</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002391</UniqueId>
@@ -9012,6 +9116,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">SearchPage</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002392</UniqueId>
@@ -9371,6 +9476,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">SettingsPage</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002393</UniqueId>
@@ -9632,6 +9738,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">StartPage</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000002394</UniqueId>
@@ -10009,6 +10116,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">PackagesPage</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">1b9b23f3d27615230a728e3b00001e3b</UniqueId>
@@ -10028,6 +10136,7 @@ end
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 						<string name="Name">external</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003eb</UniqueId>
@@ -10732,6 +10841,7 @@ return module
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">version-control</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ed</UniqueId>
@@ -10795,6 +10905,7 @@ end
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">.import</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dbc</UniqueId>
@@ -10842,6 +10953,7 @@ return {}
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">types</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dc6</UniqueId>
@@ -10940,6 +11052,7 @@ return module
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">constants</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d76</UniqueId>
@@ -11301,6 +11414,7 @@ return WallySearch
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">wally-search</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d86</UniqueId>
@@ -11319,6 +11433,7 @@ return WallySearch
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 						<string name="Name">files</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003f1</UniqueId>
@@ -11547,6 +11662,7 @@ return TomlFormatter
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">.toml-formatter</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d7c</UniqueId>
@@ -11560,6 +11676,7 @@ return TomlFormatter
 local HttpService = game:GetService("HttpService")
 
 -- Modules
+local json_formatter = require("../files/.json-formatter")
 local toml_formatter = require("../files/.toml-formatter")
 local model_json = require("../files/.model.json")
 
@@ -11593,6 +11710,7 @@ local function getScriptName(filename)
 	return filename:match("^(.-)%.server%.luau?$")
 		or filename:match("^(.-)%.client%.luau?$")
 		or filename:match("^(.-)%.luau?$")
+		or filename:match("^(.-)%.json$")
 		or filename
 end
 
@@ -11601,7 +11719,12 @@ local function isLuauFile(name)
 end
 
 local function normalizeScriptPath(path)
-	return (path:gsub("%.server%.luau?$", ""):gsub("%.client%.luau?$", ""):gsub("%.luau?$", ""))
+	return (
+		path:gsub("%.server%.luau?$", "")
+			:gsub("%.client%.luau?$", "")
+			:gsub("%.luau?$", "")
+			:gsub("%.json$", "")
+	)
 end
 
 local function applyMetaProperties(object, meta)
@@ -11775,7 +11898,7 @@ function ZipBuild.__log(...)
 	end)
 end
 
-local initNames = { "init", "init.lua", "init.luau" }
+local initNames = { "init", "init.lua", "init.luau", "init.json" }
 
 local function isInitFile(filename)
 	return table.find(initNames, filename) ~= nil
@@ -11956,6 +12079,12 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 		local isPackageJson = name:match("package%.json$") ~= nil
 		local isMeta = name:match("%.meta%.json$") ~= nil
 		local isModel = name:match("%.model%.json$") ~= nil
+		local isProject = name:match("%.project%.json$") ~= nil
+		local isJson = name:match("%.json$") ~= nil
+			and not isPackageJson
+			and not isMeta
+			and not isModel
+			and not isProject
 		local isDir = name:match("/$") ~= nil
 
 		if isDir then
@@ -11974,7 +12103,7 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			continue
 		end
 
-		if not isLuau and not isWally and not isPackageJson and not isMeta and not isModel then
+		if not isLuau and not isJson and not isWally and not isPackageJson and not isMeta and not isModel then
 			skipped += 1
 			continue
 		end
@@ -12093,9 +12222,20 @@ local function importZip(buf, root, includes, excludes, pathMappings)
 			parentInstance = resolveParent(root, dir, folderCache)
 		end
 
+		local source = content or 'return {err = "NoSource"}'
+		if isJson then
+			local ok, result = pcall(json_formatter.toLuau, content)
+			if not ok then
+				ZipBuild.__log(`[ZipImporter] Failed to parse JSON file "{name}": {tostring(result)}`)
+				skipped += 1
+				continue
+			end
+			source = result
+		end
+
 		local object = inst(scriptType, {
 			Name = scriptName or name or "ErrNoName",
-			Source = content or 'return {err = "NoSource"}',
+			Source = source,
 			Parent = parentInstance or game:GetService("ServerStorage"),
 		})
 
@@ -12415,6 +12555,7 @@ return ZipBuild
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">.zip-build</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d80</UniqueId>
@@ -12486,6 +12627,7 @@ return RojoInstancer :: {
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">.model.json</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000dfa0</UniqueId>
@@ -12600,6 +12742,7 @@ return util
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">util</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000e059</UniqueId>
@@ -12773,6 +12916,7 @@ return reader
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">readers</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">3e60f5073f8033070a6cbd000000e05b</UniqueId>
@@ -13052,9 +13196,102 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">simple-linter</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">7830aa0826c339ff0acce6b600002f7a</UniqueId>
+						</Properties>
+					</Item>
+					<Item class="ModuleScript" referent="RBXEFAD10C0ADE84C339C1D64500C0B3F36">
+						<Properties>
+							<Content name="LinkedSource"><null></null></Content>
+							<ProtectedString name="Source"><![CDATA[local JsonFormatter = {}
+local HttpService = game:GetService("HttpService")
+
+local function serialize(value: any, depth: number): string
+	local valueType = typeof(value)
+	if valueType == "string" then
+		return string.format("%q", value)
+	elseif valueType == "number" or valueType == "boolean" then
+		return tostring(value)
+	elseif valueType ~= "table" then
+		error(("Unsupported JSON value type: %s"):format(valueType))
+	end
+
+	local keyCount = 0
+	local maxIndex = 0
+	local isArray = true
+	for key in pairs(value) do
+		keyCount += 1
+		if typeof(key) ~= "number" or key < 1 or key % 1 ~= 0 then
+			isArray = false
+		else
+			maxIndex = math.max(maxIndex, key)
+		end
+	end
+	isArray = isArray and keyCount == maxIndex
+
+	local indent = string.rep("\t", depth)
+	local childIndent = string.rep("\t", depth + 1)
+	local entries = {}
+	if isArray then
+		for index = 1, maxIndex do
+			table.insert(entries, childIndent .. serialize(value[index], depth + 1))
+		end
+	else
+		local keys = {}
+		for key in pairs(value) do
+			if typeof(key) ~= "string" then
+				error(("Unsupported JSON object key type: %s"):format(typeof(key)))
+			end
+			table.insert(keys, key)
+		end
+		table.sort(keys)
+
+		for _, key in ipairs(keys) do
+			table.insert(
+				entries,
+				("%s[%s] = %s"):format(
+					childIndent,
+					string.format("%q", key),
+					serialize(value[key], depth + 1)
+				)
+			)
+		end
+	end
+
+	if #entries == 0 then
+		return "{}"
+	end
+	return "{\n" .. table.concat(entries, ",\n") .. "\n" .. indent .. "}"
+end
+
+function JsonFormatter.format(json: string): { [string]: any }
+	assert(typeof(json) == "string", "JSON input must be a string")
+	assert(json:match("^%s*{"), "JSON root must be an object")
+
+	local result = HttpService:JSONDecode(json)
+	assert(typeof(result) == "table", "JSON root must decode to an object")
+
+	return result
+end
+
+function JsonFormatter.toLuau(json: string): string
+	return "return " .. serialize(JsonFormatter.format(json), 0)
+end
+
+return JsonFormatter
+]]></ProtectedString>
+							<string name="ScriptGuid">{48679F6E-775C-4E3A-AF3A-EA30071715B1}</string>
+							<BinaryString name="AttributesSerialize"></BinaryString>
+							<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+							<bool name="DefinesCapabilities">false</bool>
+							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+							<string name="Name">.json-formatter</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
+							<int64 name="SourceAssetId">-1</int64>
+							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+							<UniqueId name="UniqueId">7b943991ff5a96090ae2d208000027e9</UniqueId>
 						</Properties>
 					</Item>
 				</Item>
@@ -13071,6 +13308,7 @@ end
 					<bool name="DefinesCapabilities">false</bool>
 					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 					<string name="Name">Packages</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					<UniqueId name="UniqueId">43081bf106ede6b70a6985610000253b</UniqueId>
@@ -13087,6 +13325,7 @@ end
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 						<string name="Name">_Index</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<UniqueId name="UniqueId">43081bf106ede6b70a6985610000253e</UniqueId>
@@ -13103,6 +13342,7 @@ end
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">elttob_fusion@0.2.0</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">43081bf106ede6b70a6985610000253f</UniqueId>
@@ -13189,6 +13429,7 @@ return restrictRead("Fusion", {
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">fusion</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">43081bf106ede6b70a69856100002540</UniqueId>
@@ -13205,6 +13446,7 @@ return restrictRead("Fusion", {
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">Animation</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a69856100002541</UniqueId>
@@ -13435,6 +13677,7 @@ return Spring]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Spring</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dea</UniqueId>
@@ -13541,6 +13784,7 @@ return SpringScheduler]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">SpringScheduler</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003df6</UniqueId>
@@ -13690,6 +13934,7 @@ return Tween]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Tween</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e00</UniqueId>
@@ -13778,6 +14023,7 @@ return TweenScheduler]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">TweenScheduler</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e12</UniqueId>
@@ -13834,6 +14080,7 @@ return getTweenRatio]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">getTweenRatio</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e18</UniqueId>
@@ -14009,6 +14256,7 @@ return lerpType]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">lerpType</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e26</UniqueId>
@@ -14121,6 +14369,7 @@ return packType]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">packType</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e2a</UniqueId>
@@ -14220,6 +14469,7 @@ return springCoefficients
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">springCoefficients</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e34</UniqueId>
@@ -14322,6 +14572,7 @@ return unpackType]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">unpackType</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e36</UniqueId>
@@ -14340,6 +14591,7 @@ return unpackType]]></ProtectedString>
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">Colour</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a6985610000254b</UniqueId>
@@ -14407,6 +14659,7 @@ return Oklab
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Oklab</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dee</UniqueId>
@@ -14425,6 +14678,7 @@ return Oklab
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">Dependencies</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a6985610000254d</UniqueId>
@@ -14494,6 +14748,7 @@ return captureDependencies
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">captureDependencies</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003df0</UniqueId>
@@ -14536,6 +14791,7 @@ return initDependency]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">initDependency</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dfc</UniqueId>
@@ -14573,6 +14829,7 @@ return {
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">sharedState</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e08</UniqueId>
@@ -14646,6 +14903,7 @@ return updateAll]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">updateAll</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e0c</UniqueId>
@@ -14689,6 +14947,7 @@ return useDependency]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">useDependency</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e20</UniqueId>
@@ -14707,6 +14966,7 @@ return useDependency]]></ProtectedString>
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">Instances</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a69856100002553</UniqueId>
@@ -14868,6 +15128,7 @@ return Children :: PubTypes.SpecialKey]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Children</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003de6</UniqueId>
@@ -14902,6 +15163,7 @@ return Cleanup]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Cleanup</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003df8</UniqueId>
@@ -14935,6 +15197,7 @@ return Hydrate]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Hydrate</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dfe</UniqueId>
@@ -14984,6 +15247,7 @@ return New]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">New</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e10</UniqueId>
@@ -15032,6 +15296,7 @@ return OnChange]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">OnChange</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e1a</UniqueId>
@@ -15082,6 +15347,7 @@ return OnEvent]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">OnEvent</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e24</UniqueId>
@@ -15139,6 +15405,7 @@ return Out
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Out</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e2c</UniqueId>
@@ -15182,6 +15449,7 @@ return Ref]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Ref</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e32</UniqueId>
@@ -15322,6 +15590,7 @@ return applyInstanceProps]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">applyInstanceProps</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e38</UniqueId>
@@ -15446,6 +15715,7 @@ return {
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">defaultProps</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e3a</UniqueId>
@@ -15464,6 +15734,7 @@ return {
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">Logging</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a6985610000255e</UniqueId>
@@ -15509,6 +15780,7 @@ return logError]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">logError</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003de8</UniqueId>
@@ -15557,6 +15829,7 @@ return logErrorNonFatal]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">logErrorNonFatal</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003df4</UniqueId>
@@ -15594,6 +15867,7 @@ return logWarn]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">logWarn</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e04</UniqueId>
@@ -15653,6 +15927,7 @@ return {
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">messages</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e14</UniqueId>
@@ -15689,6 +15964,7 @@ return parseError]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">parseError</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e1e</UniqueId>
@@ -15707,6 +15983,7 @@ return parseError]]></ProtectedString>
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">State</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a69856100002565</UniqueId>
@@ -15833,6 +16110,7 @@ return Computed]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Computed</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dec</UniqueId>
@@ -16095,6 +16373,7 @@ return ForKeys]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">ForKeys</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003df2</UniqueId>
@@ -16418,6 +16697,7 @@ return ForPairs]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">ForPairs</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e02</UniqueId>
@@ -16678,6 +16958,7 @@ return ForValues]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">ForValues</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e0e</UniqueId>
@@ -16775,6 +17056,7 @@ return Observer]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Observer</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e1c</UniqueId>
@@ -16851,6 +17133,7 @@ return Value]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">Value</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e28</UniqueId>
@@ -16880,6 +17163,7 @@ return unwrap]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">unwrap</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e30</UniqueId>
@@ -16898,6 +17182,7 @@ return unwrap]]></ProtectedString>
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">Utility</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a6985610000256e</UniqueId>
@@ -16924,6 +17209,7 @@ return {
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">None</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003de4</UniqueId>
@@ -16991,6 +17277,7 @@ return cleanup]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">cleanup</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003dfa</UniqueId>
@@ -17015,6 +17302,7 @@ return doNothing]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">doNothing</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e06</UniqueId>
@@ -17046,6 +17334,7 @@ return isSimilar]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">isSimilar</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e0a</UniqueId>
@@ -17072,6 +17361,7 @@ return needsDestruction]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">needsDestruction</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e16</UniqueId>
@@ -17114,6 +17404,7 @@ return restrictRead]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">restrictRead</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e22</UniqueId>
@@ -17147,6 +17438,7 @@ return xtypeof]]></ProtectedString>
 										<bool name="DefinesCapabilities">false</bool>
 										<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 										<string name="Name">xtypeof</string>
+										<BinaryString name="SerializedOverrides"></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										<UniqueId name="UniqueId">43081bf106ede6b70a69856100003e2e</UniqueId>
@@ -17308,6 +17600,7 @@ return nil]]></ProtectedString>
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">PubTypes</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a69856100003de0</UniqueId>
@@ -17468,6 +17761,7 @@ return nil]]></ProtectedString>
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">Types</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">43081bf106ede6b70a69856100003de2</UniqueId>
@@ -17487,6 +17781,7 @@ return nil]]></ProtectedString>
 							<bool name="DefinesCapabilities">false</bool>
 							<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 							<string name="Name">neura-studios_zzlib@0.1.1</string>
+							<BinaryString name="SerializedOverrides"></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500002859</UniqueId>
@@ -17700,6 +17995,7 @@ return zzlib
 								<bool name="DefinesCapabilities">false</bool>
 								<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 								<string name="Name">zzlib</string>
+								<BinaryString name="SerializedOverrides"></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								<UniqueId name="UniqueId">7044519f934c1dcf0a6a43350000285a</UniqueId>
@@ -18007,6 +18303,7 @@ return inflate
 									<bool name="DefinesCapabilities">false</bool>
 									<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 									<string name="Name">inflatebit32</string>
+									<BinaryString name="SerializedOverrides"></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									<UniqueId name="UniqueId">7044519f934c1dcf0a6a43350000285b</UniqueId>
@@ -18026,6 +18323,7 @@ return inflate
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 						<string name="Name">Fusion</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500002855</UniqueId>
@@ -18042,6 +18340,7 @@ return inflate
 						<bool name="DefinesCapabilities">false</bool>
 						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 						<string name="Name">ZZLib</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500002857</UniqueId>
@@ -18118,6 +18417,7 @@ end
 					<bool name="DefinesCapabilities">false</bool>
 					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 					<string name="Name">main</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					<UniqueId name="UniqueId">43081bf106ede6b70a69856100003d72</UniqueId>
@@ -18133,6 +18433,7 @@ end
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">ServerScriptService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039c</UniqueId>
@@ -18145,9 +18446,23 @@ end
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">ServerStorage</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039d</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="VideoService" referent="RBXC56175770F9C4695ABD4DF9B84B0EEC6">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">VideoService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000004bc</UniqueId>
 		</Properties>
 	</Item>
 	<Item class="HttpService" referent="RBXACD227B7F6104B92819B899ABD9F68DB">
@@ -18158,6 +18473,7 @@ end
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">HttpService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003b1</UniqueId>
@@ -18213,21 +18529,10 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAQAAAA==]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">Lighting</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000004b9</UniqueId>
-		</Properties>
-	</Item>
-	<Item class="VideoService" referent="RBXC56175770F9C4695ABD4DF9B84B0EEC6">
-		<Properties>
-			<BinaryString name="AttributesSerialize"></BinaryString>
-			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-			<bool name="DefinesCapabilities">false</bool>
-			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-			<string name="Name">VideoService</string>
-			<int64 name="SourceAssetId">-1</int64>
-			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000004bc</UniqueId>
 		</Properties>
 	</Item>
 	<Item class="LodDataService" referent="RBX0717D123F78145A2B74F1AA64112F982">
@@ -18237,6 +18542,7 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAQAAAA==]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">LodDataService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000004bd</UniqueId>
@@ -18258,6 +18564,7 @@ X09yaWdpbmFsVGVjaG5vbG9neU9uRmlsZUxvYWQEAQAAAA==]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">TestService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000505</UniqueId>
@@ -18311,6 +18618,7 @@ return {
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">LuauLSP_Settings</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500003129</UniqueId>
@@ -18330,6 +18638,7 @@ AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
 				<bool name="DefinesCapabilities">false</bool>
 				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 				<string name="Name">iamthebestts_chrono@0.1.0</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000015880</UniqueId>
@@ -18343,12 +18652,32 @@ AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
 			<bool name="DefinesCapabilities">false</bool>
 			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
 			<string name="Name">SerializationService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000006ea</UniqueId>
 		</Properties>
 	</Item>
+	<Item class="VirtualInputManager" referent="RBX1B8C524C0C0E412B8E998CAB6DBF0D6E">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">VirtualInputManager</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7b943991ff5a96090ae2d2080000069d</UniqueId>
+		</Properties>
+	</Item>
 	<SharedStrings>
+		<SharedString md5="leDEa27wHRPaBssaK0OoqQ==">AQAAABUAAAACAAAAan8/AAUAAAAAAAADAAAAP39rIAMAAAAAAAAEAAAAf2Y/MAMAAAAAAAAF
+AAAAilY+UAMAAAAAAAAGAAAAj35fEAUAAAAAAAAHAAAAi21PEAIAAAAAAAAIAAAAZmxvgAMA
+AAAAAAAJAAAAZbDqEAYAAAAAAAAKAAAAw8faMAUAAAAAAAALAAAAiVpHkAMAAAAAAAAMAAAA
+Oi4kQAUAAAAAAAANAAAAHh4lFAMAAAAAAAAOAAAAZlw7UAUAAAAAAAAPAAAA6JxKJAMAAAAA
+AAAQAAAAc3trYAUAAAAAAAARAAAAhHtacAMAAAAAAAASAAAAgcLgAAYAAAAAAAATAAAAc4RK
+BAUAAAAAAAAUAAAAxr21cAUAAAAAAAAVAAAAzq2UNAMAAAAAAAAWAAAAlJSMRAMAAAAAAAA=</SharedString>
 		<SharedString md5="yuZpQdnvvUBOTYh1jqZ2cA=="></SharedString>
 	</SharedStrings>
 </roblox>

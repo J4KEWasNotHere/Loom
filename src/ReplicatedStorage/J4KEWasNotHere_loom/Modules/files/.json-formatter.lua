@@ -1,5 +1,3 @@
---!strict
-
 local JsonFormatter = {}
 local HttpService = game:GetService("HttpService")
 
