@@ -1112,21 +1112,6 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d000000392</UniqueId>
 		</Properties>
 	</Item>
-	<Item class="ServiceVisibilityService" referent="RBX6E151A04947A4559A3052C33C0A9CE97">
-		<Properties>
-			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
-			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
-			<BinaryString name="AttributesSerialize"></BinaryString>
-			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-			<bool name="DefinesCapabilities">false</bool>
-			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-			<string name="Name">ServiceVisibilityService</string>
-			<BinaryString name="SerializedOverrides"></BinaryString>
-			<int64 name="SourceAssetId">-1</int64>
-			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
-		</Properties>
-	</Item>
 	<Item class="LuaWebService" referent="RBXC1F226D9BF784DAB957B4FD6A2005AF5">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
@@ -8228,7 +8213,6 @@ local DEFAULT_SETTINGS = {
 
 local instance = nil
 
--- Internal constructor (also handy for tests with a mock plugin)
 function PluginSettingsService.new(pluginInstance)
 	local self = setmetatable({
 		_store = {},
@@ -8259,7 +8243,6 @@ function PluginSettingsService.new(pluginInstance)
 	return self
 end
 
--- Called ONCE from the main plugin script: PluginSettingsService.init(plugin)
 function PluginSettingsService.init(pluginInstance)
 	if instance then
 		warn("[Loom-Settings]: init called more than once — returning existing instance.")
@@ -18525,6 +18508,21 @@ end
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039d</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="ServiceVisibilityService" referent="RBX6E151A04947A4559A3052C33C0A9CE97">
+		<Properties>
+			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
+			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ServiceVisibilityService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d0000003ad</UniqueId>
 		</Properties>
 	</Item>
 	<Item class="VideoService" referent="RBXC56175770F9C4695ABD4DF9B84B0EEC6">
