@@ -2,6 +2,7 @@ local Modules = script.Parent.Parent
 local zipBuild = require(Modules.files[".zip-build"])
 local packageInstancer = require(Modules.common["package-instancer"])
 local wallySearch = require(Modules.external["wally-search"])
+local settings = require(Modules.common["settings-service"]).getInstance()
 
 local InstallService = {}
 InstallService.__index = InstallService
@@ -56,9 +57,8 @@ end
 
 -- Module API
 
-function InstallService.new(settingsService)
+function InstallService.new()
 	return setmetatable({
-		settings = settingsService,
 		_callbacks = {},
 	}, InstallService)
 end
@@ -82,7 +82,7 @@ end
 function InstallService:installDependencies(dependencyData, options, onProgress)
 	local workQueue = normalizeDependencyEntries(
 		dependencyData,
-		self.settings:get("includeDev", false),
+		settings:get("includeDev", false),
 		function(msg)
 			self:debug(msg)
 		end
@@ -95,7 +95,7 @@ function InstallService:installDependencies(dependencyData, options, onProgress)
 	local failed = {}
 	local installedCount = 0
 
-	local includeDirs = self.settings:get("includeDirectors", true)
+	local includeDirs = settings:get("includeDirectors", true)
 	local parent = options.parent
 
 	local idx = 0

@@ -5,6 +5,8 @@
 	to hot-swap plugin versions, and the reload/reset actions.
 ]]
 
+local settingsService = require(script.Parent.Parent["settings-service"]).getInstance()
+
 return function(ctx)
 	local Computed = ctx.fusion.Computed
 	local unwrap = ctx.fusion.unwrap
@@ -22,7 +24,6 @@ return function(ctx)
 	local version_control = ctx.modules.version_control
 	local Constants = ctx.modules.Constants
 
-	local settingsService = ctx.pluginServices.settingsService
 	local installService = ctx.pluginServices.installService
 
 	local SettingsState = ctx.state.SettingsState

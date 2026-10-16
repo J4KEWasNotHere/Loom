@@ -10,6 +10,8 @@ local DEFAULT_SETTINGS = {
 	includeWallyToml = true,
 }
 
+local instance = nil
+
 function PluginSettingsService.new(pluginInstance)
 	local self = setmetatable({
 		_store = {},
@@ -21,23 +23,41 @@ function PluginSettingsService.new(pluginInstance)
 		warn(
 			"[Loom-Settings]: No plugin instance provided — settings will NOT persist across sessions."
 		)
+		return self
 	end
 
-	if pluginInstance then
-		for key in pairs(DEFAULT_SETTINGS) do
-			local full = ("%s.%s"):format(self._prefix, key)
-			local ok, v = pcall(function()
-				return pluginInstance:GetSetting(full)
-			end)
+	for key in pairs(DEFAULT_SETTINGS) do
+		local full = ("%s.%s"):format(self._prefix, key)
+		local ok, v = pcall(function()
+			return pluginInstance:GetSetting(full)
+		end)
 
-			if not ok then
-				warn(`[Loom-Settings]: GetSetting failed for "{key}": {v}`)
-			elseif v ~= nil then
-				self._store[key] = v
-			end
+		if not ok then
+			warn(`[Loom-Settings]: GetSetting failed for "{key}": {v}`)
+		elseif v ~= nil then
+			self._store[key] = v
 		end
 	end
+
 	return self
+end
+
+function PluginSettingsService.init(pluginInstance)
+	if instance then
+		warn("[Loom-Settings]: init called more than once — returning existing instance.")
+		return instance
+	end
+	instance = PluginSettingsService.new(pluginInstance)
+	return instance
+end
+
+-- Called from every other module
+function PluginSettingsService.getInstance()
+	assert(
+		instance,
+		"[Loom-Settings]: Not initialized. Call PluginSettingsService.init(plugin) from the main script first."
+	)
+	return instance
 end
 
 function PluginSettingsService:set(key, value)
@@ -47,7 +67,6 @@ function PluginSettingsService:set(key, value)
 		local ok, err = pcall(function()
 			self._plugin:SetSetting(full, value)
 		end)
-
 		if not ok then
 			warn(`[Loom-Settings]: SetSetting failed for "{key}": {err}`)
 		end
@@ -57,7 +76,10 @@ end
 function PluginSettingsService:get(key, fallback)
 	local value = self._store[key]
 	if value == nil then
-		return fallback
+		if fallback ~= nil then
+			return fallback
+		end
+		return DEFAULT_SETTINGS[key]
 	end
 	return value
 end

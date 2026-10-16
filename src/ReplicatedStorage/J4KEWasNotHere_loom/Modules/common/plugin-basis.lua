@@ -60,8 +60,8 @@ return {
 		local PackagesPage = require(Pages.PackagesPage)
 		local SettingsPage = require(Pages.SettingsPage)
 
-		local settingsService = SettingsService.new(pluginInstance)
-		local installService = InstallService.new(settingsService)
+		local settingsService = SettingsService.getInstance()
+		local installService = InstallService.new()
 
 		-- break on unsupported modes
 		if RunService:IsRunMode() or RunService:IsRunning() then
@@ -226,7 +226,6 @@ return {
 				ReplicatedStorage = ReplicatedStorage,
 			},
 			pluginServices = {
-				settingsService = settingsService,
 				installService = installService,
 			},
 			utils = {

@@ -33,14 +33,21 @@ local function relink(clickHandler)
 	end
 end
 
-local basis = require(pluginRoot.Modules.common["plugin-basis"])
-relink(basis.start(plugin, pluginRoot, button))
+local basis
+
+local function startBasis()
+	local SettingsService = require(pluginRoot.Modules.common["settings-service"])
+	SettingsService.init(plugin)
+	basis = require(pluginRoot.Modules.common["plugin-basis"])
+	relink(basis.start(plugin, pluginRoot, button))
+end
+
+startBasis()
 
 pluginRoot:GetAttributeChangedSignal("__needsRestart"):Connect(function()
 	if pluginRoot:GetAttribute("__needsRestart") then
 		pluginRoot:SetAttribute("__needsRestart", false)
-		basis = require(pluginRoot.Modules.common["plugin-basis"])
-		relink(basis.start(plugin, pluginRoot, button))
+		startBasis()
 	end
 end)
 

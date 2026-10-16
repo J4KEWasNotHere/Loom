@@ -6214,6 +6214,7 @@ end]]></ProtectedString>
 local zipBuild = require(Modules.files[".zip-build"])
 local packageInstancer = require(Modules.common["package-instancer"])
 local wallySearch = require(Modules.external["wally-search"])
+local settings = require(Modules.common["settings-service"]).getInstance()
 
 local InstallService = {}
 InstallService.__index = InstallService
@@ -6256,6 +6257,7 @@ local function normalizeDependencyEntries(dependencies, includeDev, debugFn)
 						package = pkg,
 						version = version,
 						label = dep.name,
+						overrideName = dep.name,
 						realm = dep.realm or "shared",
 					})
 				end
@@ -6267,9 +6269,8 @@ end
 
 -- Module API
 
-function InstallService.new(settingsService)
+function InstallService.new()
 	return setmetatable({
-		settings = settingsService,
 		_callbacks = {},
 	}, InstallService)
 end
@@ -6293,7 +6294,7 @@ end
 function InstallService:installDependencies(dependencyData, options, onProgress)
 	local workQueue = normalizeDependencyEntries(
 		dependencyData,
-		self.settings:get("includeDev", false),
+		settings:get("includeDev", false),
 		function(msg)
 			self:debug(msg)
 		end
@@ -6306,7 +6307,7 @@ function InstallService:installDependencies(dependencyData, options, onProgress)
 	local failed = {}
 	local installedCount = 0
 
-	local includeDirs = self.settings:get("includeDirectors", true)
+	local includeDirs = settings:get("includeDirectors", true)
 	local parent = options.parent
 
 	local idx = 0
@@ -6771,6 +6772,37 @@ end
 local function getPackageDisplayName(name)
 	local packageName = tostring(name or "")
 	return packageName:match("([^/]+)$") or packageName
+end
+
+local function getGenericArguments(genericParams)
+	local parameters = genericParams:sub(2, -2)
+	local arguments = {}
+	local parameterStart = 1
+	local nestedDepth = 0
+
+	local function addArgument(parameter)
+		local name, suffix = parameter:match("^%s*([%a_][%w_]*)(.*)$")
+		assert(name, ("Invalid generic parameter: %s"):format(parameter))
+		if suffix:match("^%s*%.%.%.") then
+			name ..= "..."
+		end
+		table.insert(arguments, name)
+	end
+
+	for index = 1, #parameters do
+		local character = parameters:sub(index, index)
+		if character == "{" or character == "(" or character == "[" or character == "<" then
+			nestedDepth += 1
+		elseif character == "}" or character == ")" or character == "]" or character == ">" then
+			nestedDepth -= 1
+		elseif character == "," and nestedDepth == 0 then
+			addArgument(parameters:sub(parameterStart, index - 1))
+			parameterStart = index + 1
+		end
+	end
+
+	addArgument(parameters:sub(parameterStart))
+	return "<" .. table.concat(arguments, ", ") .. ">"
 end
 
 local function getFolderVersion(name)
@@ -7622,7 +7654,10 @@ PackageModule.syncPackage = function(
 			genericParams = ""
 		end
 		if typeName then
-			local genericArguments = genericParams:gsub("%s", "")
+			local genericArguments = ""
+			if genericParams ~= "" then
+				genericArguments = getGenericArguments(genericParams)
+			end
 			table.insert(
 				sourceLines,
 				("export type %s%s = main.%s%s"):format(
@@ -7720,8 +7755,8 @@ return {
 		local PackagesPage = require(Pages.PackagesPage)
 		local SettingsPage = require(Pages.SettingsPage)
 
-		local settingsService = SettingsService.new(pluginInstance)
-		local installService = InstallService.new(settingsService)
+		local settingsService = SettingsService.getInstance()
+		local installService = InstallService.new()
 
 		-- break on unsupported modes
 		if RunService:IsRunMode() or RunService:IsRunning() then
@@ -7886,7 +7921,6 @@ return {
 				ReplicatedStorage = ReplicatedStorage,
 			},
 			pluginServices = {
-				settingsService = settingsService,
 				installService = installService,
 			},
 			utils = {
@@ -8192,6 +8226,9 @@ local DEFAULT_SETTINGS = {
 	includeWallyToml = true,
 }
 
+local instance = nil
+
+-- Internal constructor (also handy for tests with a mock plugin)
 function PluginSettingsService.new(pluginInstance)
 	local self = setmetatable({
 		_store = {},
@@ -8203,23 +8240,42 @@ function PluginSettingsService.new(pluginInstance)
 		warn(
 			"[Loom-Settings]: No plugin instance provided — settings will NOT persist across sessions."
 		)
+		return self
 	end
 
-	if pluginInstance then
-		for key in pairs(DEFAULT_SETTINGS) do
-			local full = ("%s.%s"):format(self._prefix, key)
-			local ok, v = pcall(function()
-				return pluginInstance:GetSetting(full)
-			end)
+	for key in pairs(DEFAULT_SETTINGS) do
+		local full = ("%s.%s"):format(self._prefix, key)
+		local ok, v = pcall(function()
+			return pluginInstance:GetSetting(full)
+		end)
 
-			if not ok then
-				warn(`[Loom-Settings]: GetSetting failed for "{key}": {v}`)
-			elseif v ~= nil then
-				self._store[key] = v
-			end
+		if not ok then
+			warn(`[Loom-Settings]: GetSetting failed for "{key}": {v}`)
+		elseif v ~= nil then
+			self._store[key] = v
 		end
 	end
+
 	return self
+end
+
+-- Called ONCE from the main plugin script: PluginSettingsService.init(plugin)
+function PluginSettingsService.init(pluginInstance)
+	if instance then
+		warn("[Loom-Settings]: init called more than once — returning existing instance.")
+		return instance
+	end
+	instance = PluginSettingsService.new(pluginInstance)
+	return instance
+end
+
+-- Called from every other module
+function PluginSettingsService.getInstance()
+	assert(
+		instance,
+		"[Loom-Settings]: Not initialized. Call PluginSettingsService.init(plugin) from the main script first."
+	)
+	return instance
 end
 
 function PluginSettingsService:set(key, value)
@@ -8229,7 +8285,6 @@ function PluginSettingsService:set(key, value)
 		local ok, err = pcall(function()
 			self._plugin:SetSetting(full, value)
 		end)
-
 		if not ok then
 			warn(`[Loom-Settings]: SetSetting failed for "{key}": {err}`)
 		end
@@ -8239,7 +8294,10 @@ end
 function PluginSettingsService:get(key, fallback)
 	local value = self._store[key]
 	if value == nil then
-		return fallback
+		if fallback ~= nil then
+			return fallback
+		end
+		return DEFAULT_SETTINGS[key]
 	end
 	return value
 end
@@ -9132,6 +9190,8 @@ end
 	to hot-swap plugin versions, and the reload/reset actions.
 ]]
 
+local settingsService = require(script.Parent.Parent["settings-service"]).getInstance()
+
 return function(ctx)
 	local Computed = ctx.fusion.Computed
 	local unwrap = ctx.fusion.unwrap
@@ -9149,7 +9209,6 @@ return function(ctx)
 	local version_control = ctx.modules.version_control
 	local Constants = ctx.modules.Constants
 
-	local settingsService = ctx.pluginServices.settingsService
 	local installService = ctx.pluginServices.installService
 
 	local SettingsState = ctx.state.SettingsState
@@ -9497,6 +9556,8 @@ end
 	that used to be an upvalue inside plugin-basis.lua.
 ]]
 
+local settingsService = require(script.Parent.Parent["settings-service"]).getInstance()
+
 return function(ctx)
 	local Computed = ctx.fusion.Computed
 	local unwrap = ctx.fusion.unwrap
@@ -9517,7 +9578,6 @@ return function(ctx)
 	local ServerScriptService = ctx.services.ServerScriptService
 	local ReplicatedStorage = ctx.services.ReplicatedStorage
 
-	local settingsService = ctx.pluginServices.settingsService
 	local installService = ctx.pluginServices.installService
 
 	local IsVersionInstalling = ctx.state.IsVersionInstalling
@@ -9764,6 +9824,7 @@ return function(ctx)
 	local Label = ctx.components.Label
 	local MainButton = ctx.components.MainButton
 	local VerticalCollapsibleSection = ctx.components.VerticalCollapsibleSection
+	local Paragraph = ctx.components.Paragraph
 
 	local makeCard = ctx.ui.makeCard
 	local makeSectionHeader = ctx.ui.makeSectionHeader
@@ -10092,10 +10153,11 @@ return function(ctx)
 	return {
 		makeCard({
 			makeSectionHeader("Installed packages"),
-			Label({
+			Paragraph({
 				Text = "Every Loom-managed install is listed here with version status and dependencies.",
 				TextSize = 12,
 				TextColor3 = Color3.fromRGB(180, 180, 180),
+				TextXAlignment = Enum.TextXAlignment.Center,
 			}),
 			Computed(function()
 				return buildPage()
@@ -10714,26 +10776,27 @@ function module.recreateFromGitHub(
 	-- below builds it directly with the correct layout regardless.
 	resolveNested(sourcePlugin, { Packages = true })
 
-	if installService then
-		-- Default to sourcePlugin itself: embed() below stashes and destroys
-		-- everything currently in pluginRoot, so installing packages there
-		-- (or leaving them in ReplicatedStorage) would just lose them. They
-		-- need to already be inside the tree that's about to become the
-		-- live plugin.
-		local packagesOk, installedOrErr, failed =
-			module.installPackagesFromGitHub(installService, nil, packagesParent or sourcePlugin)
-		if not packagesOk then
-			warn(`[VersionControl]: Failed to install packages from wally.toml: {installedOrErr}`)
-		elseif failed and #failed > 0 then
-			warn(
-				`[VersionControl]: {#failed} package(s) failed to install: {table.concat(
-					failed,
-					", "
-				)}`
-			)
-		end
-	else
-		warn(`[VersionControl]: No installService provided - skipping package install`)
+	if not installService then
+		sourcePlugin:Destroy()
+		return false, "No installService provided - cannot install required packages"
+	end
+
+	-- Dependencies must be installed into the tree being embedded, since embed
+	-- replaces pluginRoot and discards any packages installed elsewhere.
+	local packageTarget = packagesParent or sourcePlugin
+	if packageTarget ~= sourcePlugin and not packageTarget:IsDescendantOf(sourcePlugin) then
+		sourcePlugin:Destroy()
+		return false, "packagesParent must be inside the rebuilt plugin tree"
+	end
+
+	local packagesOk, installedOrErr, failed =
+		module.installPackagesFromGitHub(installService, nil, packageTarget)
+	if not packagesOk then
+		sourcePlugin:Destroy()
+		return false, `Failed to install packages from wally.toml: {tostring(installedOrErr)}`
+	elseif failed and #failed > 0 then
+		sourcePlugin:Destroy()
+		return false, `Failed to install packages from wally.toml: {table.concat(failed, ", ")}`
 	end
 
 	return module.embed(sourcePlugin, pluginRoot, cleanup)
@@ -10933,7 +10996,12 @@ export type VersionControl = {
 
 	-- Functions
 	embed: (newPlugin: Instance, pluginRoot: Instance, cleanup: (() -> ())?) -> (boolean, any),
-	recreateFromGitHub: (pluginRoot: Instance, cleanup: (() -> ())?) -> (boolean, any),
+	recreateFromGitHub: (
+		pluginRoot: Instance,
+		installService: any,
+		cleanup: (() -> ())?,
+		packagesParent: Instance?
+	) -> (boolean, any),
 
 	init: () -> (boolean, { [string]: any }?),
 	rinit: (max: number?) -> (boolean, { [string]: any }?),
@@ -18384,14 +18452,21 @@ local function relink(clickHandler)
 	end
 end
 
-local basis = require(pluginRoot.Modules.common["plugin-basis"])
-relink(basis.start(plugin, pluginRoot, button))
+local basis
+
+local function startBasis()
+	local SettingsService = require(pluginRoot.Modules.common["settings-service"])
+	SettingsService.init(plugin)
+	basis = require(pluginRoot.Modules.common["plugin-basis"])
+	relink(basis.start(plugin, pluginRoot, button))
+end
+
+startBasis()
 
 pluginRoot:GetAttributeChangedSignal("__needsRestart"):Connect(function()
 	if pluginRoot:GetAttribute("__needsRestart") then
 		pluginRoot:SetAttribute("__needsRestart", false)
-		basis = require(pluginRoot.Modules.common["plugin-basis"])
-		relink(basis.start(plugin, pluginRoot, button))
+		startBasis()
 	end
 end)
 
@@ -18622,26 +18697,6 @@ return {
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				<UniqueId name="UniqueId">7044519f934c1dcf0a6a433500003129</UniqueId>
-			</Properties>
-		</Item>
-		<Item class="Folder" referent="RBXAAD3432AE1C04D7AAB8DF345B020EC5B">
-			<Properties>
-				<Color3 name="IconTint">
-					<R>0</R>
-					<G>0</G>
-					<B>0</B>
-				</Color3>
-				<BinaryString name="AttributesSerialize"><![CDATA[AwAAAAsAAABkZXNjcmlwdGlvbgJHAAAAVW5pZmllZCB0aW1lIHNjaGVkdWxlciBmb3IgTHVh
-dSDigJQgdGFza3MsIGludGVydmFscywgc2NvcGVzLCBwcm9maWxpbmcIAAAAaXNTaGFyZWQD
-AQcAAABsaWNlbnNlAgMAAABNSVQ=]]></BinaryString>
-				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-				<bool name="DefinesCapabilities">false</bool>
-				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
-				<string name="Name">iamthebestts_chrono@0.1.0</string>
-				<BinaryString name="SerializedOverrides"></BinaryString>
-				<int64 name="SourceAssetId">-1</int64>
-				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-				<UniqueId name="UniqueId">3e60f5073f8033070a6cbd0000015880</UniqueId>
 			</Properties>
 		</Item>
 	</Item>

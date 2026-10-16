@@ -3,5 +3,7 @@
     "[lua]": {
         "editor.defaultFormatter": "JohnnyMorganz.stylua"
     },
-    "luau-lsp.sourcemap.enabled": true
+    "luau-lsp.sourcemap.enabled": true,
+    "stylua.targetReleaseVersion": "latest",
+    "luau-lsp.sourcemap.rojoPath": "C:\\Users\\HP\\rojo-7.7.1-windows-x86_64\\rojo.exe"
 }

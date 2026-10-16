@@ -10,6 +10,8 @@
 	that used to be an upvalue inside plugin-basis.lua.
 ]]
 
+local settingsService = require(script.Parent.Parent["settings-service"]).getInstance()
+
 return function(ctx)
 	local Computed = ctx.fusion.Computed
 	local unwrap = ctx.fusion.unwrap
@@ -30,7 +32,6 @@ return function(ctx)
 	local ServerScriptService = ctx.services.ServerScriptService
 	local ReplicatedStorage = ctx.services.ReplicatedStorage
 
-	local settingsService = ctx.pluginServices.settingsService
 	local installService = ctx.pluginServices.installService
 
 	local IsVersionInstalling = ctx.state.IsVersionInstalling

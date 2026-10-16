@@ -48,6 +48,37 @@ local function getPackageDisplayName(name)
 	return packageName:match("([^/]+)$") or packageName
 end
 
+local function getGenericArguments(genericParams)
+	local parameters = genericParams:sub(2, -2)
+	local arguments = {}
+	local parameterStart = 1
+	local nestedDepth = 0
+
+	local function addArgument(parameter)
+		local name, suffix = parameter:match("^%s*([%a_][%w_]*)(.*)$")
+		assert(name, ("Invalid generic parameter: %s"):format(parameter))
+		if suffix:match("^%s*%.%.%.") then
+			name ..= "..."
+		end
+		table.insert(arguments, name)
+	end
+
+	for index = 1, #parameters do
+		local character = parameters:sub(index, index)
+		if character == "{" or character == "(" or character == "[" or character == "<" then
+			nestedDepth += 1
+		elseif character == "}" or character == ")" or character == "]" or character == ">" then
+			nestedDepth -= 1
+		elseif character == "," and nestedDepth == 0 then
+			addArgument(parameters:sub(parameterStart, index - 1))
+			parameterStart = index + 1
+		end
+	end
+
+	addArgument(parameters:sub(parameterStart))
+	return "<" .. table.concat(arguments, ", ") .. ">"
+end
+
 local function getFolderVersion(name)
 	return (tostring(name or ""):match("@(.+)$")) or nil
 end
@@ -897,7 +928,10 @@ PackageModule.syncPackage = function(
 			genericParams = ""
 		end
 		if typeName then
-			local genericArguments = genericParams:gsub("%s", "")
+			local genericArguments = ""
+			if genericParams ~= "" then
+				genericArguments = getGenericArguments(genericParams)
+			end
 			table.insert(
 				sourceLines,
 				("export type %s%s = main.%s%s"):format(

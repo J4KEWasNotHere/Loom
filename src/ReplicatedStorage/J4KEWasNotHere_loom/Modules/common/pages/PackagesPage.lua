@@ -15,6 +15,7 @@ return function(ctx)
 	local Label = ctx.components.Label
 	local MainButton = ctx.components.MainButton
 	local VerticalCollapsibleSection = ctx.components.VerticalCollapsibleSection
+	local Paragraph = ctx.components.Paragraph
 
 	local makeCard = ctx.ui.makeCard
 	local makeSectionHeader = ctx.ui.makeSectionHeader
@@ -343,10 +344,11 @@ return function(ctx)
 	return {
 		makeCard({
 			makeSectionHeader("Installed packages"),
-			Label({
+			Paragraph({
 				Text = "Every Loom-managed install is listed here with version status and dependencies.",
 				TextSize = 12,
 				TextColor3 = Color3.fromRGB(180, 180, 180),
+				TextXAlignment = Enum.TextXAlignment.Center,
 			}),
 			Computed(function()
 				return buildPage()
