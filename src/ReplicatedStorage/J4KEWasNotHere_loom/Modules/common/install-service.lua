@@ -159,7 +159,7 @@ function InstallService:syncFromRaw(raw, pkgLabel, options, dependencyRealm)
 		realm = (dependencyRealm == "dev") and "dev"
 			or ((wallyData.package and wallyData.package.realm) or "shared")
 	end
-	local includeDirs = self.settings:get("includeDirectors", true)
+	local includeDirs = settings:get("includeDirectors", true)
 
 	packageInstancer.syncPackage(realm, {
 		source = sourceFolder,
@@ -168,7 +168,7 @@ function InstallService:syncFromRaw(raw, pkgLabel, options, dependencyRealm)
 		displayName = options.displayName,
 		unpackSrc = options.unpackSrc == true,
 		includeDirectors = includeDirs,
-		includeWallyToml = self.settings:get("includeWallyToml", true),
+		includeWallyToml = settings:get("includeWallyToml", true),
 		wally = wallyData,
 	})
 
@@ -185,7 +185,7 @@ function InstallService:installPackage(entry, options)
 
 	if entry.reference and entry.existingSource then
 		local realm = options.parent or entry.realm or "shared"
-		local includeDirs = self.settings:get("includeDirectors", true)
+		local includeDirs = settings:get("includeDirectors", true)
 
 		local wallyModule = entry.existingSource:FindFirstChild("wally.toml")
 		local wallyData = nil
@@ -203,7 +203,7 @@ function InstallService:installPackage(entry, options)
 			displayName = options.displayName or entry.overrideName,
 			unpackSrc = options.unpackSrc == true,
 			includeDirectors = includeDirs,
-			includeWallyToml = self.settings:get("includeWallyToml", true),
+			includeWallyToml = settings:get("includeWallyToml", true),
 			wally = wallyData,
 		})
 
@@ -253,7 +253,7 @@ function InstallService:installPackage(entry, options)
 			ipairs(
 				normalizeDependencyEntries(
 					dependencies,
-					self.settings:get("includeDev", false),
+					settings:get("includeDev", false),
 					function(msg)
 						self:debug(msg)
 					end
@@ -308,8 +308,8 @@ function InstallService:installQueue(queue, onProgress, options)
 		end
 	end
 
-	local unpackSrc = self.settings:get("unpackSrc", true)
-	local includeDirs = self.settings:get("includeDirectors", true)
+	local unpackSrc = settings:get("unpackSrc", true)
+	local includeDirs = settings:get("includeDirectors", true)
 
 	local idx = 0
 	while idx < #workQueue do

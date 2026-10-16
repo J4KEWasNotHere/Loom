@@ -6356,7 +6356,7 @@ function InstallService:syncFromRaw(raw, pkgLabel, options, dependencyRealm)
 		realm = (dependencyRealm == "dev") and "dev"
 			or ((wallyData.package and wallyData.package.realm) or "shared")
 	end
-	local includeDirs = self.settings:get("includeDirectors", true)
+	local includeDirs = settings:get("includeDirectors", true)
 
 	packageInstancer.syncPackage(realm, {
 		source = sourceFolder,
@@ -6365,7 +6365,7 @@ function InstallService:syncFromRaw(raw, pkgLabel, options, dependencyRealm)
 		displayName = options.displayName,
 		unpackSrc = options.unpackSrc == true,
 		includeDirectors = includeDirs,
-		includeWallyToml = self.settings:get("includeWallyToml", true),
+		includeWallyToml = settings:get("includeWallyToml", true),
 		wally = wallyData,
 	})
 
@@ -6382,7 +6382,7 @@ function InstallService:installPackage(entry, options)
 
 	if entry.reference and entry.existingSource then
 		local realm = options.parent or entry.realm or "shared"
-		local includeDirs = self.settings:get("includeDirectors", true)
+		local includeDirs = settings:get("includeDirectors", true)
 
 		local wallyModule = entry.existingSource:FindFirstChild("wally.toml")
 		local wallyData = nil
@@ -6400,7 +6400,7 @@ function InstallService:installPackage(entry, options)
 			displayName = options.displayName or entry.overrideName,
 			unpackSrc = options.unpackSrc == true,
 			includeDirectors = includeDirs,
-			includeWallyToml = self.settings:get("includeWallyToml", true),
+			includeWallyToml = settings:get("includeWallyToml", true),
 			wally = wallyData,
 		})
 
@@ -6450,7 +6450,7 @@ function InstallService:installPackage(entry, options)
 			ipairs(
 				normalizeDependencyEntries(
 					dependencies,
-					self.settings:get("includeDev", false),
+					settings:get("includeDev", false),
 					function(msg)
 						self:debug(msg)
 					end
@@ -6505,8 +6505,8 @@ function InstallService:installQueue(queue, onProgress, options)
 		end
 	end
 
-	local unpackSrc = self.settings:get("unpackSrc", true)
-	local includeDirs = self.settings:get("includeDirectors", true)
+	local unpackSrc = settings:get("unpackSrc", true)
+	local includeDirs = settings:get("includeDirectors", true)
 
 	local idx = 0
 	while idx < #workQueue do
@@ -18482,6 +18482,42 @@ end
 				</Properties>
 			</Item>
 		</Item>
+		<Item class="Folder" referent="RBXF69463FB410841109C986F33AED261ED">
+			<Properties>
+				<Color3 name="IconTint">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">Packages</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">vq3zFj7ddPsNc4SVANyGyw==</SharedString>
+				<UniqueId name="UniqueId">1334ad8cae1c57e20ae4208b00003498</UniqueId>
+			</Properties>
+			<Item class="Folder" referent="RBXA7BA31F9112942B8A280BA3BBF9936ED">
+				<Properties>
+					<Color3 name="IconTint">
+						<R>0</R>
+						<G>0</G>
+						<B>0</B>
+					</Color3>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">_Index</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">1334ad8cae1c57e20ae4208b00003499</UniqueId>
+				</Properties>
+			</Item>
+		</Item>
 	</Item>
 	<Item class="ServerScriptService" referent="RBX21B75B852B064780A7E660B29D9436F8">
 		<Properties>
@@ -18496,6 +18532,42 @@ end
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			<UniqueId name="UniqueId">461f0080d2ce3ba20a6974d00000039c</UniqueId>
 		</Properties>
+		<Item class="Folder" referent="RBX25CCF65969754EF781248FC2CC1825E2">
+			<Properties>
+				<Color3 name="IconTint">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">Packages</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">vq3zFj7ddPsNc4SVANyGyw==</SharedString>
+				<UniqueId name="UniqueId">1334ad8cae1c57e20ae4208b00003496</UniqueId>
+			</Properties>
+			<Item class="Folder" referent="RBX2569535C6FC948879C5244583A523D70">
+				<Properties>
+					<Color3 name="IconTint">
+						<R>0</R>
+						<G>0</G>
+						<B>0</B>
+					</Color3>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">_Index</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">1334ad8cae1c57e20ae4208b00003497</UniqueId>
+				</Properties>
+			</Item>
+		</Item>
 	</Item>
 	<Item class="ServerStorage" referent="RBX8C11EB737ECD4FB289435B598D326BF7">
 		<Properties>
@@ -18731,6 +18803,7 @@ AAAAAAAJAAAAZbDqEAYAAAAAAAAKAAAAw8faMAUAAAAAAAALAAAAiVpHkAMAAAAAAAAMAAAA
 Oi4kQAUAAAAAAAANAAAAHh4lFAMAAAAAAAAOAAAAZlw7UAUAAAAAAAAPAAAA6JxKJAMAAAAA
 AAAQAAAAc3trYAUAAAAAAAARAAAAhHtacAMAAAAAAAASAAAAgcLgAAYAAAAAAAATAAAAc4RK
 BAUAAAAAAAAUAAAAxr21cAUAAAAAAAAVAAAAzq2UNAMAAAAAAAAWAAAAlJSMRAMAAAAAAAA=</SharedString>
+		<SharedString md5="vq3zFj7ddPsNc4SVANyGyw==">cGFja2FnZS1kaXJlY3RvcnkvQGpha2Vib3lnYW1lcjY0</SharedString>
 		<SharedString md5="yuZpQdnvvUBOTYh1jqZ2cA=="></SharedString>
 	</SharedStrings>
 </roblox>
